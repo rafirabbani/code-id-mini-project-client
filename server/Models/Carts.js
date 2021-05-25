@@ -1,4 +1,4 @@
-const carts = function(sequelize, DataTypes) {
+const carts = (sequelize, DataTypes) => {
   const Carts = sequelize.define('carts', {
     cart_id: {
       autoIncrement: true,
@@ -9,7 +9,7 @@ const carts = function(sequelize, DataTypes) {
     cart_created_on: {
       type: DataTypes.DATEONLY,
       allowNull: true,
-      defaultValue: Sequelize.literal('CURRENT_DATE')
+      defaultValue: sequelize.literal('CURRENT_DATE')
     },
     cart_status: {
       type: DataTypes.STRING(15),

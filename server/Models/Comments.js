@@ -1,4 +1,4 @@
-const comments = function(sequelize, DataTypes) {
+const comments = (sequelize, DataTypes) => {
   const Comments = sequelize.define('comments', {
     comment_id: {
       autoIncrement: true,
@@ -11,8 +11,9 @@ const comments = function(sequelize, DataTypes) {
       allowNull: true
     },
     comment_created_on: {
-      type: DataTypes.DATEONLY,
-      allowNull: true
+        type: DataTypes.DATEONLY,
+        allowNull: true,
+        defaultValue: sequelize.literal('CURRENT_DATE')
     },
     comment_rating: {
       type: DataTypes.INTEGER,

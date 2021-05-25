@@ -1,4 +1,4 @@
-const orders = function(sequelize, DataTypes) {
+const orders = (sequelize, DataTypes) => {
   const Orders = sequelize.define('orders', {
     order_name: {
       type: DataTypes.STRING(25),
@@ -73,4 +73,7 @@ const orders = function(sequelize, DataTypes) {
   Orders.associate = (models) => {
       Orders.belongsTo(models.Users, {foreignKey: "order_user_id"})
   }
-};
+  return Orders
+}
+
+export default orders

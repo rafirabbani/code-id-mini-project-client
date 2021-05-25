@@ -1,4 +1,4 @@
-const line_items = function(sequelize, DataTypes) {
+const line_items = (sequelize, DataTypes) => {
   const Line_Items = sequelize.define('line_items', {
     line_item_id: {
       autoIncrement: true,

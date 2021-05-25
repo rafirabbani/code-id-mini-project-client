@@ -1,4 +1,4 @@
-const movies = function(sequelize, DataTypes) {
+const movies = (sequelize, DataTypes) => {
   const Movies = sequelize.define('movies', {
     movie_id: {
       autoIncrement: true,

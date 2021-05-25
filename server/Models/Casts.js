@@ -1,4 +1,4 @@
-const casts = function(sequelize, DataTypes) {
+const casts = (sequelize, DataTypes) => {
   const Casts = sequelize.define('casts', {
     cast_id: {
       autoIncrement: true,

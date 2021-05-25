@@ -5,10 +5,11 @@ import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
 import models from './Models/Index'
+import routes from './Routes/IndexRoute'
 
 const app = express()
 
-// parse body params and attache them to req.body
+// parse body params and attach them to req.body
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
@@ -33,6 +34,9 @@ app.use(async (req, res, next) => {
     req.context = {models};
     next();
 });
+
+//api routes
+app.use('/api/users', routes.UsersRoute)
 
 // Catch unauthorised errors
 app.use((err, req, res, next) => {
