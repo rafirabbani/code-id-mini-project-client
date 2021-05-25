@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser'
 import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
-import models from './Models/Index'
+import models from './Models/IndexModels'
 import routes from './Routes/IndexRoute'
 
 const app = express()
