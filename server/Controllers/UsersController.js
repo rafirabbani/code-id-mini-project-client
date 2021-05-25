@@ -53,6 +53,7 @@ const createUser = async (req, res) => {
             data.user_avatar_path = files.user_avatar.path
         }
         try {
+            
             const result = await req.context.models.Users.create(data.dataValues)
             //console.log(result)
             return res.send(result)
