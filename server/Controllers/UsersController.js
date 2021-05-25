@@ -35,7 +35,7 @@ const createUser = async (req, res) => {
             }
             fs.rename(file.path, path.join(folder, file.name), (err) => {
                 if (err) throw err
-                console.log(`file moved to ${folder}`)
+                console.log(`File Moved to ${folder}`)
             })
             file.path = path.join(folder + file.name)
         })
@@ -71,7 +71,7 @@ const getAllUsers = async (req, res) => {
             order: [
                 ['user_id', 'ASC']
             ]
-        });
+        })
         return res.send(result)
     }
     catch (err) {
@@ -112,11 +112,8 @@ const updateUser = async (req, res) => {
                 if (file) {
                     const userName = result.dataValues.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
                     if (fs.existsSync(`${pathDir}/users/${userName}`)) {
-
-                        fs.rm(`${pathDir}/users/${userName}`, {recursive: true}, (err) => {
-                            if (err) throw err
-                            console.log('File Deleted')
-                        })
+                        fs.rmdirSync(`${pathDir}/users/${userName}`, {recursive: true})
+                        console.log('File Deleted')
                     }
                     let folder = pathDir + `/users/`
                     if (!fs.existsSync(folder)) {
@@ -139,7 +136,7 @@ const updateUser = async (req, res) => {
                     }
                     fs.rename(file.path, path.join(folder + file.name), (err) => {
                         if (err) throw err
-                        console.log('file moved')
+                        console.log(`File Moved to ${folder}`)
                     })
                     file.path = path.join(folder + file.name)
                 }
@@ -151,7 +148,7 @@ const updateUser = async (req, res) => {
                     }
                     fs.rename(file.path, path.join(folder + file.name), (err) => {
                         if (err) throw err
-                        console.log('file moved')
+                        console.log(`File Moved to ${folder}`)
                     })
                     file.path = path.join(folder + file.name)
                 }
@@ -182,7 +179,7 @@ const updateUser = async (req, res) => {
                     }
                     fs.rename(result.dataValues.user_avatar_path, path.join(folder + result.dataValues.user_avatar), (err) => {
                         if (err) throw err
-                        console.log('file moved')
+                        console.log(`File Moved to ${folder}`)
                         const oldName = result.dataValues.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
                         fs.rmdirSync(`${pathDir}/users/${oldName}`);
                     });
@@ -218,16 +215,14 @@ const deleteUser = async (req, res) => {
         const userName = result.dataValues.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
         let folder = pathDir + `/users/${userName}/`
         if (fs.existsSync(folder)) {
-            fs.rm(folder, {recursive: true}, async (err) => {
-                if (err) throw err
-                    console.log('image deleted')
-            })
+            fs.rmdirSync(folder, {recursive: true})
+            console.log('File Deleted')
         }
         try {
-            const result = await req.context.models.Users.destroy({
+            const destroy = await req.context.models.Users.destroy({
                 where: {user_id: req.params.id}
             })
-            return res.send('deleted ' + result + ' row')
+            return res.send(`Deleted ${destroy} row`)
         }
         catch (err) {
             res.status(500)

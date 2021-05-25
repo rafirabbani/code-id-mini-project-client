@@ -1,5 +1,7 @@
-import UsersRoute from './UsersRoute'
+import UsersRoutes from './UsersRoute'
+import MoviesRoutes from './MoviesRoute'
 
 export default {
-    UsersRoute
+    UsersRoutes,
+    MoviesRoutes
 }

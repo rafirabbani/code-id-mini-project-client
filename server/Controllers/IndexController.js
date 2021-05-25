@@ -1,5 +1,8 @@
-import UsersRoute from './UsersController'
+import UsersController from './UsersController'
+import MoviesController from './MoviesController'
+
 
 export default {
-    UsersRoute
+    UsersController,
+    MoviesController
 }
