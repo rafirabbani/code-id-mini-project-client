@@ -1,9 +1,11 @@
 import UsersRoutes from './UsersRoute'
-import MoviesRoutes from './MoviesRoute'
+import MoviesRoute from './MoviesRoute'
 import OrdersRoute from './OrdersRoute'
+import CastsRoute from './CastsRoute'
 
 export default {
     UsersRoutes,
-    MoviesRoutes,
-    OrdersRoute
+    MoviesRoute,
+    OrdersRoute,
+    CastsRoute
 }

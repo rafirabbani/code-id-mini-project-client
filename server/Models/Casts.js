@@ -10,10 +10,6 @@ const casts = (sequelize, DataTypes) => {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    cast_year_date: {
-      type: DataTypes.STRING(5),
-      allowNull: true
-    },
     cast_image: {
       type: DataTypes.STRING(255),
       allowNull: true
@@ -36,6 +32,14 @@ const casts = (sequelize, DataTypes) => {
     },
     cast_image_path: {
       type: DataTypes.STRING,
+      allowNull: true
+    },
+    cast_birthdate: {
+      type: DataTypes.DATEONLY,
+      allowNull: false
+    },
+    cast_gender: {
+      type: DataTypes.STRING(7),
       allowNull: true
     }
   }, {
