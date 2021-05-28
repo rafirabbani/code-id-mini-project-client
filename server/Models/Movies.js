@@ -88,7 +88,7 @@ const movies = (sequelize, DataTypes) => {
   Movies.associate = (models) => {
       Movies.hasMany(models.Casts, { foreignKey: 'cast_movie_id', onDelete: 'CASCADE'});
       Movies.hasMany(models.Comments, { foreignKey: 'comment_movie_id', onDelete: 'CASCADE'});
-      Movies.hasOne(models.Line_Items, { foreignKey: 'line_item_movie_id'});
+      Movies.hasMany(models.Line_Items, { foreignKey: 'line_item_movie_id', onDelete: 'CASCADE'});
   }
   return Movies
 }

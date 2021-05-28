@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import formidable from 'formidable'
+import AuthHelper from '../Helper/AuthHelper'
 
 const pathDir = path.join(__dirname, '../../uploads')
 
@@ -34,6 +35,10 @@ const createUser = async (req, res) => {
             return res.send(err)
         }
         const data = new req.context.models.Users(fields)
+        const salt = AuthHelper.makeSalt()
+        const hashPassword = AuthHelper.hashPassword(data.user_password, salt)
+        data.user_salt = salt
+        data.user_password = hashPassword
         //console.log(files.user_avatar)
         if (Object.keys(files).length !== 0) {
             data.user_avatar = files.user_avatar.name
@@ -56,7 +61,9 @@ const createUser = async (req, res) => {
                     const update = await req.context.models.Users.update(
                         {
                             user_avatar_path: avatarPath
-                        }, { returning: true, where: { user_id: result.user_id }
+                        }, { attributes: { exclude: ['user_salt', 'user_password', 'user_type'] }, 
+                        returning: true, where: { user_id: result.user_id }, 
+                        
                     })
                     if (update) {
                         return res.send(update)
@@ -91,7 +98,8 @@ const getAllUsers = async (req, res) => {
         const result = await req.context.models.Users.findAll({
             order: [
                 ['user_id', 'ASC']
-            ]
+            ],
+            attributes: { exclude: ['user_salt', 'user_password'] }
         })
         return res.send(result)
     }
@@ -105,7 +113,10 @@ const getAllUsers = async (req, res) => {
 const getOneUser = async (req, res) => {
     try { 
         const result = await req.context.models.Users.findOne({
-            where: { user_id: req.params.id }
+            where: { user_id: req.params.id }, 
+            attributes: { exclude: ['user_salt', 'user_password'] },
+            include: [req.context.models.Carts]
+
         })
         if (result) {
             return res.send(result)
@@ -173,6 +184,18 @@ const updateUser = async (req, res) => {
                 }
                 const data = new req.context.models.Users(fields)
                 data.user_id = req.params.id
+                if (data.user_password) {
+                    const oldSalt = result.user_salt
+                    if (AuthHelper.hashPassword(data.user_password, oldSalt) === result.user_password) {
+                        res.status(400)
+                        return res.send('Cannot Use Same Password as Before')
+                    } else {
+                        const salt = AuthHelper.makeSalt()
+                        const hashPassword = AuthHelper.hashPassword(data.user_password, salt)
+                        data.user_salt = salt
+                        data.user_password = hashPassword
+                    }
+                }
                 if (data.user_name === result.user_name) {
                     if (fs.existsSync(files.user_avatar.path)) {
                         fs.unlinkSync(files.user_avatar.path)
@@ -198,9 +221,10 @@ const updateUser = async (req, res) => {
                 }
                 try {
                     const update = await req.context.models.Users.update(data.dataValues, {
-                        returning: true, where: { user_id : req.params.id }
+                        /* returning: true, */ where: { user_id : req.params.id },
+                        attributes: { exclude: ['user_salt', 'user_password'] }
                     })
-                    return res.send(update)
+                    return res.send('Data Updated')
                 }
                 catch (err) {
                     console.log(err)

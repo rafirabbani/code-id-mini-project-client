@@ -40,6 +40,8 @@ app.use('/api/users', routes.UsersRoutes)
 app.use('/api/movies', routes.MoviesRoute)
 app.use('/api/orders', routes.OrdersRoute)
 app.use('/api/casts', routes.CastsRoute)
+app.use('/api/auth', routes.AuthRoute)
+app.use('/api/transactions', routes.TransactionsRoute)
 
 // Catch unauthorised errors
 app.use((err, req, res, next) => {

@@ -39,8 +39,8 @@ const carts = (sequelize, DataTypes) => {
     ]
   })
   Carts.associate = (models) => {
-      Carts.hasOne(models.Line_Items, { foreignKey: 'line_item_cart_id'});
-      Carts.belongsTo(models.Users, { foreignKey: 'cart_user_id'});
+      Carts.belongsTo(models.Users, { foreignKey: 'cart_user_id'})
+      Carts.hasMany(models.Line_Items, { foreignKey: 'line_item_cart_id', onDelete: 'CASCADE' })
   }
   return Carts
 }

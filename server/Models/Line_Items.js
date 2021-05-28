@@ -1,4 +1,4 @@
-const line_items = (sequelize, DataTypes) => {
+const line_items = function(sequelize, DataTypes) {
   const Line_Items = sequelize.define('line_items', {
     line_item_id: {
       autoIncrement: true,
@@ -21,7 +21,7 @@ const line_items = (sequelize, DataTypes) => {
         model: 'movies',
         key: 'movie_id'
       },
-      unique: "line_items_line_item_movie_id_key"
+      unique: "line_items_line_item_movie_id_line_item_cart_id_key"
     },
     line_item_cart_id: {
       type: DataTypes.INTEGER,
@@ -30,7 +30,7 @@ const line_items = (sequelize, DataTypes) => {
         model: 'carts',
         key: 'cart_id'
       },
-      unique: "line_items_line_item_cart_id_key"
+      unique: "line_items_line_item_movie_id_line_item_cart_id_key"
     },
     line_item_order_name: {
       type: DataTypes.STRING(25),
@@ -43,17 +43,11 @@ const line_items = (sequelize, DataTypes) => {
     timestamps: false,
     indexes: [
       {
-        name: "line_items_line_item_cart_id_key",
-        unique: true,
-        fields: [
-          { name: "line_item_cart_id" },
-        ]
-      },
-      {
-        name: "line_items_line_item_movie_id_key",
+        name: "line_items_line_item_movie_id_line_item_cart_id_key",
         unique: true,
         fields: [
           { name: "line_item_movie_id" },
+          { name: "line_item_cart_id" },
         ]
       },
       {
@@ -66,8 +60,8 @@ const line_items = (sequelize, DataTypes) => {
     ]
   })
   Line_Items.associate = (models) => {
-      Line_Items.belongsTo(models.Carts, { foreignKey: 'line_item_cart_id'});
-      Line_Items.belongsTo(models.Movies, { foreignKey: 'line_item_movie_id'});
+    Line_Items.belongsTo(models.Movies, { foreignKey: 'line_item_movie_id' })
+    Line_Items.belongsTo(models.Carts, { foreignKey: 'line_item_cart_id'})
   }
   return Line_Items
 }
