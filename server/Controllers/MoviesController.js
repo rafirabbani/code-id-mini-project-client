@@ -125,7 +125,7 @@ const getOneMovie = async (req, res) => {
     }
 }
 
-// Update Single Movie by id
+// Update Single Movie by ID
 const updateMovie = async (req, res) => {
     const Movies = req.context.models.Movies
     try {
@@ -229,6 +229,7 @@ const updateMovie = async (req, res) => {
     }
 }
 
+// Delete Single Movie by ID
 const deleteMovie = async (req, res) => {
     const Movies = req.context.models.Movies
     try {
