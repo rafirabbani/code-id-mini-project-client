@@ -6,7 +6,7 @@ const pathDir = path.join(__dirname, '../../uploads')
 
 // Create New Movie
 const createMovie = async (req, res) => {
-    const dataField = {}
+    const Movies = req.context.models.Movies
     if (!fs.existsSync(pathDir)) {
         fs.mkdirSync(pathDir);
     }
@@ -14,59 +14,84 @@ const createMovie = async (req, res) => {
         multiples: true,
         uploadDir: pathDir,
         keepExtensions: true
-    });
+    })
+
     form 
         .on('fileBegin', (keyName, file) => {
-            let folder = pathDir + `/movies/`
+            //console.log(file)
+            const folder = `${pathDir}/movies/`
             if (!fs.existsSync(folder)) {
-                fs.mkdirSync(folder);
+                mkdirSync(folder)
             }
-            file.path = path.join(folder + file.name)
-        })
-        .on('field', (keyName, value) => {
-            dataField[keyName] = value
-        })
-        .on('file', (keyName, file) => {
-            //console.log(dataField)
-            const movieTitle = dataField.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim();
-            let folder = pathDir + `/movies/${movieTitle}`
-            if (!fs.existsSync(folder)) {
-                fs.mkdirSync(folder, {recursive: true});
-            }
-            fs.rename(file.path, path.join(folder, file.name), (err) => {
-                if (err) {
-                    res.send(err.response)
-                }
-                console.log(`File moved to ${folder}`)
-            })
-            file.path = path.join(folder + file.name)
+            file.path = path.join(folder, file.name)
         })
         .on('end', () => {
-            console.log('File Uploaded Successfully')
+            console.log('File Uploaded')
         })
+    
     form.parse(req, async (err, fields, files) => {
         if (err) {
-            res.send(err.response)
+            res.status(400)
+            return res.send(err)
         }
-        const data = new req.context.models.Movies(fields)
+        const data = new Movies(fields)
         if (Object.keys(files).length !== 0) {
             data.movie_image = files.movie_image.name
             data.movie_image_path = files.movie_image.path
         }
         try {
-            const result = await req.context.models.Movies.create(data.dataValues)
-            return res.send(result)
+            const result = await Movies.create(data.dataValues)
+            if (result.movie_image) {
+                const title = result.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                const folder = `${pathDir}/movies/${result.movie_id}_${title}/`
+                const imagePath = path.join(folder, result.movie_image)
+                if (!fs.existsSync(folder)) {
+                    fs.mkdirSync(folder)
+                    fs.renameSync(result.movie_image_path, imagePath)
+                }
+                else {
+                    fs.renameSync(result.movie_image_path, imagePath)
+                }
+                try {
+                    const update = await Movies.update({
+                        movie_image_path: imagePath
+                    },
+                    { returning: true, where: { movie_id: result.movie_id } })
+                    if (update) {
+                        return res.send(update)
+                    }
+                    else {
+                        res.status(500)
+                        fs.renameSync(imagePath, result.movie_image_path)
+                        fs.rmdirSync(folder)
+                        return res.send(`Cannot Update File Path to ${imagePath}`)
+                    }
+
+                }
+                catch (err) {
+                    console.log(err)
+                    res.status(500)
+                    return res.send(err)
+                }
+            } 
+            else {
+                return res.send(result)
+            }
         }
         catch (err) {
-            return res.send(err.response)
+            console.log(err)
+            return res.send(err)
         }
     })
+
+
 }
 
 //Get All Movies
 const getAllMovies = async (req, res) => {
+    const Movies = req.context.models.Movies
     try {
-        const result = await req.context.models.Movies.findAll({
+        const result = await Movies.findAll({
             order: [
                 ['movie_id', 'ASC']
             ]
@@ -74,161 +99,168 @@ const getAllMovies = async (req, res) => {
         return res.send(result)
     }
     catch (err) {
-        return res.send(err.response)
+        return res.send(err)
     }
 }
 
 // Get Single Movie by ID
 const getOneMovie = async (req, res) => {
-    const result = await req.context.models.Movies.findOne({
-        where: { movie_id: req.params.id }
-    })
-    if (result) {
-        res.send(result)
+    const Movies = req.contex.models.Movies
+    try {
+        const result = await Movies.findOne({
+            where: { movie_id : req.params.id }
+        })
+        if (result) {
+            return res.send(result)
+        }
+        else {
+            res.status(404)
+            return res.send('Movie not found')
+        }
     }
-    else {
-        res.status(404)
-        res.send('Movie Not Found')
+    catch (err) {
+        console.log(err)
+        res.status(500)
+        return res.send(err)
     }
 }
 
 // Update Single Movie by id
 const updateMovie = async (req, res) => {
-    const result = await req.context.models.Movies.findOne({
-        where: {movie_id: req.params.id}
-    })
-    if (result) {
-        //console.log(result.dataValues)
-        const dataField = {}
-        const form = formidable({
-            multiples: true,
-            uploadDir: pathDir,
-            keepExtensions: true
-        });
-        form 
-        .on('fileBegin', (keyName, file) => {
-            //console.log(file)
-            if (file) {
-                const movieTitle = result.dataValues.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                if (fs.existsSync(`${pathDir}/movies/${movieTitle}`)) {
-                    fs.rmdirSync(`${pathDir}/movies/${movieTitle}`, {recursive: true})
-                    console.log('File Deleted')
-                }
-                let folder = pathDir + `/movies/`
-                if (!fs.existsSync(folder)) {
-                    fs.mkdirSync(folder, {recursive: true})
-                }
-                file.path = path.join(folder + file.name)
-            }
+    const Movies = req.context.models.Movies
+    try {
+        const result = await Movies.findOne({
+            where: { movie_id: req.params.id }
         })
-        .on('field', (keyName, value) => {
-            dataField[keyName] = value
-        })
-        .on('file', (keyName, file) => {
-            //console.log(dataField)
-            //console.log(file.path)
-            if (dataField.movie_title === undefined) {
-                const movieTitle = result.dataValues.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                let folder = pathDir + `/movies/${movieTitle}/`
-                if (!fs.existsSync(folder)) {
-                    fs.mkdirSync(folder, {recursive: true})
-                }
-                fs.rename(file.path, path.join(folder + file.name), (err) => {
-                    if (err) throw err
-                    console.log(`File Moved to ${folder}`)
+        if (result) {
+            const dataField = {}
+            const form = formidable({
+                multiples: true,
+                uploadDir: pathDir,
+                keepExtensions: true
+            })
+
+            form
+                .on('field', (keyName, value) => {
+                    dataField[keyName] = value
                 })
-                file.path = path.join(folder + file.name)
-            }
-            else {
-                const movieTitle = dataField.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                let folder = pathDir + `/movies/${movieTitle}/`
-                if (!fs.existsSync(folder)) {
-                    fs.mkdirSync(folder, {recursive: true})
-                }
-                fs.rename(file.path, path.join(folder + file.name), (err) => {
-                    if (err) throw err
-                    console.log(`File Moved to ${folder}`)
+                .on('file', (keyName, file) => {
+                    if (dataField.movie_title) {
+                        const title = dataField.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                        const folder = `${pathDir}/movies/${req.params.id}_${title}/`
+                        const oldTitle = result.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                        if (!fs.existsSync(folder)) {
+                            fs.mkdirSync(folder)
+                            const imagePath = path.join(folder, file.name)
+                            fs.renameSync(file.path, imagePath)
+                            fs.rmSync(`${pathDir}/movies/${req.params.id}_${oldTitle}`, { recursive: true })
+                            file.path = imagePath
+                        }
+                    }
+                    else {
+                        const title = result.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                        const folder = `${pathDir}/movies/${req.params.id}_${title}/`
+                        const imagePath = path.join(folder, file.name)
+                        if (fs.existsSync(result.movie_image_path)) {
+                            fs.unlinkSync(result.movie_image_path)
+                            
+                        }
+                        fs.renameSync(file.path, imagePath)
+                        file.path = imagePath
+                    }
                 })
-                file.path = path.join(folder + file.name)
-            }
-        })
-        .on('end', () => {
-            console.log('File Uploaded Successfully')
-            //return res.send('hi')
-        })
-    form.parse(req, async(err, fields, files) => {
-        if (err) {
-            res.status(400)
-            res.send(err)
-        }
-        const data = new req.context.models.Movies(fields)
-        data.movie_id = req.params.id
-        if (Object.keys(files).length !== 0) {
-            data.movie_image = files.movie_image.name
-            data.movie_image_path = files.movie_image.path
-            //console.log(data)
+                .on('end', () => {
+                    console.log('File Uploaded')
+                })
+            
+            form.parse(req, async(err, fields, files) => {
+                if (err) {
+                    res.status(400)
+                    return res.send(err)
+                }
+                const data = new Movies(fields)
+                data.movie_id = req.params.id
+                if (data.movie_title === result.movie_title) {
+                    if (Object.keys(files).length !== 0) {
+                        if (fs.existsSync(files.movie_image.path)) {
+                            fs.unlinkSync(files.movie_image.path)
+                        }
+                    }
+                    res.status(400)
+                    return res.send(`Cannot Update With Existing Name`)
+                }
+                else if (Object.keys(files).length !== 0) {
+                    data.movie_image = files.movie_image.name 
+                    data.movie_image_path = files.movie_image.path
+                }
+                else if (data.movie_title && Object.keys(files).length === 0) {
+                    const title = data.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                    const folder = `${pathDir}/movies/${req.params.id}_${title}/`
+                    if (!fs.existsSync(folder)) {
+                        const oldTitle = result.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                        const imagePath = path.join(folder, result.movie_image)
+                        fs.mkdirSync(folder)
+                        fs.renameSync(result.movie_image_path, imagePath)
+                        fs.rmSync(`${pathDir}/movies/${req.params.id}_${oldTitle}`, { recursive: true })
+                        data.movie_image_path = imagePath
+                    }
+                }
+                try {
+                    const update = await Movies.update(data.dataValues, {
+                        returning: true, where: { movie_id : req.params.id }
+                    })
+                    return res.send(update)
+                }
+                catch (err) {
+                    console.log(err)
+                    res.status(400)
+                    return res.send(err)
+                }
+            })
         }
         else {
-            //console.log(data.dataValues)
-            if(data.dataValues.movie_title) {
-                const movieTitle = data.dataValues.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                let folder = pathDir + `/movies/${movieTitle}/`
-                if (!fs.existsSync(folder)) {
-                    fs.mkdirSync(folder);
-                }
-                fs.rename(result.dataValues.movie_image_path, path.join(folder + result.dataValues.movie_image), (err) => {
-                    if (err) throw err
-                    console.log(`File Moved to ${folder}`)
-                    const oldTitle = result.dataValues.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                    fs.rmdirSync(`${pathDir}/movies/${oldTitle}`);
-                });
-                let newImagePath = path.join(folder + result.dataValues.movie_image)
-                data.movie_image_path = newImagePath
-            }
+            res.status(404)
+            return res.send('Movie not found')
         }
-        try {
-            //console.log(data.dataValues)
-            const update = await req.context.models.Movies.update(data.dataValues, 
-                { returning: true, where: { movie_id: req.params.id }});
-            return res.send(update)
-        }
-        catch (err) {
-            res.status(400)
-            res.send(err.fields)
-        }
-    })
-}
-else {
-    res.status(404)
-    res.send('Movie not found')
-}
+    }
+    catch (err) {
+        console.log(err)
+        res.send(err)
+    }
 }
 
 const deleteMovie = async (req, res) => {
-    const result = await req.context.models.Movies.findOne({
-        where: { movie_id: req.params.id }
-    })
-    if (result) {
-        const movieTitle = result.dataValues.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
-        const folder = `${pathDir}/movies/${movieTitle}`
-        if (fs.existsSync(folder)) {
-            fs.rmdirSync(folder, { recursive: true })
-            console.log('File Deleted')
+    const Movies = req.context.models.Movies
+    try {
+        const result = await Movies.findOne({
+            where: { movie_id : req.params.id }
+        })
+        if (result) {
+            const oldTitle = result.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
+            const folder = `${pathDir}/movies/${req.params.id}_${oldTitle}`
+            if (fs.existsSync(folder)) {
+                fs.rmSync(folder, { recursive: true })
+                console.log('File Deleted')
+            }
+            try {
+                const destroy = await Movies.destroy({
+                    where: { movie_id : req.params.id }
+                })
+                return res.send(`Deleted ${destroy} row`)
+            }
+            catch(err) {
+                console.log(err)
+                res.send(err)
+            }
         }
-        try {
-            const destroy = await req.context.models.Movies.destroy({
-                where: { movie_id: req.params.id }
-            })
-            return res.send(`Deleted ${destroy} row`)
-        }
-        catch (err) {
-            res.status(500)
-            res.send(err)
+        else {
+            res.status(404)
+            return res.send('Movie not found')
         }
     }
-    else {
-        res.status(404)
-        res.send('Movie Not Found')
+    catch (err) {
+        console.log(err)
+        return res.send(err)
     }
 }
 

@@ -37,8 +37,9 @@ app.use(async (req, res, next) => {
 
 //api routes
 app.use('/api/users', routes.UsersRoutes)
-app.use('/api/movies', routes.MoviesRoutes)
+app.use('/api/movies', routes.MoviesRoute)
 app.use('/api/orders', routes.OrdersRoute)
+app.use('/api/casts', routes.CastsRoute)
 
 // Catch unauthorised errors
 app.use((err, req, res, next) => {

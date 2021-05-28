@@ -6,7 +6,6 @@ const pathDir = path.join(__dirname, '../../uploads')
 
 // Create New User
 const createUser = async (req, res) => {
-    const dataField = {}
     if (!fs.existsSync(pathDir)) {
         fs.mkdirSync(pathDir);
     }
@@ -14,53 +13,74 @@ const createUser = async (req, res) => {
         multiples: true,
         uploadDir: pathDir,
         keepExtensions: true
-    });
+    })
+
     form 
         .on('fileBegin', (keyName, file) => {
-            let folder = pathDir + `/users/`
+            //console.log(file)
+            const folder = `${pathDir}/users/`
             if (!fs.existsSync(folder)) {
-                fs.mkdirSync(folder);
+                mkdirSync(folder)
             }
-            file.path = path.join(folder + file.name)
-        })
-        .on('field', (keyName, value) => {
-            dataField[keyName] = value
-        })
-        .on('file', (keyName, file) => {
-            //console.log(dataField)
-            const userName = dataField.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim();
-            let folder = pathDir + `/users/${userName}`
-            if (!fs.existsSync(folder)) {
-                fs.mkdirSync(folder, {recursive: true});
-            }
-            fs.rename(file.path, path.join(folder, file.name), (err) => {
-                if (err) throw err
-                console.log(`File Moved to ${folder}`)
-            })
-            file.path = path.join(folder + file.name)
+            file.path = path.join(folder, file.name)
         })
         .on('end', () => {
-            console.log('File Uploaded Successfully')
+            console.log('File Uploaded')
         })
-    form.parse(req, async(err,fields,files) => {
+    
+    form.parse(req, async (err, fields, files) => {
         if (err) {
-            res.Status(400)
-            res.send(err)
+            res.status(400)
+            return res.send(err)
         }
         const data = new req.context.models.Users(fields)
+        //console.log(files.user_avatar)
         if (Object.keys(files).length !== 0) {
             data.user_avatar = files.user_avatar.name
             data.user_avatar_path = files.user_avatar.path
         }
         try {
-            
             const result = await req.context.models.Users.create(data.dataValues)
-            //console.log(result)
-            return res.send(result)
+            if (result.user_avatar) {
+                const name = result.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                const folder = `${pathDir}/users/${result.user_id}_${name}/`
+                const avatarPath = path.join(folder, result.user_avatar)
+                if (!fs.existsSync(folder)) {
+                    fs.mkdirSync(folder)
+                    fs.renameSync(result.user_avatar_path, avatarPath)
+                }
+                else {
+                    fs.renameSync(result.user_avatar_path, avatarPath)
+                }
+                try {
+                    const update = await req.context.models.Users.update(
+                        {
+                            user_avatar_path: avatarPath
+                        }, { returning: true, where: { user_id: result.user_id }
+                    })
+                    if (update) {
+                        return res.send(update)
+                    }
+                    else {
+                        res.status(500)
+                        fs.renameSync(avatarPath, result.user_avatar_path)
+                        fs.rmdirSync(folder)
+                        return res.send(`Cannot Update File Path to ${avatarPath}`)
+                    }  
+                }
+                catch (err) {
+                    console.log(err)
+                    res.status(500)
+                    return res.send(err)
+                }
+            }
+            else {
+                return res.send(result)
+            }
         }
         catch (err) {
-            res.status(400)
-            res.send(err.fields)
+            console.log(err)
+            return res.send(err)
         }
     })
 }
@@ -76,164 +96,164 @@ const getAllUsers = async (req, res) => {
         return res.send(result)
     }
     catch (err) {
+        console.log(err)
         return res.send(err)
     }
 }
 
 // Get Single User by id
 const getOneUser = async (req, res) => {
-    const result = await req.context.models.Users.findOne({
-        where: { user_id: req.params.id }
-    })
-    if (result) {
-        return res.send(result)
+    try { 
+        const result = await req.context.models.Users.findOne({
+            where: { user_id: req.params.id }
+        })
+        if (result) {
+            return res.send(result)
+        }
+        else {
+            res.status(404)
+            return res.send('User Not Found')
+        }
     }
-    else {
-        res.status(404)
-        res.send('User Not Found')
+    catch (err) {
+        console.log(err)
+        return res.send(err)
     }
 }
 
 // Update Single User by ID
 const updateUser = async (req, res) => {
-    const result = await req.context.models.Users.findOne({
-        where: {user_id: req.params.id}
-    })
-    if (result) {
-        //console.log(result.dataValues)
-        const dataField = {}
-        const form = formidable({
-            multiples: true,
-            uploadDir: pathDir,
-            keepExtensions: true
-        });
-        form 
-            .on('fileBegin', (keyName, file) => {
-                //console.log(file)
-                if (file) {
-                    const userName = result.dataValues.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                    if (fs.existsSync(`${pathDir}/users/${userName}`)) {
-                        fs.rmdirSync(`${pathDir}/users/${userName}`, {recursive: true})
-                        console.log('File Deleted')
-                    }
-                    let folder = pathDir + `/users/`
-                    if (!fs.existsSync(folder)) {
-                        fs.mkdirSync(folder, {recursive: true})
-                    }
-                    file.path = path.join(folder + file.name)
-                }
-            })
-            .on('field', (keyName, value) => {
-                dataField[keyName] = value
-            })
-            .on('file', (keyName, file) => {
-                //console.log(dataField)
-                //console.log(file.path)
-                if (dataField.user_name === undefined) {
-                    const userName = result.dataValues.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                    let folder = pathDir + `/users/${userName}/`
-                    if (!fs.existsSync(folder)) {
-                        fs.mkdirSync(folder, {recursive: true})
-                    }
-                    fs.rename(file.path, path.join(folder + file.name), (err) => {
-                        if (err) throw err
-                        console.log(`File Moved to ${folder}`)
-                    })
-                    file.path = path.join(folder + file.name)
-                }
-                else {
-                    const userName = dataField.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                    let folder = pathDir + `/users/${userName}/`
-                    if (!fs.existsSync(folder)) {
-                        fs.mkdirSync(folder, {recursive: true})
-                    }
-                    fs.rename(file.path, path.join(folder + file.name), (err) => {
-                        if (err) throw err
-                        console.log(`File Moved to ${folder}`)
-                    })
-                    file.path = path.join(folder + file.name)
-                }
-            })
-            .on('end', () => {
-                console.log('File Uploaded Successfully')
-                //return res.send('hi')
-            })
-        form.parse(req, async(err, fields, files) => {
-            if (err) {
-                res.status(400)
-                res.send(err)
-            }
-            const data = new req.context.models.Users(fields)
-            data.user_id = req.params.id
-            if (Object.keys(files).length !== 0) {
-                data.user_avatar = files.user_avatar.name
-                data.user_avatar_path = files.user_avatar.path
-                //console.log(data)
-            }
-            else {
-                //console.log(data.dataValues)
-                if(data.dataValues.user_name) {
-                    const userName = data.dataValues.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                    let folder = pathDir + `/users/${userName}/`
-                    if (!fs.existsSync(folder)) {
-                        fs.mkdirSync(folder);
-                    }
-                    fs.rename(result.dataValues.user_avatar_path, path.join(folder + result.dataValues.user_avatar), (err) => {
-                        if (err) throw err
-                        console.log(`File Moved to ${folder}`)
-                        const oldName = result.dataValues.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                        fs.rmdirSync(`${pathDir}/users/${oldName}`);
-                    });
-                    let newUserPath = path.join(folder + result.dataValues.user_avatar)
-                    data.user_avatar_path = newUserPath
-                }
-            }
-            try {
-                //console.log(data.dataValues)
-                const update = await req.context.models.Users.update(data.dataValues, 
-                    { returning: true, where: { user_id: req.params.id }});
-                return res.send(update)
-            }
-            catch (err) {
-                res.status(400)
-                res.send(err.fields)
-            }
+    try {
+        const result = await req.context.models.Users.findOne({
+            where: { user_id: req.params.id }
         })
+        if (result) {
+            const dataField = {}
+            const form = formidable({
+                multiples: true,
+                uploadDir: pathDir,
+                keepExtensions: true
+            })
+
+            form
+                .on('field', (keyName, value) => {
+                    dataField[keyName] = value
+                })
+                .on('file', (keyName, file) => {
+                    const oldName = result.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                    const oldFolder = `${pathDir}/users/${req.params.id}_${oldName}/`
+                    if (dataField.user_name) {
+                        const newName = dataField.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                        const newFolder = `${pathDir}/users/${req.params.id}_${newName}/`
+                        const avatarPath = path.join(newFolder, file.name)
+                        if (!fs.existsSync(newFolder)) {
+                            fs.mkdirSync(newFolder)
+                            fs.renameSync(file.path, avatarPath)
+                            fs.rmSync(`${pathDir}/users/${req.params.id}_${oldName}`, { recursive: true })
+                            file.path = avatarPath
+                        }
+                    }
+                    else {
+                        const avatarPath = path.join(oldFolder, file.name)
+                        if (fs.existsSync(result.user_avatar_path)) {
+                            fs.unlinkSync(result.user_avatar_path)
+                        }
+                        fs.renameSync(file.path, avatarPath)
+                        file.path = avatarPath
+                    }
+                })
+                .on('end', () => {
+                    console.log('File Uploaded')
+                })
+
+            form.parse(req, async (err, fields, files) => {
+                if (err) {
+                    res.status(400)
+                    return res.send(err)
+                }
+                const data = new req.context.models.Users(fields)
+                data.user_id = req.params.id
+                if (data.user_name === result.user_name) {
+                    if (fs.existsSync(files.user_avatar.path)) {
+                        fs.unlinkSync(files.user_avatar.path)
+                    }
+                    res.status(400)
+                    return res.send(`Cannot Update With Existing Name`)
+                }
+                else if (Object.keys(files).length !== 0) {
+                    data.user_avatar = files.user_avatar.name 
+                    data.user_avatar_path = files.user_avatar.path
+                }
+                else if (data.user_name && Object.keys(files).length === 0) {
+                    const name = data.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                    const folder = `${pathDir}/users/${req.params.id}_${name}/`
+                    if (!fs.existsSync(folder)) {
+                        const oldName = result.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                        const avatarPath = path.join(folder, result.user_avatar)
+                        fs.mkdirSync(folder)
+                        fs.renameSync(result.user_avatar_path, avatarPath)
+                        fs.rmSync(`${pathDir}/users/${req.params.id}_${oldName}`, { recursive: true })
+                        data.user_avatar_path = avatarPath
+                    }
+                }
+                try {
+                    const update = await req.context.models.Users.update(data.dataValues, {
+                        returning: true, where: { user_id : req.params.id }
+                    })
+                    return res.send(update)
+                }
+                catch (err) {
+                    console.log(err)
+                    res.status(400)
+                    return res.send(err)
+                }
+            })
+        }
+        else {
+            res.status(404)
+            return res.send(`User Not Found`)
+        }
     }
-    else {
-        res.status(404)
-        res.send('User not found')
+    catch (err) {
+        console.log(err)
+        return res.send(err)
     }
 }
 
 
 // Delete Single User by ID
 const deleteUser = async (req, res) => {
-    const result = await req.context.models.Users.findOne({
-        where: {user_id: req.params.id}
-    })
-    if (result) {
-        const userName = result.dataValues.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
-        let folder = pathDir + `/users/${userName}/`
-        if (fs.existsSync(folder)) {
-            fs.rmdirSync(folder, {recursive: true})
-            console.log('File Deleted')
+    try {
+        const result = await req.context.models.Users.findOne({
+            where: { user_id : req.params.id }
+        })
+        if (result) {
+            const oldName = result.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
+            const folder = `${pathDir}/users/${req.params.id}_${oldName}`
+            if (fs.existsSync(folder)) {
+                fs.rmSync(folder, { recursive: true })
+                console.log('File Deleted')
+            }
+            try {
+                const destroy = await req.context.models.Users.destroy({
+                    where: { user_id : req.params.id }
+                })
+                return res.send(`Deleted ${destroy} row`)
+            }
+            catch(err) {
+                console.log(err)
+                res.send(err)
+            }
         }
-        try {
-            const destroy = await req.context.models.Users.destroy({
-                where: {user_id: req.params.id}
-            })
-            return res.send(`Deleted ${destroy} row`)
-        }
-        catch (err) {
-            res.status(500)
-            res.send(err)
+        else {
+            res.status(404)
+            return res.send('User not found')
         }
     }
-    else {
-        res.status(404)
-        res.send('User Not Found')
-    }    
+    catch (err) {
+        console.log(err)
+        return res.send(err)
+    }  
 }
 
 

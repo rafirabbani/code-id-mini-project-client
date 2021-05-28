@@ -1,22 +1,19 @@
 import fs, { mkdirSync } from 'fs'
 import path from 'path'
 import formidable from 'formidable'
-import { sequelize } from '../../config/config-db'
 
 const pathDir = path.join(__dirname, '../../uploads')
 
 //Create New Cast
 const createCast = async (req, res) => {
-    const dataField = {}
     if (!fs.existsSync(pathDir)) {
         fs.mkdirSync(pathDir);
     }
-
     const form = formidable({
         multiples: true,
         uploadDir: pathDir,
         keepExtensions: true
-    });
+    })
     
     form 
         .on('fileBegin', (keyName, file) => {
@@ -26,9 +23,6 @@ const createCast = async (req, res) => {
                 mkdirSync(folder)
             }
             file.path = path.join(folder, file.name)
-        })
-        .on('field', (keyName, value) => {
-            dataField[keyName] = value
         })
         .on('end', () => {
             console.log('File Uploaded')
@@ -53,26 +47,34 @@ const createCast = async (req, res) => {
             if (result) {
                 const name = result.cast_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
                 const folder = `${pathDir}/casts/${result.cast_id}_${name}/`
+                const imagePath = path.join(folder, result.cast_image)
                 if (!fs.existsSync(folder)) {
                     fs.mkdirSync(folder)
-                    const imagePath = path.join(folder, result.cast_image)
                     fs.renameSync(result.cast_image_path, imagePath)
-                    try {
-                        const update = await req.context.models.Casts.update(
-                            {
-                                cast_image_path: imagePath
-                            },
-                            { returning: true, where: {cast_id: result.cast_id}
-                        })
-                        return res.send(update)
-                    }
-                    catch (err) {
-                        console.log(err)
-                        return res.send(err)
-                    }
                 }
                 else {
-                    return res.send(result)
+                    fs.renameSync(result.cast_image_path, imagePath)
+                }
+                try {
+                    const update = await req.context.models.Casts.update(
+                        {
+                            cast_image_path: imagePath
+                        }, { returning: true, where: { cast_id: result.cast_id }
+                    })
+                    if (update) {
+                        return res.send(update)
+                    }
+                    else {
+                        res.status(500)
+                        fs.renameSync(imagePath, result.cast_image_path)
+                        fs.rmdirSync(folder)
+                        return res.send(`Cannot Update File Path to ${imagePath}`)
+                    }  
+                }
+                catch (err) {
+                    console.log(err)
+                    res.status(500)
+                    return res.send(err)
                 }
             }
             else {
@@ -82,7 +84,6 @@ const createCast = async (req, res) => {
         }
         catch (err) {
             console.log(err)
-            res.status(400)
             return res.send(err)
         }
     })
@@ -105,7 +106,7 @@ const getAllCast = async (req, res) => {
 const getOneCast = async (req, res) => {
     try {
         const result = await req.context.models.Casts.findOne({
-            where: {cast_id : req.params.id}
+            where: { cast_id : req.params.id }
         })
         if (result) {
             //console.log(result.cast_name)
@@ -127,7 +128,7 @@ const getOneCast = async (req, res) => {
 const updateCast = async (req, res) => {
     try {
         const result = await req.context.models.Casts.findOne({
-            where: {cast_id : req.params.id}
+            where: { cast_id : req.params.id }
         })
         if (result) {
             const dataField = {}
@@ -190,7 +191,7 @@ const updateCast = async (req, res) => {
                     data.cast_image_size = files.cast_image.size
                     data.cast_image_type = files.cast_image.type
                 }
-                else if (data.cast_name && Object.keys(files).length === 0 ) {
+                else if (data.cast_name && Object.keys(files).length === 0) {
                     const name = data.cast_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
                     const folder = `${pathDir}/casts/${req.params.id}_${name}/`
                     if (!fs.existsSync(folder)) {
