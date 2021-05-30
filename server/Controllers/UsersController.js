@@ -99,7 +99,8 @@ const getAllUsers = async (req, res) => {
             order: [
                 ['user_id', 'ASC']
             ],
-            attributes: { exclude: ['user_salt', 'user_password'] }
+            attributes: { exclude: ['user_salt', 'user_password'] },
+            include: req.context.models.Carts
         })
         return res.send(result)
     }
@@ -122,6 +123,7 @@ const getOneUser = async (req, res) => {
             return res.send(result)
         }
         else {
+            console.log(result)
             res.status(404)
             return res.send('User Not Found')
         }

@@ -3,13 +3,13 @@ const orders = (sequelize, DataTypes) => {
     order_name: {
       type: DataTypes.STRING(25),
       allowNull: false,
-      defaultValue: "concat(ORD, to_char((CURRENT_DATE)",
+      defaultValue:  sequelize.fn('concat', 'ORD', sequelize.fn('to_char', sequelize.literal('now()'), 'yyyymmdd-'), sequelize.fn('lpad', sequelize.fn('concat', sequelize.literal("nextval('orders_order_name_seq')")), 4, '0')),
       primaryKey: true
     },
     order_created_on: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: "LOCALTIMESTAMP(0)"
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP(0)')
     },
     order_subtotal: {
       type: DataTypes.DECIMAL,
