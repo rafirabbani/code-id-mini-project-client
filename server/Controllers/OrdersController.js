@@ -10,7 +10,7 @@ const createOrder = async (req, res) => {
     else {
         req.disc = 0
     }
-
+    const totalDue = (req.body.order_subTotal - (req.body.order_subtotal * req.disc)) + ((req.body.order_subTotal - (req.body.order_subtotal * req.disc)) * req.tax)
     try {
         const result = await req.context.models.Orders.findAll({
             where: { order_user_id: req.body.order_user_id, order_status: 'OPEN' }
@@ -20,7 +20,6 @@ const createOrder = async (req, res) => {
         }
         else {
             try {
-                const totalDue = (req.body.order_subTotal - (req.body.order_subtotal * req.disc)) + ((req.body.order_subTotal - (req.body.order_subtotal * req.disc)) * req.tax)
                 const result = await req.context.models.Orders.create({
                     order_subtotal: req.body.order_subtotal,
                     order_discount: req.disc,

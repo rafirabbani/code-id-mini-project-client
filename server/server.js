@@ -1,6 +1,6 @@
 import config from './../config/config'
 import { sequelize } from '../config/config-db';
-import app from './express-fullstack'
+import app from './express'
 
 /* app.listen(config.port, () =>
   console.info('Server started on port %s.', config.port),
