@@ -51,14 +51,15 @@ const openCart = async (req, res, next) => {
 const updateCart =  async (req, res, next) => {
     try {
         const result = await req.context.models.Carts.findOne({
-            where: { cart_id: req.params.cart_id, cart_status: 'OPEN' }
+            where: { cart_id: req.params.cart_id/* , cart_status: 'OPEN' */ },
+            include: req.context.models.Line_Items
         })
         if(result) {
             await req.context.models.Carts.update({
                 cart_status: req.body.cart_status
             }, { where: { cart_id: result.cart_id }
             })
-            //req.cart = req.params.cart_id
+            req.items = result.line_items
             req.params.user_id = result.cart_user_id
             //console.log(result)
             next()
@@ -74,10 +75,10 @@ const updateCart =  async (req, res, next) => {
 }
 
 //Get All Open Carts
-const getAllCarts = async (req, res) => {
+const getAllOpenCarts = async (req, res) => {
     try {
         const result = await req.context.models.Carts.findAll({
-            where: { cart_status: 'OPEN' },
+             where: { cart_status: 'OPEN' },
             include: req.context.models.Line_Items
         })
         return res.send(result)
@@ -88,11 +89,45 @@ const getAllCarts = async (req, res) => {
     }
 }
 
+// Get All Close Carts 
+const getAllCloseCarts = async (req, res) => {
+    try {
+        const result = await req.context.models.Carts.findAll({
+             where: { cart_status: 'CLOSE' },
+            include: req.context.models.Line_Items
+        })
+        return res.send(result)
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).send(err)
+    }
+}
+
+// Get Single Cart by ID 
+const getOneCart = async (req, res) => {
+    try {
+        const result = await req.context.models.Carts.findOne({
+            where: { cart_id: req.params.cart_id },
+            include: req.context.models.Line_Items
+        })
+        if (result) {
+            return res.send(result)
+        }
+        else {
+            res.status(404).send('Cart Not Found')
+        }
+    }
+    catch (err) {
+        return res.status(500).send('Something Went Wrong')
+    }
+}
+
 // Get All Open Carts For Single User
 const getAllCartsByUser = async (req, res, next) => {
     try {
         const result = await req.context.models.Carts.findAll({
-            where: { cart_user_id: req.params.user_id, cart_status: 'OPEN' },
+            where: { cart_user_id: req.params.user_id, cart_status: 'OPEN'},
             include: req.context.models.Line_Items
         })
         //req.items = result.line_items
@@ -126,10 +161,14 @@ const sumLineItems = async (req, res, next) => {
     }
 }
 
+
+
 export default {
     openCart,
     updateCart,
-    getAllCarts,
+    getAllOpenCarts,
     getAllCartsByUser,
-    sumLineItems
+    sumLineItems,
+    getAllCloseCarts,
+    getOneCart
 }

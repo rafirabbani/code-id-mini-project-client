@@ -31,7 +31,7 @@ const updateLineItem = async (req, res, next) => {
             try {
                 const update = await req.context.models.Line_Items.update({
                     line_item_qty: req.body.line_item_qty,
-                    line_item_status: req.body.line_item_status,
+                    //line_item_status: req.body.line_item_status,
                     line_item_movie_id: req.body.line_item_movie_id
                 }, {
                     where: { line_item_id: req.params.line_item_id }
@@ -61,10 +61,9 @@ const updateLineItem = async (req, res, next) => {
 }
 
 // Sum Line Items On Single Cart 
-const sumLineItems = async (req, res, next) => {
+const sumLineItems = async (req, res) => {
     const movies = []
     const subTotal = {}
-    //const subTotal = {}
     //console.log(req.items)
     //res.send(req.items)
     for (const item of req.items) {
@@ -74,9 +73,12 @@ const sumLineItems = async (req, res, next) => {
             })
             if (result) {
                 let Movie = {}
-                //Movie['movie_id'] = item.line_item_movie_id
-                Movie['movie_qty'] = item.line_item_qty
-                Movie['movie_price'] = result.movie_price 
+                Movie['movie_id'] = item.line_item_movie_id
+                Movie['qty'] = item.line_item_qty
+                //Movie['movie_price'] = result.movie_price 
+                Movie['subtotal'] = item.line_item_qty * result.movie_price
+                
+
                 movies.push(Movie)
             }
             else {
@@ -90,22 +92,42 @@ const sumLineItems = async (req, res, next) => {
         }
     }
     if (movies.length > 1) {
-        subTotal['subtotal'] =  movies.reduce((total, due) => ((total.movie_qty * total.movie_price) + (due.movie_qty * due.movie_price)))
+        subTotal['total_due'] =  movies.reduce((total, subtotal) => ((total.subtotal + subtotal.subtotal)))
+        subTotal['total_qty'] = movies.reduce((total, qty) => (total.qty + qty.qty))
+        //subTotal['movies'] = movies
         return res.send(subTotal)
     }
     else {
-        //req.subTotal = movies[0].movie_qty * movies[0].movie_price
-        subTotal['subtotal'] = movies[0].movie_qty * movies[0].movie_price
+        subTotal['total_due'] = movies[0].qty * movies[0].subtotal
+        subTotal['total_qty'] = movies[0].qty
+        //subTotal['movies'] = movies
         return res.send(subTotal)
     }
-    
-    //next()
-    //return res.send(req.subTotal)
+}
+
+// Update All Line Items on Cart
+const bulkUpdateLineItems = async (req, res, next) => {
+    //const result = []
+    for (const item of req.items) {
+        try {
+            await req.context.models.Line_Items.update({
+                line_item_status: req.body.line_item_status, 
+                line_item_order_name: req.body.line_item_order_name
+            }, { where: { line_item_id: item.line_item_id } })
+        }
+        catch (err) {
+            console.log(err)
+            return res.status(500).send('Something Went Wrong')
+        }
+    }
+    next()
+    //return res.send(result)
 }
 
 
 export default {
     addLineItem,
     updateLineItem,
-    sumLineItems
+    sumLineItems,
+    bulkUpdateLineItems
 }
