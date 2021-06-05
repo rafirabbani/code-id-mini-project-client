@@ -7,6 +7,7 @@ const config = {
         path.join(CURRENT_WORKING_DIR, 'client/main.js')
     ],
     output: {
+        globalObject: 'this',
         path: path.join(CURRENT_WORKING_DIR , '/dist'),
         filename: 'bundle.js',
         publicPath: "/dist/"

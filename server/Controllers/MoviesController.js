@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import formidable from 'formidable'
 
-const pathDir = path.join(__dirname, '../../uploads')
+const pathDir = path.join(process.cwd(), '/uploads')
 
 // Create New Movie
 const createMovie = async (req, res) => {

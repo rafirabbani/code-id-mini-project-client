@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSelector }  from 'react-redux'
 
 export default function Home() {
-    const email = localStorage.getItem('email')
-    console.log(email)
+    const [loginCheck, setLoginCheck] = useState(false)
+    useEffect(() => {
+        //console.log(data.auth, data.user)
+    }, [])
     return (
         <div>
             <h1>HOME PAGE</h1>

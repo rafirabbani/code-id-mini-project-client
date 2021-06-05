@@ -2,7 +2,7 @@ import fs, { mkdirSync } from 'fs'
 import path from 'path'
 import formidable from 'formidable'
 
-const pathDir = path.join(__dirname, '../../uploads')
+const pathDir = path.join(process.cwd(), '/uploads')
 
 //Create New Cast
 const createCast = async (req, res) => {

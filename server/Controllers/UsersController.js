@@ -3,10 +3,11 @@ import path from 'path'
 import formidable from 'formidable'
 import AuthHelper from '../Helper/AuthHelper'
 
-const pathDir = path.join(__dirname, '../../uploads')
+const pathDir = path.join(process.cwd(), '/uploads')
 
 // Create New User
 const createUser = async (req, res) => {
+    //console.log(pathDir)
     if (!fs.existsSync(pathDir)) {
         fs.mkdirSync(pathDir);
     }
@@ -21,7 +22,7 @@ const createUser = async (req, res) => {
             //console.log(file)
             const folder = `${pathDir}/users/`
             if (!fs.existsSync(folder)) {
-                mkdirSync(folder)
+                fs.mkdirSync(folder)
             }
             file.path = path.join(folder, file.name)
         })
@@ -46,6 +47,7 @@ const createUser = async (req, res) => {
         }
         try {
             const result = await req.context.models.Users.create(data.dataValues)
+            //return res.send(result)
             if (result.user_avatar) {
                 const name = result.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
                 const folder = `${pathDir}/users/${result.user_id}_${name}/`

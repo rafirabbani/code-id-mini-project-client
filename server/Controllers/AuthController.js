@@ -23,13 +23,15 @@ const signIn = async (req, res) => {
                 }})
             }
             else {
-                res.status(401)
-                return res.send(`Email or Password Doesn't Match`)
+                return res.status(401).send({
+                    message: 'Invalid Email or Password'
+                })
             }
         }
         else {
-            res.status(401)
-            return res.send(`Email or Password Doesn't Match`)
+            return res.status(401).send({
+                message: 'Invalid Email or Password'
+            })
         }
     }
     catch (err) {

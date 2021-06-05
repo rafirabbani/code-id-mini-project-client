@@ -29,6 +29,11 @@ import ReactDOMServer from 'react-dom/server'
 import MainRouter from './../client/MainRouter'
 import { StaticRouter } from 'react-router-dom'
 import Template from './../template'
+import { Provider } from 'react-redux'
+import store from '../client/ReduxStore'
+
+// Create Redux Store
+//const store = createStore(reducer)
 
 //comment script dibawah before building for production
 import devBundle from './devBundle'
@@ -61,9 +66,11 @@ app.use('/api/transactions', routes.TransactionsRoute)
 app.get('/mini-project/*', (req, res) => {
     const context = {}
     const markup = ReactDOMServer.renderToString(
-      <StaticRouter location={req.url} context={context}>
-        <MainRouter />
-      </StaticRouter>
+      <Provider store={store}>
+        <StaticRouter location={req.url} context={context}>
+          <MainRouter />
+        </StaticRouter>
+      </Provider>
     );
     if (context.url) {
       return res.redirect(303, context.url)
