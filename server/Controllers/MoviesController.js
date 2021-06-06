@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import formidable from 'formidable'
+//import defaultMovieImage from '../Assets/Images/popcorn-png-3.png'
 
 const pathDir = path.join(process.cwd(), '/uploads')
 
@@ -105,7 +106,7 @@ const getAllMovies = async (req, res) => {
 
 // Get Single Movie by ID
 const getOneMovie = async (req, res) => {
-    const Movies = req.contex.models.Movies
+    const Movies = req.context.models.Movies
     try {
         const result = await Movies.findOne({
             where: { movie_id : req.params.id }
@@ -265,10 +266,38 @@ const deleteMovie = async (req, res) => {
     }
 }
 
+const downloadMovieImage = async (req, res) => {
+    const Movies = req.context.models.Movies
+    try {
+        const result = await Movies.findOne({
+            where: { movie_id : req.params.id }
+        })
+        if (result) {
+            if (fs.existsSync(result.movie_image_path)) {
+                return res.download(result.movie_image_path)
+            }
+            else {
+                return res.download(path.join(process.cwd(),'/server/assets/images/popcorn-png-3.png'))
+            }
+            
+        }
+        else {
+            res.status(404)
+            return res.send('Movie not found')
+        }
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500)
+        return res.send(err)
+    }
+}
+
 export default {
     createMovie,
     getAllMovies,
     getOneMovie,
     updateMovie,
-    deleteMovie
+    deleteMovie,
+    downloadMovieImage
 }

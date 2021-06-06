@@ -1,8 +1,8 @@
-import IndexQuery from '../ApiQuery/IndexQuery'
+//import IndexQuery from '../ApiQuery/IndexQuery'
 import { AUTH_SIGNIN_REQ, AUTH_SIGNIN_SUCCESS, AUTH_SIGNIN_FAIL, AUTH_SIGNOUT } from '../Constants/AuthConstants'
 import Axios from 'axios'
 
-const auth = IndexQuery.AuthQuery
+//const auth = IndexQuery.AuthQuery
 
 const signIn = (data) => async (dispatch) => {
     dispatch({ type: AUTH_SIGNIN_REQ })

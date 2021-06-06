@@ -40,7 +40,7 @@ export default function SignIn() {
                     setWarningModal(true)
                 }
                 else if (result.status === 200) {
-                    history.push('/mini-project/home')
+                    history.push('/mini-project/store/home')
                 }
             })
         }

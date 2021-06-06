@@ -1,8 +1,9 @@
-import IndexQuery from '../ApiQuery/IndexQuery'
+//import IndexQuery from '../ApiQuery/IndexQuery'
+import Axios from 'axios';
 import { USER_CREATE_REQ, USER_CREATE_SUCCESS, USER_CREATE_FAILURE, USER_HOLD_MAIL, USER_HOLD_PASSWORD_MAIL }  from '../Constants/UserConstants'
 //import Axios from 'axios';
 
-const user = IndexQuery.UserQuery
+//const user = IndexQuery.UserQuery
 
 const createUser = (data) => async (dispatch) => {
     dispatch({ type: USER_CREATE_REQ })
@@ -14,12 +15,13 @@ const createUser = (data) => async (dispatch) => {
         data.user_birthdate && create.append('user_birthdate', data.user_birthdate)
         data.user_avatar && create.append('user_avatar', data.user_avatar)
         create.append('user_type', 'USER')
-        user.createUser(create).then ((result) => {
-            //console.log(result)
-            dispatch({ type: USER_CREATE_SUCCESS, payload: result.data})
-        })
+        const result = await Axios.post('/api/users/create', create)
+        dispatch({ type: USER_CREATE_SUCCESS, payload: result.data })
+        return result
+
     } catch (err) {
-        dispatch({ type: USER_CREATE_FAILURE, payload: err })
+        dispatch({ type: USER_CREATE_FAILURE, payload: err.response.data })
+        return err.response
     }
 }
 

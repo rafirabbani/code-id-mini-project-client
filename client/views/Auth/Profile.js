@@ -12,12 +12,12 @@ import 'react-nice-dates/build/style.css'*/
 
 export default function Profile() {
   const dispatch = useDispatch()
+  const history = useHistory()
   const [warning, setWarning] = useState(false)
   const data = useSelector((state) => state.user)
   const [values, setValues] = useState([])
-  const [blob, setBlob] = useState([]);
-  //const [files, setFiles] = useState([]);
-  const history = useHistory()
+  const [blob, setBlob] = useState([])
+  
   const uploadSingleFile = name => event => {
     //1.untuk ubah file ke blob agar bisa di preview image nya
     setBlob({ ...blob, [name]: URL.createObjectURL(event.target.files[0])})
@@ -28,8 +28,15 @@ export default function Profile() {
   }
 
   useEffect(() => {
-        setValues({...values, ['user_email']: data.user.user_email, ['user_password']: data.user.user_password })
-  }, [])
+    //console.log(data)
+    if (data.user) {
+      setValues({...values, ['user_email']: data.user.user_email, ['user_password']: data.user.user_password })
+    }
+    else {
+      history.push('/mini-project/signup')
+    } 
+
+  }, [data, history])
 
   const handleChange = name => event => {
     setValues({...values, [name]: event.target.value })
@@ -37,13 +44,18 @@ export default function Profile() {
   }
 
   const onSubmit = (e) => {
-    //console.log(values)
-    //const create = new FormData(values)
-    //console.log(create, values)
     e.preventDefault()
     if (values.user_name) {
-      dispatch(UserActions.createUser(values))
-      history.push('/mini-project/signin')
+      dispatch(UserActions.createUser(values)).then((result) => {
+        //console.log(result)
+        if (result.status === 200) {
+          history.push('/mini-project/signup/success')
+        }
+        else if (result.status === 400) {
+          //console.log(result)
+          history.push('/mini-project/signup/fail')
+        }
+      })
     }
     else {
       setWarning(true)

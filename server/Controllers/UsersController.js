@@ -79,8 +79,7 @@ const createUser = async (req, res) => {
                 }
                 catch (err) {
                     console.log(err)
-                    res.status(500)
-                    return res.send(err)
+                    return res.status(500).send(err)
                 }
             }
             else {
@@ -88,8 +87,12 @@ const createUser = async (req, res) => {
             }
         }
         catch (err) {
-            console.log(err)
-            return res.send(err)
+            //console.log(err)
+            if (Object.keys(files).length !== 0) {
+                fs.rmSync(files.user_avatar.path)
+            }
+            
+            return res.status(400).send(err)
         }
     })
 }

@@ -23,8 +23,13 @@ export default function SignUp() {
   }
 
   useEffect(() => {
-    //console.log(data.user.user_email)
-    setValues({...values, user_email: data.user.user_email})
+    if (data.user) {
+      setValues({...values, user_email: data.user.user_email})
+    }
+    else {
+      setValues({...values, user_email: ''})
+    }
+    
   }, []) 
 
   const onSubmit = (e) => {

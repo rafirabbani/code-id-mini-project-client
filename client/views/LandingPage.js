@@ -50,13 +50,13 @@ export default function LandingPage() {
                             <h3 className="text-white text-left">
                             Enter your email address and start purchasing new DVD.
                             </h3>
-                            <span> <input className='focus:ring-0 focus:border-transparent 'type='text' placeholder='Your Email Address' name='email' onChange={handleChange('user_email')}/><button
+                            <span> <input className='focus:ring-0 focus:border-transparent mt-1'type='text' placeholder='Your Email Address' name='email' onChange={handleChange('user_email')}/><button
                             type="button"
                             className="border border-red-600 bg-red-600 text-white px-4 py-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline"
                             onClick={onSubmit}>
                             Sign Up
                             </button></span>
-                            <h1 className='text-red-600 font-bold text-l mt-1' style={!warning ? {visibility: 'hidden'}  : null }>Email Required!!!</h1>
+                            <h1 className='text-red-600 font-bold text-l mb-1' style={!warning ? {visibility: 'hidden'}  : {visibility: 'visible'}  }>Email Required!!!</h1>
                         </div>
                     </div>
                 </div>
