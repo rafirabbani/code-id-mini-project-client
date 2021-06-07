@@ -37,7 +37,7 @@ export default function SignUp() {
     //console.log(values, data)
     if (values.user_email && values.user_password){
       dispatch(UserActions.holdPasswordMail(values))
-      history.push('/mini-project/profile')
+      history.push('/mini-project/signup/profile')
     }
     else if (!values.user_email && values.user_password) {
       setWarningEmail(true)

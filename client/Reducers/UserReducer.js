@@ -7,7 +7,7 @@ const userReducer =(state = {}, action) => {
         case USER_CREATE_SUCCESS:
             //console.log(action)
             //console.log(action.payload)
-            return { loading: false, userInfo: action.payload }
+            return { loading: false, user: action.payload }
         case USER_CREATE_FAILURE:
             return { loading: false, error: action.payload, user: {} }
         case USER_HOLD_MAIL:

@@ -13,7 +13,11 @@ const initState = {
         userType: 
             typeof window !== "undefined"
             ? localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')).user_type : null
-            : null
+            : null,
+        userID:
+            typeof window !== "undefined"
+            ? localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')).user_id : null
+            : null,
         
     },
 }

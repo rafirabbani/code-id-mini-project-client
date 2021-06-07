@@ -135,7 +135,7 @@ const getOneUser = async (req, res) => {
     }
     catch (err) {
         console.log(err)
-        return res.send(err)
+        return res.status(500).send(err)
     }
 }
 
@@ -287,11 +287,46 @@ const deleteUser = async (req, res) => {
     }  
 }
 
+const downloadUserAvatar = async (req, res) => {
+    try {
+        const result = await req.context.models.Users.findOne({
+            where: { user_id: req.params.id }, 
+            attributes: { exclude: ['user_salt', 'user_password'] }
+
+        })
+        if (result) {
+            if (fs.existsSync(result.user_avatar_path)) {
+                return res.download(result.user_avatar_path)
+            }
+            else {
+                if (result.user_gender === 'Male') {
+                    return res.download(path.join(process.cwd(),'/server/assets/images/default-male.png'))
+                }
+                else if (result.user_gender === 'Female') {
+                    return res.download(path.join(process.cwd(),'/server/assets/images/default-female.png'))
+                }
+                else {
+                    return res.download(path.join(process.cwd(),'/server/assets/images/popcorn-png-3.png'))
+                }
+            }
+        }
+        else {
+            console.log(result)
+            res.status(404)
+            return res.send('User Not Found')
+        }
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send(err)
+    }
+}
 
 export default {
     createUser,
     getAllUsers,
     getOneUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    downloadUserAvatar
 }

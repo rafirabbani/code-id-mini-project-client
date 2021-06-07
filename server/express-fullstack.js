@@ -7,6 +7,7 @@ import helmet from 'helmet'
 import models from './Models/IndexModels'
 import routes from './Routes/IndexRoute'
 
+
 const app = express()
 
 // parse body params and attach them to req.body
@@ -31,6 +32,7 @@ import { StaticRouter } from 'react-router-dom'
 import Template from './../template'
 import { Provider } from 'react-redux'
 import store from '../client/ReduxStore'
+import Client from '../client/App'
 
 // Create Redux Store
 //const store = createStore(reducer)

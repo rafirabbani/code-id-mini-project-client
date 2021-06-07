@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import Popcorn from '../../assets/images/popcorn-png-3.png'
 import UserActions from '../../Actions/UserActions'
+import DatePicker from "react-datepicker"
 //import { ArrowRightIcon } from '@heroicons/react/outline'
 /* import DatePicker from 'react-datepicker'
 import Calendar from 'react-calendar'
@@ -13,6 +14,7 @@ import 'react-nice-dates/build/style.css'*/
 export default function Profile() {
   const dispatch = useDispatch()
   const history = useHistory()
+  const [startDate, setStartDate] = useState(new Date())
   const [warning, setWarning] = useState(false)
   const data = useSelector((state) => state.user)
   const [values, setValues] = useState([])
@@ -40,15 +42,26 @@ export default function Profile() {
 
   const handleChange = name => event => {
     setValues({...values, [name]: event.target.value })
+    if (name === 'user_birthdate') {
+      setStartDate(event.target.value)
+    }
     setWarning(false)
   }
 
+  const handleDateChange = (date) => {
+    setStartDate(date)
+    setValues({...values, ['user_birthdate']: date})
+    
+  }
+
   const onSubmit = (e) => {
+    //console.log(startDate)
     e.preventDefault()
     if (values.user_name) {
+      //cons
       dispatch(UserActions.createUser(values)).then((result) => {
-        //console.log(result)
-        if (result.status === 200) {
+        console.log(result.status)
+        if (result.status == 200) {
           history.push('/mini-project/signup/success')
         }
         else if (result.status === 400) {
@@ -83,27 +96,27 @@ export default function Profile() {
                 <div className='mt-1'>
                   <input className='rounded-lg hidden'id='user_id' name='user_id' type='text' />
                 </div> 
-                <div className='mt-5 text-sm'><label>Name</label></div>
+                <div className='text-sm'><label>Name</label></div>
                 <div className='mt-1'>
                   <input className='rounded-lg w-full ring-red-600 border-red-600 focus:ring-green-400 focus:border-green-400'id='user_name' name='user_name' type='text' onChange={handleChange('user_name')}/>
                 </div>
                 <h1 className='text-yellow-400 font-bold text-sm mt-1' style={!warning ? {visibility: 'hidden'}  : null }>Name Required!!!</h1>
-                {/* <div className='mt-5 text-sm'><label>Birth Date</label></div>
+                <div className='mt-2 text-sm'><label>Birth Date</label></div>
                 <div className='mt-1'>
                   {/* <Calendar/> */}
-                  {/*<DatePicker className='rounded-lg w-full' id='user_birthdate' name='user_birthdate' selected={startDate} onChange={(date) => setStartDate(date)} style={dateStyles}/>*/}
-                  {/* <input className='rounded-lg w-full'id='user_birthdate' name='user_birthdate' type='text' onChange={handleChange('user_birthdate')}/>}
-                </div> */}
-                <div className='mt-2 text-sm'><label>Gender</label></div>
-                <div className='mt-1 ring-red-600 border-red-600 focus:ring-green-400 focus:border-green-400'><select className='rounded-lg' id='user_gender' name='user_gender'
+                  <DatePicker className='border-red-600 rounded-lg w-full focus:border-green-400 focus:ring-green-400 text-red-600' id='user_birthdate' name='user_birthdate' selected={values.user_birthdate} onChange={(date)=>handleDateChange(date)} dateFormat="yyyy-MM-dd"/>
+                  {/* <input className='rounded-lg w-full'id='user_birthdate' name='user_birthdate' type='text' onChange={handleChange('user_birthdate')}/>} */}
+                </div>
+                <div className='mt-7 text-sm'><label>Gender</label></div>
+                <div className='mt-1'><select className='rounded-lg border-red-600 focus:ring-green-400 focus:border-green-400 appearance-none' id='user_gender' name='user_gender'
                   onChange={handleChange('user_gender')}>
                   <option  defaultValue hidden>Choose Your Gender</option>
-                  <option value='Male'>Male</option>
+                  <option value='Male' className='focus:bg-black focus:text-white'>Male</option>
                   <option value='Female'>Female</option>
                   <option value='?'>?</option>
                   </select>
                 </div>
-                <div className='mt-5 text-sm'><label>Avatar</label></div>
+                <div className='mt-7 text-sm'><label>Avatar</label></div>
                 <div className="mt-1 col-span-6 sm:col-span-2 lg:col-span-3 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg">
                   <div className="space-y-2 text-center">
                     <div className="mx-auto h-48 w-24 text-gray-400">
@@ -121,7 +134,7 @@ export default function Profile() {
                   onClick={onSubmit}>
                   Sign Up</button>
               </form>
-              <span className='text-sm text-blue-600'>Already have an account? <button className='text-xs ml-3 font-bold' onClick={toLogin}>Sign In Here</button></span>
+              <h1 className='mt-5 text-sm text-blue-600'>Already have an account? <button className='text-xs ml-3 font-bold' onClick={toLogin}>Sign In Here</button></h1>
             </div>
           </div>
           {/* <DatePicker className='rounded-lg w-full' id='user_birthdate' name='user_birthdate' selected={startDate} onChange={(date) => setStartDate(date)} dateFormat='yyyy-MM-dd'/> */}

@@ -2,7 +2,7 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import ExclamationIcon from '@heroicons/react/solid/ExclamationIcon'
 
-export default function LoginCheckModal() {
+export default function LoginBlockPage() {
     const history = useHistory()
     const onClose = () => {
         history.push('/mini-project/signin')
