@@ -8,17 +8,17 @@ import WarningModal from './WarningModal'
 export default function SignIn() {
     const dispatch = useDispatch()
     const history = useHistory()
-    const { auth } = useSelector((state) => state)
+    //const { auth } = useSelector((state) => state)
     const [warningEmail, setWarningEmail] = useState(false)
     const [warningPassword, setWarningPassword] = useState(false)
     const [values, setValues] = useState([])
     const [warningModal, setWarningModal] = useState(false)
 
-    /* useEffect(() => {
-        if (auth.isLoggedIn) {
+    useEffect(() => {
+        if (localStorage.getItem('data')) {
             history.push('/mini-project/store/home')
         }
-    }, []) */
+    }, [])
 
     const handleChange = name => event => {
         setValues({...values, [name]: event.target.value})

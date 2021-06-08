@@ -7,16 +7,15 @@ import Header from '../Components/Header'
 
 export default function Home() {
     const dispatch = useDispatch()
-    const [page, setPage] = useState(true)
     const { movie, auth } = useSelector((state) => state)
     const { loading } = movie
     const history = useHistory()
 
     useEffect(() => {
         dispatch(MovieActions.movieList())
-        /* if (!auth.isLoggedIn) {
-            history.push('/mini-project/login-block')
-        } */
+        if (!localStorage.getItem('data')) {
+            history.push('/mini-project/auth-failed')
+        }
     }, [dispatch])
 
     

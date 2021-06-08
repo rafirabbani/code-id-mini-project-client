@@ -12,7 +12,8 @@ import MovieActions from '../../Actions/MovieActions'
 export default function MoviesDetails() {
     const [amount, setAmount] = useState(1)
     const { movie_id }  = useParams()
-    const movie = useSelector((state) => state.movie)
+    const { movie, auth } = useSelector((state) => state)
+    const history = useHistory()
     const dispatch = useDispatch()
     const { loading } = movie
     //const { casts } = singleMovie
@@ -35,12 +36,12 @@ export default function MoviesDetails() {
     }
 
     useEffect(() => {
-        console.log(movie_id)
+        console.log(movie_id, auth)
         dispatch(MovieActions.singleMovie(parseInt(movie_id)))
-        //setAmount(1)
-        //console.log(!movie.singleMovie)
-        //console.log(amount)
-    }, [dispatch])
+        if (!localStorage.getItem('data')) {
+            history.push('/mini-project/auth-failed')
+        }
+    }, [])
 
     return (
         <div className='mt-20'>

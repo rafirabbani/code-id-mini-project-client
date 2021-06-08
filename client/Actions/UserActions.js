@@ -15,6 +15,7 @@ const createUser = (data) => async (dispatch) => {
         data.user_name && create.append('user_name', data.user_name)
         data.user_birthdate && create.append('user_birthdate', data.user_birthdate)
         data.user_avatar && create.append('user_avatar', data.user_avatar)
+        data.user_gender && create.append('user_gender', data.user_gender)
         create.append('user_type', 'USER')
         const result = await Axios.post('/api/users/create', create)
         dispatch({ type: USER_CREATE_SUCCESS, payload: result.data })
