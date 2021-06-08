@@ -4,7 +4,8 @@ const authReducer = (state = {}, action) => {
         case AUTH_SIGNIN_REQ:
             return { loading: true, isLoggedIn: false }
         case AUTH_SIGNIN_SUCCESS:
-            return { isLoggedIn: true, loading: false, userInfo: action.payload }
+            console.log(action.payload)
+            return { isLoggedIn: true, loading: false, userInfo: action.payload, userID: action.payload.id, userType: action.payload.user_type }
         case AUTH_SIGNIN_FAIL:
             return { isLoggedIn: false, loading: false, error: action.payload }
         default:

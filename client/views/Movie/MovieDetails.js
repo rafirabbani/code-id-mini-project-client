@@ -8,11 +8,14 @@ import MinusCircleIcon from '@heroicons/react/outline/MinusCircleIcon'
 import Carousel  from 'react-elastic-carousel'
 import MovieActions from '../../Actions/MovieActions'
 
+
 export default function MoviesDetails() {
     const [amount, setAmount] = useState(1)
-    const { movie_id } = useParams()
-    const { movie } = useSelector((state) => state)
+    const { movie_id }  = useParams()
+    const movie = useSelector((state) => state.movie)
     const dispatch = useDispatch()
+    const { loading } = movie
+    //const { casts } = singleMovie
     const handleAmountChange = (e) => {
         if (e.target.value < 1 && e.target.value) {
             setAmount(1)
@@ -32,12 +35,13 @@ export default function MoviesDetails() {
     }
 
     useEffect(() => {
-        dispatch(MovieActions.singleMovie(movie_id))
+        console.log(movie_id)
+        dispatch(MovieActions.singleMovie(parseInt(movie_id)))
         //setAmount(1)
         //console.log(!movie.singleMovie)
-        console.log(amount)
-    }, [])
-    
+        //console.log(amount)
+    }, [dispatch])
+
     return (
         <div className='mt-20'>
             <Header/>
@@ -45,7 +49,7 @@ export default function MoviesDetails() {
                     <div className="flex flex-row items-start justify-between px-10">
                     <Carousel className="">
                                 <div>
-                                    <img className="rounded-lg" src={movie.singleMovie && `/api/movies/download/image/${movie.singleMovie.movie_id}`} width="100%" height="50%"/>
+                                    <img className="rounded-lg" src={!loading &&  `/api/movies/download/image/${movie.singleMovie.movie_id}`} width="100%" height="50%"/>
                                 </div>
                                 <div>
                                     <iframe className="rounded-lg" width="400" height="400" src="https://www.youtube.com/embed/XkOj5QiQKIc" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen={true}></iframe>
@@ -64,30 +68,36 @@ export default function MoviesDetails() {
                         </div>
                         <div className='text-white flex flex-wrap flex-col -mt-1 ml-5 w-full'>
                                 <label className="text-3xl text-white block">Title:</label>
-                                <h1 class="inline-block uppercase text-xl text-white mb-3 font-serif font-bold">{movie.singleMovie && movie.singleMovie.movie_title}</h1>
+                                <h1 className="inline-block uppercase text-xl text-white mb-3 font-serif font-bold cursor-default">{!loading && movie.singleMovie.movie_title}</h1>
                                 <label className="text-3xl text-white">Price:</label>
-                                <h1 class="text-white text-2xl mb-3 mt-1 font-mono font-bold">Rp{movie.singleMovie && movie.singleMovie.movie_price}</h1>
+                                <h1 className="text-white text-2xl mb-3 mt-1 font-mono font-bold cursor-default">Rp{!loading && movie.singleMovie.movie_price}</h1>
                                 <label className="text-3xl text-white">Genre:</label>
-                                <h1 class="uppercase text-xl text-white mb-3 mt-1 font-serif font-bold">{movie.singleMovie && movie.singleMovie.movie_genre}</h1>
+                                <h1 className="uppercase text-xl text-white mb-3 mt-1 font-serif font-bold cursor-default">{!loading && movie.singleMovie.movie_genre}</h1>
                                 <label className="text-3xl text-white">Director:</label>
-                                <h1 class="uppercase text-xl text-white mb-3 mt-1 font-serif font-bold">{movie.singleMovie && movie.singleMovie.movie_director}</h1>
+                                <h1 className="uppercase text-xl text-white mb-3 mt-1 font-serif font-bold cursor-default">{!loading && movie.singleMovie.movie_director}</h1>
                                 <label className="text-3xl text-white">Views:</label>
-                                <h1 class="uppercase text-xl text-white mb-3 mt-1 font-serif font-bold">{movie.singleMovie && movie.singleMovie.movie_views}</h1>
+                                <h1 className="uppercase text-xl text-white mb-3 mt-1 font-serif font-bold cursor-default">{!loading && movie.singleMovie.movie_views}</h1>
                                 <label className="text-3xl text-white">Rating:</label>
-                                <h1 class="uppercase text-xl text-white mb-3 mt-1 font-serif font-bold">{movie.singleMovie && `${movie.singleMovie.movie_rating}/10`}</h1>
+                                <h1 className="uppercase text-xl text-white mb-3 mt-1 font-serif font-bold cursor-default">{!loading && `${movie.singleMovie.movie_rating}/10`}</h1>
                         </div>
                         <div/>
                         <div className="flex flex-wrap flex-col flex-grow-0 px-5 py-5 ring-2 ring-red-600 rounded-md">
-                            <h1 className='text-xl text-center text-white'>Add Amount</h1>
+                            <label className='text-xl text-center text-white'>Add Amount</label>
                             <span className="flex flex-row items-center justify-center mt-5"><button className="focus:outline-none" onClick={()=> amountChange('plus')}><PlusCircleIcon className="w-7 h-7 text-white"/></button><input className="focus:outline-none mx-5 rounded-md bg-gray-800 w-14 h-14 text-center text-sm text-white" value={amount && amount}
-                            onChange={handleAmountChange}/><button className="focus:outline-none disabled:opacity-40" onClick={()=> amountChange('minus')} disabled={amount===1 ? true : false}><MinusCircleIcon className="w-7 h-7 text-white"/></button></span>
-                            <span className="flex flex-row items-center justify-between mt-5"><h1 className="text-white text-md">Subtotal: </h1><h1 className="text-white text-sm font-mono">Rp{movie.singleMovie && (movie.singleMovie.movie_price * amount)}</h1></span>
+                            onChange={handleAmountChange}/><button className="focus:outline-none disabled:opacity-30 disabled:cursor-not-allowed" onClick={()=> amountChange('minus')} disabled={amount===1 ? true : false}><MinusCircleIcon className="w-7 h-7 text-white"/></button></span>
+                            <span className="flex flex-row items-center justify-between mt-5"><label className="text-white text-md">Subtotal:</label><h1 className="text-white text-sm font-mono cursor-default">Rp{!loading && (movie.singleMovie.movie_price * amount)}</h1></span>
                             <button className="text-white w-full bg-red-600 py-1 mt-2 rounded-lg hover:ring-2 ring-white">Add To Cart</button>
                         </div>
                     </div>
-                    <h3 className="text-gray-600 text-5xl font-bold mt-24 ml-16 text-center font-serif">Casts</h3>
+                    <h3 className="text-gray-600 text-5xl font-bold mt-24 ml-16 text-center font-serif cursor-default">Casts</h3>
                     <div className="flex flex-row flex-wrap w-full items-center justify-between px-16 py-5 mt-5">
-                        <img className="w-36 h-36 rounded-md" src ="https://images.unsplash.com/photo-1563170351-be82bc888aa4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=376&q=80"/>
+                         {
+                            !loading && movie.singleMovie.casts.map((cast) => (
+                                <div className='px-5 py-5' key={cast.cast_id}>
+                                    <div className="justify-center flex flex-grow-0"><img className="rounded-md" src={`/api/casts/image/download/${cast.cast_id}`} width="150" height="75" alt="cast_image"/></div>
+                                    <h1 className='text-white text-sm text-center mt-3 font-serif font-thin cursor-default'>{cast.cast_name}</h1>
+                                </div>
+                        ))} 
                     </div>     
             </div>
         </div>

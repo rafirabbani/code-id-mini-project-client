@@ -109,7 +109,8 @@ const getOneMovie = async (req, res) => {
     const Movies = req.context.models.Movies
     try {
         const result = await Movies.findOne({
-            where: { movie_id : req.params.id }
+            where: { movie_id : req.params.id },
+            include: req.context.models.Casts
         })
         if (result) {
             return res.send(result)

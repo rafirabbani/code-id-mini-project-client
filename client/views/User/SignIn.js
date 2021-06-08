@@ -14,11 +14,11 @@ export default function SignIn() {
     const [values, setValues] = useState([])
     const [warningModal, setWarningModal] = useState(false)
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (auth.isLoggedIn) {
             history.push('/mini-project/store/home')
         }
-    }, [])
+    }, []) */
 
     const handleChange = name => event => {
         setValues({...values, [name]: event.target.value})
