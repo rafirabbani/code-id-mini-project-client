@@ -9,6 +9,7 @@ import AdminUpdateMovie from './AdminUpdateMovie'
 export default function Movies() {
     const [createMovieModal, setCreateMovieModal] = useState(false)
     const [updateMovieModal, setUpdateMovieModal] = useState(false)
+    const [blob, setBlob] = useState([])
     const [detailMovie, setDetailMovie] = useState({
         movie_id: undefined,
         movie_title: undefined,
@@ -28,16 +29,17 @@ export default function Movies() {
     })
     const { movie } = useSelector((state) => state)
     const dispatch = useDispatch()
-    const { movies } = movie
+    const { movies, updateMovie, createMovie } = movie
 
     useEffect(() => {
-        dispatch(MovieActions.movieList())
+        dispatch(MovieActions.movieList());
     }, [])
-    useEffect(() => {
-        if (!movies){
+
+    useEffect(() => { 
+        if (!movies) {
             dispatch(MovieActions.movieList())
         }
-    }, [dispatch, movies])
+    }, [movies, updateMovie, createMovie ])
 
     const handleDetail = (movieID, movieTitle, movieEpisode, movieDirector, movieStudio, movieTVStatus, movieDuration, 
         movieRelease, movieCountry,movieGenre, movieRating, movieNetwork, movieTrailer, 

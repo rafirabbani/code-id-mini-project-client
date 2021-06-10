@@ -116,7 +116,7 @@ export default function AdminCreateMovie(props) {
                             <div className=""><label className="text-l text-gray-600 focus:outline-none ring-0 border-transparent">Movie Duration</label></div>
                             <div className="mb-5 mt-1"><input className="rounded-lg w-48 border-blue-500 text-sm" type="text" name="movie_duration" onChange={handleChange('movie_duration')}/></div>
                             <div className=""><label className="text-l text-gray-600 focus:outline-none ring-0 border-transparent">Movie Release Status</label></div>
-                            <div className="mb-5 mt-1"><select className="rounded-lg  w-48 border-blue-500 text-sm" type="text" name="movie_release_status" onChange={handleChange('movie_release_status')}>
+                            <div className="mb-5 mt-1"><select className="rounded-lg  w-48 border-blue-500 text-sm" type="text" name="movie_release_status" onChange={handleChange('movie_release')}>
                                 <option defaultValue hidden className="text-sm">Movie Release Status</option>
                                 <option className="text-sm" value="true">Released</option>
                                 <option className="text-sm" value="false">Not Released</option>
