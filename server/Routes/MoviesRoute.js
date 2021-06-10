@@ -10,6 +10,6 @@ router.get('/', movies.getAllMovies)
 router.get('/:id', movies.getOneMovie)
 router.put('/update/:id', movies.updateMovie)
 router.delete('/delete/:id', movies.deleteMovie)
-router.get('/download/image/:id', movies.downloadMovieImage)
+router.get('/image/download/:id', movies.downloadMovieImage)
 
 export default router

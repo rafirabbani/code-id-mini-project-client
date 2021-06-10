@@ -1,23 +1,74 @@
 // Add Line Item to Cart
-const addLineItem = async (req, res, next) => {
+const checkLineItem = async (req, res, next) => {
     //console.log(req.cart)
     //res.send('Masuk Line Item')
-    try {
-        const result = await req.context.models.Line_Items.create({
-            line_item_qty: req.body.line_item_qty,
-            line_item_status: 'CART',
-            line_item_movie_id: req.body.line_item_movie_id,
-            line_item_cart_id: req.params.cart_id
-        })
-        if (result) {
-            next()
+    if (req.items.length > 0) {
+        for (const item of req.items) {
+            try {
+                if (item.line_item_movie_id === req.body.line_item_movie_id) {
+                    const result = await req.context.models.Line_Items.update({
+                        line_item_qty: req.body.line_item_qty,
+                        line_item_cart_id: req.params.cart_id,
+                        line_item_status: 'CART'
+                    }, { where: { line_item_id: item.line_item_id }})
+                    req.exist = true
+                    if (result) {
+                    }
+                }
+                else {
+                    req.exist = false
+                }
+            }
+            catch(err) {
+                console.log(err)
+                return res.status(500).send('Something Went Wrong')
+            }
         }
-        //console.log(result)
-        //return res.send(result)
+        next()
+    }   
+    else {
+        try {
+            const result = await req.context.models.Line_Items.create({
+                line_item_qty: req.body.line_item_qty,
+                line_item_status: 'CART',
+                line_item_movie_id: req.body.line_item_movie_id,
+                line_item_cart_id: req.params.cart_id
+            })
+            if (result) {
+                next()
+            }
+            //console.log(result)
+            //return res.send(result)
+        }
+        catch (err) {
+            console.log(err)
+            return res.status(500).send(err)
+        }
+    } 
+}
+
+const newLineItem = async (req, res, next) => {
+    if (!req.exist) {
+        try {
+            const result = await req.context.models.Line_Items.create({
+                line_item_qty: req.body.line_item_qty,
+                line_item_status: 'CART',
+                line_item_movie_id: req.body.line_item_movie_id,
+                line_item_cart_id: req.params.cart_id
+            })
+            if (result) {
+                next()
+            }
+            //console.log(result)
+            //return res.send(result)
+        }
+        catch (err) {
+            console.log(err)
+            return res.status(500).send(err)
+        }
     }
-    catch (err) {
-        console.log(err)
-        return res.status(500).send(err)
+    else {
+        next()
     }
 }
 
@@ -126,8 +177,9 @@ const bulkUpdateLineItems = async (req, res, next) => {
 
 
 export default {
-    addLineItem,
+    checkLineItem,
     updateLineItem,
     sumLineItems,
-    bulkUpdateLineItems
+    bulkUpdateLineItems,
+    newLineItem
 }
