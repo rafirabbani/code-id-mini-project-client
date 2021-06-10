@@ -49,12 +49,9 @@ const createCast = async (req, res) => {
                 const folder = `${pathDir}/casts/${result.cast_id}_${name}/`
                 const imagePath = path.join(folder, result.cast_image)
                 if (!fs.existsSync(folder)) {
-                    fs.mkdirSync(folder)
-                    fs.renameSync(result.cast_image_path, imagePath)
+                    fs.mkdirSync(folder) 
                 }
-                else {
-                    fs.renameSync(result.cast_image_path, imagePath)
-                }
+                fs.renameSync(result.cast_image_path, imagePath)
                 try {
                     const update = await req.context.models.Casts.update(
                         {
@@ -149,7 +146,9 @@ const updateCast = async (req, res) => {
                             fs.mkdirSync(folder)
                             const imagePath = path.join(folder, file.name)
                             fs.renameSync(file.path, imagePath)
-                            fs.rmSync(`${pathDir}/casts/${req.params.id}_${oldName}`, { recursive: true })
+                            if (fs.existsSync(`${pathDir}/casts/${req.params.id}_${oldName}`)) {
+                                fs.rmSync(`${pathDir}/casts/${req.params.id}_${oldName}`, { recursive: true })
+                            }
                             file.path = imagePath
                         }
                     }
@@ -160,6 +159,9 @@ const updateCast = async (req, res) => {
                         if (fs.existsSync(result.cast_image_path)) {
                             fs.unlinkSync(result.cast_image_path)
                             
+                        }
+                        if (!fs.existsSync(folder)){
+                            fs.mkdirSync(folder)
                         }
                         fs.renameSync(file.path, imagePath)
                         file.path = imagePath

@@ -55,12 +55,13 @@ export default function Profile() {
   }
 
   const onSubmit = (e) => {
-    //console.log(startDate)
+    console.log(values)
     e.preventDefault()
     if (values.user_name) {
       //cons
       dispatch(UserActions.createUser(values)).then((result) => {
-        console.log(result.status)
+        //console.log(values)
+        //console.log(result.status)
         if (result.status == 200) {
           history.push('/mini-project/signup/success')
         }

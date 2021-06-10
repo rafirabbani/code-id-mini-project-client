@@ -54,11 +54,8 @@ const createUser = async (req, res) => {
                 const avatarPath = path.join(folder, result.user_avatar)
                 if (!fs.existsSync(folder)) {
                     fs.mkdirSync(folder)
-                    fs.renameSync(result.user_avatar_path, avatarPath)
                 }
-                else {
-                    fs.renameSync(result.user_avatar_path, avatarPath)
-                }
+                fs.renameSync(result.user_avatar_path, avatarPath)
                 try {
                     const update = await req.context.models.Users.update(
                         {
@@ -163,11 +160,14 @@ const updateUser = async (req, res) => {
                     if (dataField.user_name) {
                         const newName = dataField.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
                         const newFolder = `${pathDir}/users/${req.params.id}_${newName}/`
+                        //if (!fs.existsSync(newFolder)) fs.mkdirSync(newFolder)
                         const avatarPath = path.join(newFolder, file.name)
                         if (!fs.existsSync(newFolder)) {
                             fs.mkdirSync(newFolder)
                             fs.renameSync(file.path, avatarPath)
-                            fs.rmSync(`${pathDir}/users/${req.params.id}_${oldName}`, { recursive: true })
+                            if (fs.existsSync(oldFolder)) {
+                                fs.rmSync(oldFolder, { recursive: true })
+                            }
                             file.path = avatarPath
                         }
                     }
@@ -175,6 +175,9 @@ const updateUser = async (req, res) => {
                         const avatarPath = path.join(oldFolder, file.name)
                         if (fs.existsSync(result.user_avatar_path)) {
                             fs.unlinkSync(result.user_avatar_path)
+                        }
+                        if(!fs.existsSync(oldFolder)){
+                            fs.mkdirSync(oldFolder)
                         }
                         fs.renameSync(file.path, avatarPath)
                         file.path = avatarPath

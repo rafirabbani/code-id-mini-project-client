@@ -48,11 +48,8 @@ const createMovie = async (req, res) => {
                 const imagePath = path.join(folder, result.movie_image)
                 if (!fs.existsSync(folder)) {
                     fs.mkdirSync(folder)
-                    fs.renameSync(result.movie_image_path, imagePath)
                 }
-                else {
-                    fs.renameSync(result.movie_image_path, imagePath)
-                }
+                fs.renameSync(result.movie_image_path, imagePath)
                 try {
                     const update = await Movies.update({
                         movie_image_path: imagePath
@@ -76,7 +73,7 @@ const createMovie = async (req, res) => {
                 }
             } 
             else {
-                return res.send(result)
+                return res.status(200).send(result)
             }
         }
         catch (err) {
@@ -155,7 +152,9 @@ const updateMovie = async (req, res) => {
                             fs.mkdirSync(folder)
                             const imagePath = path.join(folder, file.name)
                             fs.renameSync(file.path, imagePath)
-                            fs.rmSync(`${pathDir}/movies/${req.params.id}_${oldTitle}`, { recursive: true })
+                            if(fs.existsSync(`${pathDir}/movies/${req.params.id}_${oldTitle}`)) {
+                                fs.rmSync(`${pathDir}/movies/${req.params.id}_${oldTitle}`, { recursive: true })
+                            }
                             file.path = imagePath
                         }
                     }
@@ -163,9 +162,11 @@ const updateMovie = async (req, res) => {
                         const title = result.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
                         const folder = `${pathDir}/movies/${req.params.id}_${title}/`
                         const imagePath = path.join(folder, file.name)
+                        if (!fs.existsSync(folder)){
+                            fs.mkdirSync(folder)
+                        }
                         if (fs.existsSync(result.movie_image_path)) {
                             fs.unlinkSync(result.movie_image_path)
-                            
                         }
                         fs.renameSync(file.path, imagePath)
                         file.path = imagePath

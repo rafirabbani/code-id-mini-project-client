@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useSelector, useDispatch }  from 'react-redux'
-import { useHistory } from 'react-router-dom'
+//import { useHistory } from 'react-router-dom'
 import CartIcon from '@heroicons/react/outline/ShoppingCartIcon'
 import MovieActions from '../../Actions/MovieActions'
 import Header from '../Components/Header'
 
 export default function Home() {
     const dispatch = useDispatch()
-    const { movie, auth } = useSelector((state) => state)
+    const { movie } = useSelector((state) => state)
     const { loading } = movie
-    const history = useHistory()
 
     useEffect(() => {
         dispatch(MovieActions.movieList())
-        if (!localStorage.getItem('data')) {
+        /* if (!localStorage.getItem('data')) {
             history.push('/mini-project/auth-failed')
-        }
+        } */
     }, [dispatch])
 
     

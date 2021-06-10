@@ -22,7 +22,9 @@ module.exports = {
         extend: {
             ringWidth: ['hover', 'active'],
             opacity: ['disabled'],
-            cursor: ['disabled']
+            cursor: ['disabled'],
+            backgroundColor: ['active'],
+            textColor: ['active']
         },
     },
     plugins: [

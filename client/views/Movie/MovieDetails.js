@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Header from '../Components/Header'
 import { useSelector, useDispatch }  from 'react-redux'
-import { useHistory } from 'react-router-dom'
 import PlusCircleIcon from '@heroicons/react/outline/PlusCircleIcon' 
 import MinusCircleIcon from '@heroicons/react/outline/MinusCircleIcon'
 import Carousel  from 'react-elastic-carousel'
@@ -12,11 +11,9 @@ import MovieActions from '../../Actions/MovieActions'
 export default function MoviesDetails() {
     const [amount, setAmount] = useState(1)
     const { movie_id }  = useParams()
-    const { movie, auth } = useSelector((state) => state)
-    const history = useHistory()
+    const { movie } = useSelector((state) => state)
     const dispatch = useDispatch()
     const { loading } = movie
-    //const { casts } = singleMovie
     const handleAmountChange = (e) => {
         if (e.target.value < 1 && e.target.value) {
             setAmount(1)
@@ -36,11 +33,11 @@ export default function MoviesDetails() {
     }
 
     useEffect(() => {
-        console.log(movie_id, auth)
+        //console.log(movie_id, auth)
         dispatch(MovieActions.singleMovie(parseInt(movie_id)))
-        if (!localStorage.getItem('data')) {
+        /* if (!localStorage.getItem('data')) {
             history.push('/mini-project/auth-failed')
-        }
+        } */
     }, [])
 
     return (
