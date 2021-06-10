@@ -7,6 +7,7 @@ const config = {
     entry: [ path.join(CURRENT_WORKING_DIR , './server/server.js') ],
     target: "node",
     output: {
+        globalObject: 'this',
         path: path.join(CURRENT_WORKING_DIR , '/dist/'),
         filename: "server.generated.js",
         publicPath: '/dist/',

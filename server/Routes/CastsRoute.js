@@ -10,5 +10,6 @@ router.get('/', casts.getAllCast)
 router.get('/:id', casts.getOneCast)
 router.put('/update/:id', casts.updateCast)
 router.delete('/delete/:id', casts.deleteCast)
+router.get('/image/download/:id', casts.downloadCastImage)
 
 export default router

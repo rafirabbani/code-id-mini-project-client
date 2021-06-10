@@ -22,7 +22,7 @@ const openCart = async (req, res, next) => {
                         })
                         if (result) {
                             req.params.cart_id = result.cart_id
-                            req.params.id = req.body.cart_user_id
+                            req.params.user_id = req.body.cart_user_id
                             next()
                         }
                         //console.log(result)
@@ -54,7 +54,26 @@ const updateCart =  async (req, res, next) => {
             where: { cart_id: req.params.cart_id/* , cart_status: 'OPEN' */ },
             include: req.context.models.Line_Items
         })
-        if(result) {
+        /* if (result.line_items) {
+            result.line_items.map(item => {
+                if (item.line_item_movie_id === req.body.line_item_movie_id) {
+                    req.body.line_item_qty += line_item.line_item_qty
+                    try {
+                        await req.context.models.Line_Items.update({
+                            line_item_qty: req.body.line_item_qty
+                        }, { where: { line_item_id: item.line_item_id }})
+                        req
+                        next()
+                    }
+                    catch (err) {
+                        console.log(err)
+                        return res.status(500).send(err)
+                    }
+                }
+            })
+            
+        } */
+        if (result) {
             await req.context.models.Carts.update({
                 cart_status: req.body.cart_status
             }, { where: { cart_id: result.cart_id }

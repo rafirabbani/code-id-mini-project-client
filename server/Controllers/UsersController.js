@@ -3,10 +3,11 @@ import path from 'path'
 import formidable from 'formidable'
 import AuthHelper from '../Helper/AuthHelper'
 
-const pathDir = path.join(__dirname, '../../uploads')
+const pathDir = path.join(process.cwd(), '/uploads')
 
 // Create New User
 const createUser = async (req, res) => {
+    //console.log(pathDir)
     if (!fs.existsSync(pathDir)) {
         fs.mkdirSync(pathDir);
     }
@@ -21,7 +22,7 @@ const createUser = async (req, res) => {
             //console.log(file)
             const folder = `${pathDir}/users/`
             if (!fs.existsSync(folder)) {
-                mkdirSync(folder)
+                fs.mkdirSync(folder)
             }
             file.path = path.join(folder, file.name)
         })
@@ -46,17 +47,15 @@ const createUser = async (req, res) => {
         }
         try {
             const result = await req.context.models.Users.create(data.dataValues)
+            //return res.send(result)
             if (result.user_avatar) {
                 const name = result.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
                 const folder = `${pathDir}/users/${result.user_id}_${name}/`
                 const avatarPath = path.join(folder, result.user_avatar)
                 if (!fs.existsSync(folder)) {
                     fs.mkdirSync(folder)
-                    fs.renameSync(result.user_avatar_path, avatarPath)
                 }
-                else {
-                    fs.renameSync(result.user_avatar_path, avatarPath)
-                }
+                fs.renameSync(result.user_avatar_path, avatarPath)
                 try {
                     const update = await req.context.models.Users.update(
                         {
@@ -77,8 +76,7 @@ const createUser = async (req, res) => {
                 }
                 catch (err) {
                     console.log(err)
-                    res.status(500)
-                    return res.send(err)
+                    return res.status(500).send(err)
                 }
             }
             else {
@@ -86,8 +84,12 @@ const createUser = async (req, res) => {
             }
         }
         catch (err) {
-            console.log(err)
-            return res.send(err)
+            //console.log(err)
+            if (Object.keys(files).length !== 0) {
+                fs.rmSync(files.user_avatar.path)
+            }
+            
+            return res.status(400).send(err)
         }
     })
 }
@@ -130,7 +132,7 @@ const getOneUser = async (req, res) => {
     }
     catch (err) {
         console.log(err)
-        return res.send(err)
+        return res.status(500).send(err)
     }
 }
 
@@ -158,11 +160,14 @@ const updateUser = async (req, res) => {
                     if (dataField.user_name) {
                         const newName = dataField.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
                         const newFolder = `${pathDir}/users/${req.params.id}_${newName}/`
+                        //if (!fs.existsSync(newFolder)) fs.mkdirSync(newFolder)
                         const avatarPath = path.join(newFolder, file.name)
                         if (!fs.existsSync(newFolder)) {
                             fs.mkdirSync(newFolder)
                             fs.renameSync(file.path, avatarPath)
-                            fs.rmSync(`${pathDir}/users/${req.params.id}_${oldName}`, { recursive: true })
+                            if (fs.existsSync(oldFolder)) {
+                                fs.rmSync(oldFolder, { recursive: true })
+                            }
                             file.path = avatarPath
                         }
                     }
@@ -170,6 +175,9 @@ const updateUser = async (req, res) => {
                         const avatarPath = path.join(oldFolder, file.name)
                         if (fs.existsSync(result.user_avatar_path)) {
                             fs.unlinkSync(result.user_avatar_path)
+                        }
+                        if(!fs.existsSync(oldFolder)){
+                            fs.mkdirSync(oldFolder)
                         }
                         fs.renameSync(file.path, avatarPath)
                         file.path = avatarPath
@@ -282,11 +290,46 @@ const deleteUser = async (req, res) => {
     }  
 }
 
+const downloadUserAvatar = async (req, res) => {
+    try {
+        const result = await req.context.models.Users.findOne({
+            where: { user_id: req.params.id }, 
+            attributes: { exclude: ['user_salt', 'user_password'] }
+
+        })
+        if (result) {
+            if (fs.existsSync(result.user_avatar_path)) {
+                return res.download(result.user_avatar_path)
+            }
+            else {
+                if (result.user_gender === 'Male') {
+                    return res.download(path.join(process.cwd(),'/server/assets/images/default-male.png'))
+                }
+                else if (result.user_gender === 'Female') {
+                    return res.download(path.join(process.cwd(),'/server/assets/images/default-female.png'))
+                }
+                else {
+                    return res.download(path.join(process.cwd(),'/server/assets/images/popcorn-png-3.png'))
+                }
+            }
+        }
+        else {
+            console.log(result)
+            res.status(404)
+            return res.send('User Not Found')
+        }
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send(err)
+    }
+}
 
 export default {
     createUser,
     getAllUsers,
     getOneUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    downloadUserAvatar
 }

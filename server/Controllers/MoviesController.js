@@ -1,8 +1,9 @@
 import fs from 'fs'
 import path from 'path'
 import formidable from 'formidable'
+//import defaultMovieImage from '../Assets/Images/popcorn-png-3.png'
 
-const pathDir = path.join(__dirname, '../../uploads')
+const pathDir = path.join(process.cwd(), '/uploads')
 
 // Create New Movie
 const createMovie = async (req, res) => {
@@ -47,11 +48,8 @@ const createMovie = async (req, res) => {
                 const imagePath = path.join(folder, result.movie_image)
                 if (!fs.existsSync(folder)) {
                     fs.mkdirSync(folder)
-                    fs.renameSync(result.movie_image_path, imagePath)
                 }
-                else {
-                    fs.renameSync(result.movie_image_path, imagePath)
-                }
+                fs.renameSync(result.movie_image_path, imagePath)
                 try {
                     const update = await Movies.update({
                         movie_image_path: imagePath
@@ -75,7 +73,7 @@ const createMovie = async (req, res) => {
                 }
             } 
             else {
-                return res.send(result)
+                return res.status(200).send(result)
             }
         }
         catch (err) {
@@ -105,10 +103,11 @@ const getAllMovies = async (req, res) => {
 
 // Get Single Movie by ID
 const getOneMovie = async (req, res) => {
-    const Movies = req.contex.models.Movies
+    const Movies = req.context.models.Movies
     try {
         const result = await Movies.findOne({
-            where: { movie_id : req.params.id }
+            where: { movie_id : req.params.id },
+            include: req.context.models.Casts
         })
         if (result) {
             return res.send(result)
@@ -153,7 +152,9 @@ const updateMovie = async (req, res) => {
                             fs.mkdirSync(folder)
                             const imagePath = path.join(folder, file.name)
                             fs.renameSync(file.path, imagePath)
-                            fs.rmSync(`${pathDir}/movies/${req.params.id}_${oldTitle}`, { recursive: true })
+                            if(fs.existsSync(`${pathDir}/movies/${req.params.id}_${oldTitle}`)) {
+                                fs.rmSync(`${pathDir}/movies/${req.params.id}_${oldTitle}`, { recursive: true })
+                            }
                             file.path = imagePath
                         }
                     }
@@ -161,9 +162,11 @@ const updateMovie = async (req, res) => {
                         const title = result.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
                         const folder = `${pathDir}/movies/${req.params.id}_${title}/`
                         const imagePath = path.join(folder, file.name)
+                        if (!fs.existsSync(folder)){
+                            fs.mkdirSync(folder)
+                        }
                         if (fs.existsSync(result.movie_image_path)) {
                             fs.unlinkSync(result.movie_image_path)
-                            
                         }
                         fs.renameSync(file.path, imagePath)
                         file.path = imagePath
@@ -265,10 +268,38 @@ const deleteMovie = async (req, res) => {
     }
 }
 
+const downloadMovieImage = async (req, res) => {
+    const Movies = req.context.models.Movies
+    try {
+        const result = await Movies.findOne({
+            where: { movie_id : req.params.id }
+        })
+        if (result) {
+            if (fs.existsSync(result.movie_image_path)) {
+                return res.download(result.movie_image_path)
+            }
+            else {
+                return res.download(path.join(process.cwd(),'/server/assets/images/popcorn-png-3.png'))
+            }
+            
+        }
+        else {
+            res.status(404)
+            return res.send('Movie not found')
+        }
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send(err)
+        
+    }
+}
+
 export default {
     createMovie,
     getAllMovies,
     getOneMovie,
     updateMovie,
-    deleteMovie
+    deleteMovie,
+    downloadMovieImage
 }

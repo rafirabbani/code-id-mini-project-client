@@ -10,5 +10,6 @@ router.get('/', users.getAllUsers)
 router.get('/:id', users.getOneUser)
 router.put('/update/:id', users.updateUser)
 router.delete('/delete/:id', users.deleteUser)
+router.get('/avatar/:id', users.downloadUserAvatar)
 
 export default router

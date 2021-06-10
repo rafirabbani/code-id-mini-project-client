@@ -19,7 +19,13 @@ module.exports = {
 		},
     },
     variants: {
-        extend: {},
+        extend: {
+            ringWidth: ['hover', 'active'],
+            opacity: ['disabled'],
+            cursor: ['disabled'],
+            backgroundColor: ['active'],
+            textColor: ['active']
+        },
     },
     plugins: [
         require('@tailwindcss/forms')
