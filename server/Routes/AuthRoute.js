@@ -5,6 +5,6 @@ const auth = IndexController.AuthController
 const router = Router()
 
 router.post('/signin', auth.signIn)
-router.post('/signout', auth.signOut)
+router.get('/signout', auth.signOut)
 
 export default router

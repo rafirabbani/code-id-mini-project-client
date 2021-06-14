@@ -116,7 +116,7 @@ export default function Movies() {
                                                     <div className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left">{movie.movie_id}</div>
                                                 </td>
                                                 <td className="whitespace-nowrap">
-                                                    <div className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left"><img src={`/api/movies/download/image/${movie.movie_id}`} alt="movie_image" width="100" height="100"/></div>
+                                                    <div className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left"><img src={`/api/movies/image/download/${movie.movie_id}`} alt="movie_image" width="100" height="100"/></div>
                                                 </td>
                                                 <td className="whitespace-nowrap">
                                                     <div className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left">{movie.movie_title}</div>

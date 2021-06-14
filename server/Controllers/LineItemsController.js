@@ -2,7 +2,7 @@
 const checkLineItem = async (req, res, next) => {
     //console.log(req.cart)
     //res.send('Masuk Line Item')
-    if (req.items.length > 0) {
+    if (req.items && req.items.length > 0 ) {
         for (const item of req.items) {
             try {
                 if (item.line_item_movie_id === req.body.line_item_movie_id) {
@@ -11,12 +11,9 @@ const checkLineItem = async (req, res, next) => {
                         line_item_cart_id: req.params.cart_id,
                         line_item_status: 'CART'
                     }, { where: { line_item_id: item.line_item_id }})
-                    req.exist = true
                     if (result) {
+                        req.exist = true
                     }
-                }
-                else {
-                    req.exist = false
                 }
             }
             catch(err) {
@@ -27,23 +24,8 @@ const checkLineItem = async (req, res, next) => {
         next()
     }   
     else {
-        try {
-            const result = await req.context.models.Line_Items.create({
-                line_item_qty: req.body.line_item_qty,
-                line_item_status: 'CART',
-                line_item_movie_id: req.body.line_item_movie_id,
-                line_item_cart_id: req.params.cart_id
-            })
-            if (result) {
-                next()
-            }
-            //console.log(result)
-            //return res.send(result)
-        }
-        catch (err) {
-            console.log(err)
-            return res.status(500).send(err)
-        }
+        req.exist = false
+        next()
     } 
 }
 
@@ -111,6 +93,19 @@ const updateLineItem = async (req, res, next) => {
     
 }
 
+const deleteLineItem = async (req, res) => {
+    try {
+        const result = await req.context.models.Line_Items.destroy({
+            where: { line_item_id: req.params.line_item_id }
+        })
+        return res.send(`Destroy ${result} row(s)`)
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(400).send('Something Wrong')
+    }
+}
+
 // Sum Line Items On Single Cart 
 const sumLineItems = async (req, res) => {
     const movies = []
@@ -128,8 +123,6 @@ const sumLineItems = async (req, res) => {
                 Movie['qty'] = item.line_item_qty
                 //Movie['movie_price'] = result.movie_price 
                 Movie['subtotal'] = item.line_item_qty * result.movie_price
-                
-
                 movies.push(Movie)
             }
             else {
@@ -142,18 +135,27 @@ const sumLineItems = async (req, res) => {
             return res.status(500).send('Something Went Wrong')
         }
     }
+    //console.log(movies)
+    
     if (movies.length > 1) {
-        subTotal['total_due'] =  movies.reduce((total, subtotal) => ((total.subtotal + subtotal.subtotal)))
-        subTotal['total_qty'] = movies.reduce((total, qty) => (total.qty + qty.qty))
-        //subTotal['movies'] = movies
-        return res.send(subTotal)
+        subTotal['total_due'] = movies.reduce((total, subtotal) => ({subtotal: total.subtotal + subtotal.subtotal}))
+        subTotal['total_qty'] = movies.reduce((total, qty) => ({ qty: total.qty + qty.qty }))
     }
     else {
-        subTotal['total_due'] = movies[0].qty * movies[0].subtotal
-        subTotal['total_qty'] = movies[0].qty
-        //subTotal['movies'] = movies
-        return res.send(subTotal)
+        if (movies[0]) {
+            subTotal['total_due'] = { subtotal: movies[0].subtotal } 
+            subTotal['total_qty'] = { qty:movies[0].qty }
+        }
+        else {
+            subTotal['total_due'] = { subtotal: 0 }
+            subTotal['total_qty'] = { qty: 0 }
+        }
+        
     }
+    
+        //subTotal['movies'] = movies
+        //return res.send(subTotal)
+    return res.send(subTotal)
 }
 
 // Update All Line Items on Cart
@@ -176,10 +178,27 @@ const bulkUpdateLineItems = async (req, res, next) => {
 }
 
 
+/* const getLineItemInfo = async (req, res) => {
+    try {
+        const result = await req.context.models.Line_Items.findAll({
+            where: { line_item_id: { [Op.any]: `{${ req.body.movie_id }}` } },
+            include: req.context.models.Movies
+        })
+        return res.status(200).send(result)
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send('Something went wrong')
+    }
+} */
+
+
 export default {
     checkLineItem,
     updateLineItem,
     sumLineItems,
     bulkUpdateLineItems,
-    newLineItem
+    newLineItem,
+    deleteLineItem
+    //getLineItemInfo
 }

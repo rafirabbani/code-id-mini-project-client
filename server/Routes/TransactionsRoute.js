@@ -9,7 +9,10 @@ const router = Router()
 router.post('/cart/create', cart.openCart, lineItem.checkLineItem, lineItem.newLineItem, cart.getAllCartsByUser)
 
 // Update Existing Cart With New Line Item
-router.put('/cart/update/additem/:cart_id', cart.updateCart, lineItem.checkLineItem, lineItem.newLineItem,cart.getAllCartsByUser)
+router.put('/cart/update/additem/:cart_id', cart.updateCart, lineItem.checkLineItem, lineItem.newLineItem, cart.getAllCartsByUser)
+
+//Get Line Item Info
+//router.get('/item/info/', lineItem.getLineItemInfo)
 
 // Get All Open Carts
 router.get('/cart/open', cart.getAllOpenCarts)
@@ -22,6 +25,7 @@ router.get('/cart/user/:user_id', cart.getAllCartsByUser)
 
 // Update Existing Line Item On Single Carts
 router.put('/cart/update/edititem/:line_item_id', lineItem.updateLineItem, cart.getOneCart)
+router.delete('/cart/update/deleteitem/:line_item_id', lineItem.deleteLineItem)
 
 // Delete Cart
 

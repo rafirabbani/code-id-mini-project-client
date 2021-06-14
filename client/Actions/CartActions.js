@@ -4,7 +4,7 @@ import { CART_CREATE_REQ, CART_CREATE_SUCCESS, CART_CREATE_FAIL, CART_USER_GET_R
 import Axios from 'axios'
 
 const createCart = (user_id, movie_id, movie_qty) => async (dispatch) => {
-    //console.log(user_id, movie_id, item_qty)
+    console.log(user_id, movie_id, movie_qty)
     dispatch({ type: CART_CREATE_REQ })
     const data = {
         cart_user_id: user_id,
@@ -27,10 +27,16 @@ const getCartUser = (user_id) => async (dispatch) => {
     dispatch({ type: CART_USER_GET_REQ })
     try {
         const result = await Axios.get(`/api/transactions/cart/user/${user_id}`)
+        //console.log(result)
+        if (result.data.length > 0) {
+            localStorage.setItem('cartID', JSON.stringify(result.data[0].cart_id))
+        }
         dispatch ({ type: CART_USER_GET_SUCCESS, payload: result.data })
+        
     }
     catch (err) {
-        dispatch ({ type: CART_USER_GET_FAIL, err: err.response })
+        //console.log(err)
+        dispatch ({ type: CART_USER_GET_FAIL, payload: err.message  })
     }
 }
 
@@ -49,12 +55,14 @@ const updateCart = (cart_id, movie_id, movie_qty) => async (dispatch) => {
     }
     catch(err) {
         dispatch({ type: CART_UPDATE_FAIL, err: err.response })
-        return err
+        return err.response
     }
 }
+
+
 
 export default {
     createCart,
     getCartUser,
-    updateCart
+    updateCart,
 }

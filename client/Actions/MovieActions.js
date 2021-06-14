@@ -19,6 +19,7 @@ const singleMovie = (id) => async(dispatch) => {
     try {
         const result = await Axios.get(`/api/movies/${id}`)
         dispatch({ type: MOVIE_SINGLE_SUCCESS, payload: result.data })
+        //return result.data
     }
     catch (err) {
         dispatch({ type: MOVIE_SINGLE_FAIL, err: err.response.data })
