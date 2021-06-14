@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import formidable from 'formidable'
+import { Op } from 'sequelize'
 //import defaultMovieImage from '../Assets/Images/popcorn-png-3.png'
 
 const pathDir = path.join(process.cwd(), '/uploads')
@@ -295,11 +296,25 @@ const downloadMovieImage = async (req, res) => {
     }
 }
 
+const getFewMovies = async (req, res) => {
+    try {
+        const result = await req.context.models.Movies.findAll({
+            where: { movie_id: { [Op.any]: `{${ req.body.movie_id }}` } },
+        })
+        return res.status(200).send(result)
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send('Something Went Wrong')
+    }
+}
+
 export default {
     createMovie,
     getAllMovies,
     getOneMovie,
     updateMovie,
     deleteMovie,
-    downloadMovieImage
+    downloadMovieImage,
+    getFewMovies
 }

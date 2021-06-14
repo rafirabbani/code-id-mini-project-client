@@ -12,6 +12,7 @@ import SignIn from './views/User/SignIn'
 import Home from './views/Store/Home'
 import MovieDetail from './views/Movie/MovieDetails'
 import RedirectStore from './views/Store/RedirectStore'
+import Cart from './views/Store/Cart/Cart'
 
 //Checker Page
 
@@ -33,6 +34,7 @@ import KaroselTest from './KaroselTest'
 
 //Admin Layout
 import MainLayout from './views/Admin/Components/AdminMainLayout'
+import CartActions from './Actions/CartActions'
 
 
 const MainRouter = () => {
@@ -70,6 +72,7 @@ const MainRouter = () => {
       <Route exact path ='/mini-project/store/home' render={()=> typeof window != 'undefined' && isLogin(Home)}/>
       <Route exact path = '/mini-project/store' render={()=> typeof window != 'undefined' && isLogin(RedirectStore)}/>
       <Route exact path = '/mini-project/store/movie/:movie_id' render={()=> typeof window != 'undefined' && isLogin(MovieDetail)}/>
+      <Route exact path = '/mini-project/store/cart' render={()=> typeof window != 'undefined' && isLogin(Cart)}/>
 
       {/* Checker Page Route */}
       <Route exact path = '/mini-project/auth-failed' component={AuthFailPage}/>

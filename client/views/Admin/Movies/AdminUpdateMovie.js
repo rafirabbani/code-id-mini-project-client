@@ -149,7 +149,7 @@ export default function AdminUpdateMovie(props) {
                                 <div className="mt-1 col-span-6 sm:col-span-2 lg:col-span-3 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg w-48">
                                     <div className="space-y-2 text-center">
                                         <div className="mx-auto h-48 w-24 text-gray-600">
-                                            <img src={edit ? blob.image : `/api/movies/download/image/${props.movie.movie_id}`} alt='' className="mx-auto h-48 w-48" />
+                                            <img src={edit ? blob.image : `/api/movies/image/download/${props.movie.movie_id}`} alt='' className="mx-auto h-48 w-48" />
                                         </div>
                                         <div className="flex text-sm">
                                             <label htmlFor="image" className="relative cursor-pointer rounded-lg font-medium hover:text-blue-600">

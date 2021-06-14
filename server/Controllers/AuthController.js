@@ -43,8 +43,7 @@ const signIn = async (req, res) => {
 
 const signOut = (req, res) => {
     res.clearCookie('token' , {path: '/'})
-    res.status('200')
-    return res.send('Signed Out')
+    return res.status(200).send('Signed Out')
 }
 
 const requireSignIn = expressJwt({

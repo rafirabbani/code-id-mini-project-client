@@ -2,6 +2,9 @@ import { MOVIE_LIST_REQ, MOVIE_LIST_SUCCESS, MOVIE_LIST_FAIL,
     MOVIE_SINGLE_REQ, MOVIE_SINGLE_SUCCESS, MOVIE_SINGLE_FAIL, MOVIE_CREATE_REQ,
     MOVIE_CREATE_SUCCESS, MOVIE_CREATE_FAIL, MOVIE_UPDATE_REQ, MOVIE_UPDATE_SUCCESS,
     MOVIE_UPDATE_FAIL } from '../Constants/MovieConstants'
+//import { useSelector } from 'react-redux'
+
+//const { movie } = useSelector((state) => state)
 
 const movieReducer = (state = { loading: true }, action) => {
     switch (action.type) {
