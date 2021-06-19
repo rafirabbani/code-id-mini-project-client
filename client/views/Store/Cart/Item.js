@@ -36,10 +36,6 @@ export default function Item(props) {
         } */              
     }
 
-    const priceFormat = (subTotal) => {
-        return subTotal.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-    }
-
     const inputProtection = (e) => {
         if (amount == "") {
             const data = {
@@ -97,14 +93,10 @@ export default function Item(props) {
                         <label className="px-1">Price: </label>
                         <label className="px-1 font-mono">Rp{data.movie_price && data.movie_price.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}</label>
                     </div>
-                    <div className="flex flex-row items-center justify-start">
-                        <label className="px-1">Subtotal: </label>
-                        <label className="px-1 font-mono">Rp{data.movie_price && priceFormat(amount * data.movie_price)}</label>
-                    </div>
                     {/* <div className="flex flex-row items-center justify-start">
                         <label className="px-1">Amount: </label>
                         <label className="px-1">{amount}</label>
-                    </div> */}
+                    </div> */} 
                     <div className="flex flex-row flex-grow-0 items-center justify-end">
                         <div className="flex flex-row items-center justify-between">
                             <button className="mx-3" onClick={onDelete}><TrashIcon className="w-7 h-7 text-red-600"/></button>

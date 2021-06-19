@@ -29,6 +29,7 @@ export default function AdminUpdateMovie(props) {
     const modalClose = () => {
         //console.log(values, edit)
         props.setUpdateMovieModal(false);
+        
         setOpen(!open)
     }
 
@@ -36,7 +37,8 @@ export default function AdminUpdateMovie(props) {
       dispatch(MovieActions.updateMovie(props.movie.movie_id, values)).then(
         (result) => {
           if (result.status === 200) {
-            //alert(`Movie Update Success`)
+            props.setUpdate(true)
+            alert(`Movie Update Success`)
             //return <Redirect to="/mini-project/admin/home"/>
           }
           else {

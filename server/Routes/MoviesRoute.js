@@ -12,5 +12,6 @@ router.put('/update/:id', movies.updateMovie)
 router.delete('/delete/:id', movies.deleteMovie)
 router.get('/image/download/:id', movies.downloadMovieImage)
 router.get('/some/list', movies.getFewMovies)
+router.get('/search/title/', movies.searchMovieByTitle)
 
 export default router

@@ -36,7 +36,7 @@ const casts = (sequelize, DataTypes) => {
     },
     cast_birthdate: {
       type: DataTypes.DATEONLY,
-      allowNull: false
+      allowNull: true
     },
     cast_gender: {
       type: DataTypes.STRING(7),

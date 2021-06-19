@@ -1,4 +1,5 @@
-import { ITEM_SUMITEMS_REQ, ITEM_SUMITEMS_SUCCESS, ITEM_SUMITEMS_FAIL } from '../Constants/ItemConstants'
+import { ITEM_SUMITEMS_REQ, ITEM_SUMITEMS_SUCCESS, ITEM_SUMITEMS_FAIL, GET_ORDERED_ITEMS_REQ, 
+         GET_ORDERED_ITEMS_SUCCESS, GET_ORDERED_ITEMS_FAIL } from '../Constants/ItemConstants'
 import Axios from 'axios'
 
 const sumItems = (cart_id) => async (dispatch) => {
@@ -14,7 +15,18 @@ const sumItems = (cart_id) => async (dispatch) => {
     }
 }
 
+const listOrderedItems = (orderName) => async (dispatch) => {
+    dispatch({ type: GET_ORDERED_ITEMS_REQ })
+    try {
+        const result = await Axios.get(`/api/transactions/items/ordered/${orderName}`)
+        dispatch({ type: GET_ORDERED_ITEMS_SUCCESS, payload: result.data })
+    }
+    catch (err) {
+        dispatch({ type: GET_ORDERED_ITEMS_FAIL, payload: err.response.data })
+    }
+}
+
 export default {
-    //getItemInfo
+    listOrderedItems,
     sumItems
 }

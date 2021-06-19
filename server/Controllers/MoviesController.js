@@ -89,6 +89,7 @@ const createMovie = async (req, res) => {
 //Get All Movies
 const getAllMovies = async (req, res) => {
     const Movies = req.context.models.Movies
+
     try {
         const result = await Movies.findAll({
             order: [
@@ -309,6 +310,23 @@ const getFewMovies = async (req, res) => {
     }
 }
 
+const searchMovieByTitle = async (req, res) => {
+    //console.log(req.query)
+    const { movie_title } = req.query
+
+    try {
+        const result = await req.context.models.Movies.findAll({
+            where: { movie_title: { [Op.iLike]: `%${movie_title}%` }}
+        })
+        return res.send(result)
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send('Something Went Wrong')
+    }
+    
+}
+
 export default {
     createMovie,
     getAllMovies,
@@ -316,5 +334,6 @@ export default {
     updateMovie,
     deleteMovie,
     downloadMovieImage,
-    getFewMovies
+    getFewMovies, 
+    searchMovieByTitle
 }

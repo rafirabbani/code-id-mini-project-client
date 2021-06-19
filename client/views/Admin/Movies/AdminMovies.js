@@ -9,7 +9,7 @@ import AdminUpdateMovie from './AdminUpdateMovie'
 export default function Movies() {
     const [createMovieModal, setCreateMovieModal] = useState(false)
     const [updateMovieModal, setUpdateMovieModal] = useState(false)
-    const [blob, setBlob] = useState([])
+    const [update, setUpdate] = useState(false)
     const [detailMovie, setDetailMovie] = useState({
         movie_id: undefined,
         movie_title: undefined,
@@ -29,7 +29,7 @@ export default function Movies() {
     })
     const { movie } = useSelector((state) => state)
     const dispatch = useDispatch()
-    const { movies, updateMovie, createMovie } = movie
+    const { movies, createMovie, updateMovie, deleteMovie } = movie
 
     useEffect(() => {
         dispatch(MovieActions.movieList());
@@ -39,7 +39,8 @@ export default function Movies() {
         if (!movies) {
             dispatch(MovieActions.movieList())
         }
-    }, [movies, updateMovie, createMovie ])
+        setUpdate(false)
+    }, [update, createMovie, updateMovie, deleteMovie])
 
     const handleDetail = (movieID, movieTitle, movieEpisode, movieDirector, movieStudio, movieTVStatus, movieDuration, 
         movieRelease, movieCountry,movieGenre, movieRating, movieNetwork, movieTrailer, 
@@ -63,6 +64,17 @@ export default function Movies() {
                 movie_price: moviePrice,
             })
             
+        }
+
+        const onDestroy = (id) => {
+            dispatch(MovieActions.deleteMovie(id)).then((result) => {
+                if (result.status === 200) {
+                    alert(`Movie Delete`)
+                }
+                else {
+                    alert(`Delete Fail`)
+                }
+            })
         }
 
     return (
@@ -116,7 +128,7 @@ export default function Movies() {
                                                     <div className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left">{movie.movie_id}</div>
                                                 </td>
                                                 <td className="whitespace-nowrap">
-                                                    <div className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left"><img src={`/api/movies/image/download/${movie.movie_id}`} alt="movie_image" width="100" height="100"/></div>
+                                                    <div className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left"><img src={`/api/movies/image/download/${movie.movie_id}`} alt="movie_image" style={{width: '100px', height: '100px'}}/></div>
                                                 </td>
                                                 <td className="whitespace-nowrap">
                                                     <div className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left">{movie.movie_title}</div>
@@ -133,14 +145,14 @@ export default function Movies() {
                                                             <FolderOpenIcon className="h-5 w-5 text-blue-500 mr-2"/></button>
                                                     </a>
                                                     <a>
-                                                        <button className="focus:outline-none"  /* onClick={ () => {
+                                                        <button className="focus:outline-none"  onClick={ () => {
                                                                 if (
                                                                     window.confirm(
                                                                         "Are you sure you wish to delete this item?"
                                                                     )
                                                                 )
-                                                                    onDestroy(movie.movie_id, movie.movie_title)
-                                                             } }  */><TrashIcon className="h-5 w-5 text-red-500 ml-2"/></button>
+                                                                    onDestroy(movie.movie_id)
+                                                             }}  ><TrashIcon className="h-5 w-5 text-red-500 ml-2"/></button>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -154,12 +166,12 @@ export default function Movies() {
                 </div>
             </div>
             {
-                    createMovieModal ? <AdminCreateMovie setCreateMovieModal={()=> setCreateMovieModal(false)} title={'Create New Movie'}/> 
+                    createMovieModal ? <AdminCreateMovie setCreateMovieModal={()=> setCreateMovieModal(false)} title={'Create New Movie'} setUpdate={()=> setUpdate(true)}/> 
                     : null 
                     
                     }
             {
-                updateMovieModal ? <AdminUpdateMovie setUpdateMovieModal={()=> setUpdateMovieModal(false)} title={"Update Movie"} movie={detailMovie}/>
+                updateMovieModal ? <AdminUpdateMovie setUpdateMovieModal={()=> setUpdateMovieModal(false)} title={"Update Movie"} movie={detailMovie} setUpdate={()=> setUpdate(true)}/>
                 : null
             }
         </div>
