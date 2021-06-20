@@ -1,4 +1,5 @@
 //import { sequelize } from '../../config/config-db'
+import { Op } from 'sequelize'
 
 // Create New Open Order
 const createOrder = async (req, res) => {
@@ -41,7 +42,11 @@ const createOrder = async (req, res) => {
 const getAllOrdersUser = async (req, res) => {
     try {
         const result = await req.context.models.Orders.findAll({
-            where: { order_user_id: req.params.user_id }
+            where: { order_user_id: req.params.user_id },
+            order: [
+                ['order_created_on', 'DESC']
+            ]
+            
         })
         if (result.length > 0) {
             return res.send(result)
@@ -113,10 +118,56 @@ const getOpenOrderByUser  = async (req, res) => {
     }
 }
 
+const getPaidOrderByUser = async (req, res) => {
+    try {
+        const result = await req.context.models.Orders.findAll({
+            where: { order_user_id: req.params.user_id, order_status: 'PAID' },
+            order: [
+                ['order_created_on', 'DESC']
+            ]
+            
+        })
+        if (result.length > 0) {
+            return res.send(result)
+        }
+        else {
+            return res.send('You Havent Order Anything')
+        }
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send('Something Went Wrong')
+    }
+}
+
+const getCancelledOrderByUser = async (req, res) => {
+    try {
+        const result = await req.context.models.Orders.findAll({
+            where: { order_user_id: req.params.user_id, order_status: 'CANCELLED' },
+            order: [
+                ['order_created_on', 'DESC']
+            ]
+            
+        })
+        if (result.length > 0) {
+            return res.send(result)
+        }
+        else {
+            return res.send('You Havent Order Anything')
+        }
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send('Something Went Wrong')
+    }
+}
+
 export default {
     createOrder,
     getAllOrdersUser,
     updateOrder,
     getOrderByName,
-    getOpenOrderByUser
+    getOpenOrderByUser,
+    getPaidOrderByUser,
+    getCancelledOrderByUser
 }

@@ -11,6 +11,7 @@ import OrderAction from '../../Actions/OrderAction'
 export default function Checkout() {
     const dispatch = useDispatch()
     const history = useHistory()
+    const [cancel, setCancel] = useState(false)
     const [onSuccess, setOnSuccess] = useState("")
     const { order, item } = useSelector((state) => state)
     const { openOrderUser } = order
@@ -39,12 +40,28 @@ export default function Checkout() {
     useEffect(() => {
         if (openOrderUser) {
             dispatch(ItemActions.listOrderedItems(openOrderUser.order_name))
+            setCancel(false)
         }
-    }, [openOrderUser])
+    }, [openOrderUser, cancel])
 
-    /* const onClick = () => {
-        console.log(onSuccess)
-    } */
+    useEffect(() => {
+        dispatch(OrderActions.getOpenOrderByUser(JSON.parse(localStorage.getItem('data')).user_id))
+        setCancel(false)
+    }, [cancel])
+
+    const onClick = () => {
+        dispatch(OrderActions.updateOrderByName(openOrderUser.order_name, null)).then((response) => {
+            if (response.status === 200) {
+                alert(`Order Cancelled`)
+                setCancel(true)
+                history.push('/mini-project/store/home')
+            }
+            else {
+                alert(`Cancel Failed`)
+                setCancel(true)
+            }
+        })
+    }
 
 
     return (
@@ -75,10 +92,10 @@ export default function Checkout() {
                     <label className="mt-5 text-red-600">Shipping Address:</label>
                     <label className="mt-1 px-2">City: {openOrderUser && openOrderUser.order_city}</label>
                     <label className="mt-1 px-2 mb-2">Address: {openOrderUser && openOrderUser.order_address}</label>
-                    {/* <button className="mt-5 px-1 py-1 bg-green-400 text-black rounded-md active:bg-green-500 focus:outline-none" onClick={onClick}>
-                        Pay
-                    </button> */}
-                    <PayButton onSuccess={setOnSuccess}  amount={openOrderUser && openOrderUser.order_total_due} orderNumber={openOrderUser && openOrderUser.order_name}/>
+                    <button className="disabled:opacity-40" disabled={order && order.err ? true : false}><PayButton onSuccess={setOnSuccess}  amount={openOrderUser && openOrderUser.order_total_due} orderNumber={openOrderUser && openOrderUser.order_name}/></button>
+                    <div className="flex items-center justify-center"><button className="mt-5 px-1 py-1 bg-red-600 text-white rounded-md active:bg-red-500 focus:outline-none disabled:opacity-40" onClick={onClick} disabled={order && order.err ? true : false} style={{width: "90%"}}>
+                        Cancel
+                    </button></div>
                 </div>
             </div>
     )

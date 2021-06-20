@@ -75,7 +75,7 @@ export default function Item(props) {
             })
         }
         catch (err) {
-
+            console.log(err)
         }
     }
 
