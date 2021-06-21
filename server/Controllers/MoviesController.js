@@ -333,13 +333,20 @@ const getFewMovies = async (req, res) => {
 
 const searchMovieByTitle = async (req, res) => {
     //console.log(req.query)
-    const { movie_title } = req.query
+    const { movie_title, page  } = req.query
+    const { limit, offset } = getPagination(page, 5)
 
     try {
-        const result = await req.context.models.Movies.findAll({
-            where: { movie_title: { [Op.iLike]: `%${movie_title}%` }}
+        const result = await req.context.models.Movies.findAndCountAll({
+            where: { movie_title: { [Op.iLike]: `%${movie_title}%` }},
+            limit: limit,
+            offset: offset,
+            order: [
+                ['movie_rating', 'DESC']
+            ]
         })
-        return res.send(result)
+        const response = getPagingData(result, (parseInt(page)+1).toString(), limit)
+        return res.send(response)
     }
     catch (err) {
         console.log(err)

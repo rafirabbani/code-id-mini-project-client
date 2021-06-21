@@ -20,7 +20,7 @@ export default function SearchMovie() {
         dispatch(CartActions.getCartUser(auth.userID))
         //console.log(params, query.get('movie_title'))
         if (params === 'title') {
-            dispatch(MovieActions.searchMovieTitle(query.get('movie_title')))
+            dispatch(MovieActions.searchMovieTitle(query.get('movie_title'), 0))
         }
 
         if (params === 'genre') {
@@ -33,7 +33,7 @@ export default function SearchMovie() {
 
     useEffect(() => {
         if (params === 'title') {
-            dispatch(MovieActions.searchMovieTitle(query.get('movie_title')))
+            dispatch(MovieActions.searchMovieTitle(query.get('movie_title'), 0))
             setNewSearch(false)
         }
 
@@ -50,13 +50,25 @@ export default function SearchMovie() {
             setMovies(movies)
             setPages([...Array(totalPages).keys()])
             setPageChange(false)
-
         }
-    }, [moviesByGenre, pageChange])
+        if (moviesByTitle) {
+            const { movies, totalPages } = moviesByTitle
+            setMovies(movies)
+            setPages([...Array(totalPages).keys()])
+            setPageChange(false)
+        }
+
+    }, [moviesByGenre, pageChange, moviesByTitle])
     
     const onPageChange = (page) => {
-        dispatch(MovieActions.searchMovieGenre(query.get('movie_genre'), page))
-        setPageChange(true)
+        if (query.get('movie_genre')) {
+            dispatch(MovieActions.searchMovieGenre(query.get('movie_genre'), page))
+            setPageChange(true)
+        }
+        else {
+            dispatch(MovieActions.searchMovieTitle(query.get('movie_title'), page))
+            setPageChange(true)
+        }
     }
 
 
@@ -69,17 +81,6 @@ export default function SearchMovie() {
             </div>
             <div className="text-white mx-20 px-5 text-xl">{params === 'title' && moviesByTitle && moviesByTitle.length < 1 ? `No Such Movies` : params === 'genre' && moviesByGenre && moviesByGenre.length < 1 ? `No Such Movies` : null}</div>
             <div className="mx-20 flex flex-row items-center justify-start flex-wrap">
-                {
-                    moviesByTitle && moviesByTitle.map((item) => (
-                        <div className="py-5 px-5" key={item.movie_id}>
-                            <div className="overflow-hidden truncate w-48 text-white">
-                                <a href={`/mini-project/store/movie/${item.movie_id}`}>
-                                    <img className="mb-5 transform hover:scale-105" src={`/api/movies/image/download/${item.movie_id}`} style={{width: "200px", height:"300px"}}/>
-                                </a>
-                                <label className="font-serif text-left">{item.movie_title}</label>
-                            </div>
-                        </div>
-                    ))}
                 {
                     movies && movies.map((item) => (
                         <div className="py-5 px-5" key={item.movie_id}>

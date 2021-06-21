@@ -96,10 +96,10 @@ const deleteMovie = (id) => async (dispatch) => {
     }
 }
 
-const searchMovieTitle = (value) => async (dispatch) => {
+const searchMovieTitle = (title, page) => async (dispatch) => {
     dispatch({ type: MOVIE_SEARCH_BY_TITLE_REQ })
     try {
-        const result = await Axios.get(`/api/movies/search/title/?movie_title=${value}`)
+        const result = await Axios.get(`/api/movies/search/title/?movie_title=${title}&page=${page}`)
         dispatch({ type: MOVIE_SEARCH_BY_TITLE_SUCCESS, payload: result.data })
     }
     catch (err) {
