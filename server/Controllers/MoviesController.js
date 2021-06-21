@@ -4,6 +4,19 @@ import formidable from 'formidable'
 import { Op } from 'sequelize'
 //import defaultMovieImage from '../Assets/Images/popcorn-png-3.png'
 
+const getPagination = (page, size) => {
+    const limit = size ? +size : 8
+    const offset = page ? page * limit : 0
+    return { limit, offset }
+}
+
+const getPagingData = (data, page, limit) => {
+    const { count: totalMovies, rows: movies } = data
+    const currentPage = page ? +page : 0;
+    const totalPages = Math.ceil(totalMovies / limit);
+    return { totalMovies, movies, totalPages, currentPage }
+}
+
 const pathDir = path.join(process.cwd(), '/uploads')
 
 // Create New Movie
@@ -89,14 +102,20 @@ const createMovie = async (req, res) => {
 //Get All Movies
 const getAllMovies = async (req, res) => {
     const Movies = req.context.models.Movies
+    const { page, size } = req.query
+    const { limit, offset } = getPagination(page, size)
 
     try {
-        const result = await Movies.findAll({
+        const result = await Movies.findAndCountAll({
+            limit: limit,
+            offset: offset,
             order: [
                 ['movie_id', 'ASC']
             ]
         })
-        return res.send(result)
+        const response = getPagingData(result, page+1, limit)
+        return res.send(response)
+        //console.log(result)  
     }
     catch (err) {
         return res.send(err)
@@ -327,6 +346,40 @@ const searchMovieByTitle = async (req, res) => {
     
 }
 
+const searchMovieByGenre = async (req, res) => {
+    const { movie_genre } = req.query
+    try {
+        const result = await req.context.models.Movies.findAll({
+            where: { movie_genre: {[Op.iLike]: `%${movie_genre}%`}}
+        })
+        return res.send(result)
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send('Something Went Wrong')
+
+    }
+}
+
+const getSimilarMovies = async (req, res) => {
+    const { movie_genre, movie_id } = req.query
+    try {
+        const result = await req.context.models.Movies.findAll({
+            where: { movie_genre: {[Op.iLike]: `%${movie_genre}%`}, movie_id: {[Op.not]: `${movie_id}`}},
+            limit: 5,
+            order: [
+                ['movie_rating', 'DESC']
+            ]
+        })
+        return res.send(result)
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send('Something Went Wrong')
+
+    }
+}
+
 export default {
     createMovie,
     getAllMovies,
@@ -335,5 +388,7 @@ export default {
     deleteMovie,
     downloadMovieImage,
     getFewMovies, 
-    searchMovieByTitle
+    searchMovieByTitle,
+    searchMovieByGenre,
+    getSimilarMovies
 }

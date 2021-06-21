@@ -1,17 +1,18 @@
 import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom'
 import Popcorn from '../../assets/images/popcorn-png-3.png'
 import CartIcon from '@heroicons/react/outline/ShoppingCartIcon'
 import SearchIcon from '@heroicons/react/outline/SearchIcon'
 import AuthActions from '../../Actions/AuthActions'
 import { useSelector, useDispatch } from 'react-redux'
 import { Transition } from '@headlessui/react'
+import { useHistory } from 'react-router-dom'
 
 
 export default function Header(props) {
     const [search, setSearch] = useState([])
-    const history = useHistory()
     const dispatch = useDispatch()
+    const history = useHistory()
+    const [genreModal, setGenreModal] = useState(false)
     const [profileModal, setProfileModal] = useState(false)
     const { auth, cart } = useSelector((state) => state)
     const { cartUser } = cart
@@ -29,7 +30,12 @@ export default function Header(props) {
     }
 
     const onSearch = () => {
-        history.push(`/mini-project/movies/search/title?movie_title=${search}`)
+        window.location.assign(`/mini-project/movies/search/title?movie_title=${search}`)
+        props.setNewSearch(true)
+    }
+
+    const onGenre = (genre) => {
+        window.location.assign(`/mini-project/movies/search/genre?movie_genre=${genre}`)
         props.setNewSearch(true)
     }
 
@@ -41,9 +47,10 @@ export default function Header(props) {
                     <img src={Popcorn} className="ml-10 py-2 px-2" alt='icon' style={{width: '70px', height: '75px'}}></img>
                     <a className="text-white py-2 px-3 text-2xl relative mt-1 ml-5 inline" href='/mini-project/store/home'>Home</a>
                     <a className="text-white py-2 px-3 text-2xl relative mt-1 ml-5 inline" href={`/mini-project/user/profile/${auth && auth.userID}`}>Profile</a>
+                    <button className="text-white px-3 text-2xl relative mb-5 ml-5 inline focus:outline-none" onMouseOver={()=> setGenreModal(true)} onClick={()=> setGenreModal((genreModal) => !genreModal)}>Genre</button>
                 </div>
                 <div>
-                    <input className="text-sm px-1 py-5 border-black border-2 focus:outline-none" style={{width: '300px'}} placeholder="   Find Your Favorite Movie here..."
+                    <input className="text-sm px-5 py-5 border-black border-2 focus:outline-none" style={{width: '300px'}} placeholder="Find Your Favorite Movie here..."
                     onChange={handleSearch}/>
                     <button className='bg-white text-black px-1 py-5 text-sm border-2 border-black border-l-0 hover:bg-gray-300 active:bg-gray-500 focus:outline-none relative' 
                     style={{top: '5px'}} onClick={onSearch}>
@@ -76,7 +83,19 @@ export default function Header(props) {
                             </button>
                         </div>
                     </Transition>
-
+                    <Transition show={genreModal} enter="transition-opacity duration-500" enterFrom="opacity-0" enterTo="opacity-100" leave="transition-opacity duration-500" leaveFrom="opacity-100" leaveTo="opacity-0">
+                        <div className="group rounded-lg absolute left-80 mt-16 py-1 bg-red-600 border border-gray-200 ring-4 ring-gray-200 flex flex-col flex-wrap max-h-36 w-72">
+                            <button onClick={()=> onGenre('Action')} className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-gray-800 hover:bg-white focus:outline-none">Action</button>
+                            <button onClick={()=> onGenre('Adventure')} className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-gray-800 hover:bg-white focus:outline-none">Adventure</button>
+                            <button onClick={()=> onGenre('Comedy')} className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-gray-800 hover:bg-white focus:outline-none">Comedy</button>
+                            <button onClick={()=> onGenre('Crime')} className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-gray-800 hover:bg-white focus:outline-none">Crime</button>
+                            <button onClick={()=> onGenre('Drama')} className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-gray-800 hover:bg-white focus:outline-none">Drama</button>
+                            <button onClick={()=> onGenre('Fantasy')} className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-gray-800 hover:bg-white focus:outline-none">Fantasy</button>
+                            <button onClick={()=> onGenre('Horror')} className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-gray-800 hover:bg-white focus:outline-none">Horror</button>
+                            <button onClick={()=> onGenre('Romance')} className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-gray-800 hover:bg-white focus:outline-none">Romance</button>
+                            <button onClick={()=> onGenre('Thriller')} className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-gray-800 hover:bg-white focus:outline-none">Thriller</button>
+                        </div>
+                    </Transition>
                 </div>
             </nav>
         </>

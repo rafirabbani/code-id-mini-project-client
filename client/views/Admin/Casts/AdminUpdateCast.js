@@ -1,46 +1,75 @@
 import React, { useState, Fragment, useRef, useEffect } from 'react'
+import Axios from 'axios'
 import { Transition, Dialog } from '@headlessui/react'
+import PencilAltIcon from '@heroicons/react/outline/PencilAltIcon'
 import { DocumentAddIcon } from '@heroicons/react/outline'
 import { useDispatch, useSelector } from 'react-redux'
 import MovieActions from '../../../Actions/MovieActions'
-import CastsAction from '../../../Actions/CastActions'
+import CastActions from '../../../Actions/CastActions'
 
-export default function AdminCreateCast(props) {
+
+export default function AdminUpdateCast(props) {
+    console.log(props)
     const dispatch = useDispatch()
+    const [castMovie, setCastMovie] = useState([])
     const [open, setOpen] = useState(true)
+    const [edit, setEdit] = useState(false)
     const [blob, setBlob] = useState([])
     const [values, setValues] = useState([])
     const cancelButtonRef = useRef()
     const { movie } = useSelector((state) => state)
     const { movies } = movie
 
-    const modalClose = () => {
-      props.setCreateCastModal(false)
-      setOpen(!open)
+    const handleChange = name => event => {
+        setValues({...values, [name]: event.target.value})
     }
 
-    const handleChange = name => event => {
-      setValues({...values, [name]: event.target.value})
+    const modalClose = () => {
+        props.setUpdateCastModal(false)
+        setOpen(!open)
+    }
+
+    const editHandler = () => {
+        setEdit(!edit)
+        //console.log(edit)
     }
 
     const uploadSingleFile = name => event => {
-      //1.untuk ubah file ke blob agar bisa di preview image nya
-      setBlob({ ...blob, [name]: URL.createObjectURL(event.target.files[0])})
+        //1.untuk ubah file ke blob agar bisa di preview image nya
+        setBlob({ ...blob, [name]: URL.createObjectURL(event.target.files[0])})
     
-      //2. simpan data File, bisa juga gunakan blob, lalu blob diconvert lagi
-      // ke File type, spy ga bingung kita coba gunakan cara ini aja
-      setValues({ ...values, ['cast_image']: event.target.files[0]})
+        //2. simpan data File, bisa juga gunakan blob, lalu blob diconvert lagi
+        // ke File type, spy ga bingung kita coba gunakan cara ini aja
+        setValues({ ...values, ['cast_image']: event.target.files[0]})
     }
+    
+
 
     useEffect(() => {
-      dispatch(MovieActions.movieList())
+        dispatch(MovieActions.movieList())
+        try {
+            Axios.get(`/api/movies/${props.cast.movieID}`).then((response) => {
+                setCastMovie(response.data)
+            })
+        }
+        catch (err) {
+            console.log(err)
+        }
     }, [])
 
-    const onSubmit = () => {
-      //console.log(values)
-       dispatch(CastsAction.createCast(values))
-      modalClose()
+    const onUpdate = () => {
+        dispatch(CastActions.updateCast(props.cast.castID, values)).then((response) => {
+            if (response.status === 200) {
+                alert(`Cast Updated`)
+            }
+            else {
+                alert(`Cast Update Failed`)
+            }
+        })
+        modalClose()
     }
+
+
 
     return (
         <div>
@@ -89,27 +118,27 @@ export default function AdminCreateCast(props) {
                                 <DocumentAddIcon className="text-blue-600" aria-hidden="true" width="50" height="50" />
                                 <label className="text-2xl uppercase ml-5">{props.title}</label>
                             </div>
-                                {/* <button className="focus:outline-none text-blue-600 ml-10">
+                            <button className="text-blue-600 ml-20 focus:outline-none rounded-md px-1 py-1 mt-1" onClick={editHandler} style={ edit ? {backgroundColor: '#000000', color: '#FFFFFF'} : null }>
                                     <PencilAltIcon className='' width="35" height="35"/>
-                                </button> */}
+                            </button>
                         </div> 
                     </Dialog.Title>
                     <div className=" flex items-center justify-center min-w-screen">                    
                         <div className="flex flex-col w-full ml-3 mt-5">
                             <div className=""><label className="text-l text-gray-600 focus:outline-none ring-0 border-transparent">Cast Name</label></div>
-                            <div className="mb-5 mt-1"><input className="rounded-lg w-48 border-blue-500 text-sm" type="text" name="cast_name" onChange={handleChange('cast_name')}/></div>
+                            <div className="mb-5 mt-1"><input className="rounded-lg w-48 border-blue-500 text-sm" type="text" name="cast_name" onChange={handleChange('cast_name')} disabled={edit ? false : true} value={edit ? "" :props.cast.castName}/></div>
                             <div className=""><label className="text-l text-gray-600 focus:outline-none ring-0 border-transparent">Cast Birthdate</label></div>
-                            <div className="mb-5 mt-1"><input className="rounded-lg w-48 border-blue-500 text-sm" type="date" name="cast_birthdate" onChange={handleChange('cast_birthdate')}/></div>
+                            <div className="mb-5 mt-1"><input className="rounded-lg w-48 border-blue-500 text-sm" type="date" name="cast_birthdate" onChange={handleChange('cast_birthdate')} disabled={edit ? false : true} value={edit ? '' : props.cast.castBirthdate}/></div>
                             <div className=""><label className="text-l text-gray-600 focus:outline-none ring-0 border-transparent">Cast Gender</label></div>
-                            <div className="mb-5 mt-1"><select className="rounded-lg w-48 border-blue-500 text-sm" type="text" name="cast_gender" onChange={handleChange('cast_gender')}>
-                                <option defaultValue hidden>Select Cast Gender</option>
+                            <div className="mb-5 mt-1"><select className="rounded-lg w-48 border-blue-500 text-sm" type="text" name="cast_gender" onChange={handleChange('cast_gender')} disabled={edit ? false : true}>
+                                <option defaultValue hidden>{edit ? `Select Cast Gender` : props.cast.castGender}</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 </select>
                             </div>
                             <div className=""><label className="text-l text-gray-600 focus:outline-none ring-0 border-transparent">Cast Movie</label></div>
                             <div className="mb-5 mt-1"><select className="rounded-lg w-48 border-blue-500 text-sm" type="text" name="movie_tv_status" onChange={handleChange('cast_movie_id')}>
-                                <option defaultValue hidden>Select Movie Title</option>
+                                <option defaultValue hidden>{edit ? `Select Movie Title` : castMovie.movie_title}</option>
                                 {
                                     movies && movies.map((movie) => (
                                         <option value={movie.movie_id} key={movie.movie_id}>{movie.movie_title}</option>
@@ -121,12 +150,12 @@ export default function AdminCreateCast(props) {
                                 <div className="mt-1 col-span-6 sm:col-span-2 lg:col-span-3 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg w-48">
                                     <div className="space-y-2 text-center">
                                         <div className="mx-auto h-48 w-24 text-gray-600">
-                                            <img src={blob.image} alt='' className="mx-auto h-48 w-48" />
+                                            <img src={edit ? blob.image : `/api/casts/image/download/${props.cast.castID}`} alt='' className="mx-auto h-48 w-48" />
                                         </div>
                                         <div className="flex text-sm">
                                             <label for="image" className="relative cursor-pointer rounded-lg font-medium hover:text-blue-600">
-                                                Upload Image
-                                                <input id="image" name="image" onChange={uploadSingleFile('image')} type="file" className="sr-only" />
+                                                {edit ? `Upload Image` : ''}
+                                                <input id="image" name="image" onChange={uploadSingleFile('image')} type="file" className="sr-only" disabled={edit ? false : true}/>
                                             </label>
                                         </div>
                                     </div>
@@ -140,7 +169,7 @@ export default function AdminCreateCast(props) {
                 <button
                   type="button"
                   className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={onSubmit}
+                  onClick={onUpdate}
                 >
                   Submit
                 </button>

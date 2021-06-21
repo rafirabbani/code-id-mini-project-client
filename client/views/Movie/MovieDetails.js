@@ -10,11 +10,12 @@ import CartActions from '../../Actions/CartActions'
 
 
 export default function MoviesDetails() {
+    const [link, setLink] = useState("")
     const [amount, setAmount] = useState(1)
     const { movie_id }  = useParams()
     const { movie, auth, cart } = useSelector((state) => state)
     const dispatch = useDispatch()
-    const { singleMovie } = movie
+    const { singleMovie, similarMovies } = movie
     const { cartUser } = cart
 
     useEffect(() => {
@@ -22,6 +23,21 @@ export default function MoviesDetails() {
         dispatch(CartActions.getCartUser(auth.userID))
         
     }, [])
+
+    useEffect(() => {
+        if (singleMovie) {
+            //console.log(singleMovie.movie_genre.replace(/\s+/g, '').split(',')[0])
+            dispatch(MovieActions.similarMovieGenre(singleMovie.movie_genre.replace(/\s+/g, '').split(',')[0], singleMovie.movie_id))
+            setLink(`/mini-project/movies/search/genre?movie_genre=${singleMovie && singleMovie.movie_genre.replace(/\s+/g, '').split(',')[0]}`)
+        }
+    }, [singleMovie])
+    
+    useEffect(() => {
+        if (singleMovie && similarMovies && similarMovies.length < 5) {
+            dispatch(MovieActions.similarMovieGenre(singleMovie.movie_genre.replace(/\s+/g, '').split(',')[1], singleMovie.movie_id))
+            setLink(`/mini-project/movies/search/genre?movie_genre=${singleMovie && singleMovie.movie_genre.replace(/\s+/g, '').split(',')[1]}`)
+        }
+    }, [similarMovies])
 
     const addToCart = (userID, cartID, itemID, itemQTY) => {
         //console.log(cartID)
@@ -63,8 +79,6 @@ export default function MoviesDetails() {
             setAmount((amount - 1))
         }
     }
-
-    
 
     return (
         <div className='mt-20'>
@@ -116,15 +130,27 @@ export default function MoviesDetails() {
                         </div>
                     </div>
                     <h3 className="text-gray-600 text-5xl font-bold mt-24 ml-16 text-center font-serif cursor-default">Casts</h3>
-                    <div className="flex flex-row flex-wrap w-full items-center justify-between px-16 py-5 mt-5">
+                    <div className="flex flex-row flex-wrap w-full items-center justify-start px-16 py-5 mt-5">
                          {
                             singleMovie && singleMovie.casts.map((cast) => (
                                 <div className='px-5 py-5' key={cast.cast_id}>
-                                    <div className="justify-center flex flex-grow-0"><img className="rounded-md" src={`/api/casts/image/download/${cast.cast_id}`} width="150" height="75" alt="cast_image"/></div>
+                                    <div className="justify-center flex flex-grow-0"><img className="rounded-md" src={`/api/casts/image/download/${cast.cast_id}`} alt="cast_image" style={{width: '100px', height: '200px'}}/></div>
                                     <h1 className='text-white text-sm text-center mt-3 font-serif font-thin cursor-default'>{cast.cast_name}</h1>
                                 </div>
                         ))} 
-                    </div>     
+                    </div> 
+                    <label className="text-gray-600 text-3xl font-bold mt-24 ml-20 text-left font-serif cursor-default">Similar Movies</label>
+                    <div className="flex flex-row flex-wrap w-full items-center justify-start px-16 py-5">
+                         {
+                            similarMovies && similarMovies.map((movie) => (
+                                <div className='px-5 py-5 overflow-hidden w-36' key={movie.movie_id}>
+                                    <a href={`/mini-project/store/movie/${movie.movie_id}`}className="justify-center flex flex-grow-0"><img className="rounded-md" src={`/api/movies/image/download/${movie.movie_id}`} alt="cast_image" style={{width: '180px', height: '180px'}}/></a>
+                                    <h1 className='text-white text-sm text-center mt-3 font-serif cursor-default truncate'>{movie.movie_title}</h1>
+                                </div>
+                        ))} 
+                        <a href={link} className="text-white mx-20 my-20 hover:underline cursor-default">More Movies...</a> 
+                    </div> 
+                   
             </div>
         </div>
     )

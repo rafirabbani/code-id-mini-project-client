@@ -4,13 +4,22 @@ import { TrashIcon, FolderOpenIcon } from '@heroicons/react/outline'
 import { useSelector, useDispatch } from 'react-redux'
 import CastActions from '../../../Actions/CastActions'
 import AdminCreateCastModal from './AdminCreateCast'
+import AdminUpdateCastModal from './AdminUpdateCast'
 
 
 export default function AdminCasts() {
     const dispatch = useDispatch()
     const [createCastModal, setCreateCastModal] = useState(false)
+    const [updateCastModal, setUpdateCastModal] = useState(false)
     const { cast } = useSelector((state) => state)
-    const { casts, createCast } = cast
+    const { casts, createCast, updateCast } = cast
+    const [detailCast, setDetailCast] = useState({
+        castID: undefined,
+        castName: undefined,
+        castBirthdate: undefined,
+        castGender: undefined,
+        movieID: undefined,
+    })
 
     useEffect(() => {
         dispatch(CastActions.getCastsList())
@@ -18,8 +27,18 @@ export default function AdminCasts() {
 
     useEffect(() => {
         dispatch(CastActions.getCastsList())
-    }, [createCast])
+    }, [createCast, updateCast])
 
+    const onDetails = (cast_id, cast_name, cast_gender, cast_birthdate, cast_movie_id) => {
+        setDetailCast({
+            castID: cast_id,
+            castName: cast_name,
+            castGender: cast_gender,
+            castBirthdate: cast_birthdate,
+            movieID: cast_movie_id
+        })
+        setUpdateCastModal(true)
+    }
     
     return (
         <div>
@@ -73,10 +92,7 @@ export default function AdminCasts() {
                                                 </td>
                                                 <td className="flex items-center justify-center whitespace-nowrap content-left text-sm py-14 font-medium">
                                                     <a>
-                                                        <button className="focus:outline-none"  /* onClick={() => handleDetail(movie.movie_id, movie.movie_title, movie.movie_episode, movie.movie_director, 
-                                                            movie.movie_studio, movie.movie_tv_status, movie.movie_duration, movie.movie_release, movie.movie_country, 
-                                                            movie.movie_genre, movie.movie_rating, movie.movie_network, movie.movie_trailer, movie.movie_views,
-                                                            movie.movie_price) } */>
+                                                        <button className="focus:outline-none"  onClick={() => onDetails(cast.cast_id, cast.cast_name, cast.cast_gender, cast.cast_birthdate, cast.cast_movie_id) }>
                                                             <FolderOpenIcon className="h-5 w-5 text-blue-500 mr-2"/></button>
                                                     </a>
                                                     <a>
@@ -99,6 +115,9 @@ export default function AdminCasts() {
                     </div>
                     {
                         createCastModal ? <AdminCreateCastModal setCreateCastModal={()=> setCreateCastModal(false)} title="Add New Cast"/> : null
+                    }
+                    {
+                        updateCastModal ? <AdminUpdateCastModal setUpdateCastModal={()=> setUpdateCastModal(false)} title="Update Cast" cast={detailCast} /> : null
                     }
                 </div>
             </div>

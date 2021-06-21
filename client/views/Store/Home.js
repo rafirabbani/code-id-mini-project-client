@@ -8,16 +8,27 @@ import CartActions from '../../Actions/CartActions'
 
 export default function Home() {
     const dispatch = useDispatch()
-    const [search, setSearch] = useState([])
     const { movie, auth, cart } = useSelector((state) => state)
-    const { movies } = movie
+    const [movies, setMovies] = useState([])
+    const [pages, setPages] =  useState([])
+    const [pageChange, setPageChange] = useState(false)
+    const { movieData } = movie
     const { cartUser } = cart
     const history = useHistory()
 
     useEffect(() => {
-        dispatch(MovieActions.movieList())
+        dispatch(MovieActions.movieList(0))
         dispatch(CartActions.getCartUser(auth.userID))
     }, [])
+
+    useEffect(() => {
+        if (movieData) {
+            const { movies, totalPages } = movieData
+            setMovies(movies)
+            setPages([...Array(totalPages).keys()])
+            setPageChange(false)
+        }
+    }, [movieData, pageChange])
 
     const addToCart = (userID, cartID, itemID, itemQTY) => {
         //console.log(cartID)
@@ -44,12 +55,14 @@ export default function Home() {
 
     const toDetail = (id) => {
         history.push(`/mini-project/store/movie/${id}`)
-    }
-    const testClick = () => {
-        history.push('/mini-project/movies/search/title?movie_title=aigoo')
+        //console.log(pages)
     }
 
-    
+    const onChangePage = (page) => {
+        dispatch(MovieActions.movieList(page))
+        setPageChange(true)
+    }
+
     return (
         <div>
             <Header/>
@@ -61,7 +74,7 @@ export default function Home() {
                         movies && movies.map((movie) => (
                             <div className="mx-5 my-5" key={movie.movie_id}>
                                 <a className="px-5 py-5">
-                                    {/* <div className='flex flex-row flex-grow-0 flex-wrap w-48'><h1 className='text-white text-left my-5 font-serif cursor-default text-md'>{movie.movie_title}</h1></div> */}
+                                    
                                     <div className="flex-col flex-grow-0 items-center justify-center w-56">
                                         <button className="w-56 focus:outline-none" onClick={()=> toDetail(movie.movie_id)}>
                                             <img className="transition duration-100 ease-in-out rounded-lg transform hover:scale-105" 
@@ -82,6 +95,17 @@ export default function Home() {
                                 </a>
                             </div>
                     ))} 
+                </div>
+                <div className="flex flex-row items-center justify-center">
+                    <div className="flex flex-row items-center justify-between">Pages: 
+                            {
+                                pages && pages.map((page) => (
+                                    <div> 
+                                        <button className="mx-5 focus:outline-none" onClick={()=> onChangePage(page)}>{page + 1}</button>
+                                    </div>
+                                ))
+                            }
+                    </div>
                 </div>
             </div>
         </div>
