@@ -3,10 +3,10 @@ import { GET_CASTS_LIST_REQ, GET_CASTS_LIST_SUCCESS, GET_CASTS_LIST_FAIL, CREATE
          UPDATE_CAST_FAIL } from '../Constants/CastConstant'
 import Axios from 'axios'
 
-const getCastsList = () => async (dispatch) => {
+const getCastsList = (page) => async (dispatch) => {
     dispatch({ type: GET_CASTS_LIST_REQ })
     try {
-        const result = await Axios.get(`/api/casts/`)
+        const result = await Axios.get(`/api/casts/?page=${page}`)
         dispatch({ type: GET_CASTS_LIST_SUCCESS, payload: result.data})
     }
     catch (err) {
@@ -33,10 +33,11 @@ const createCast = (data) => async (dispatch) => {
 const updateCast = (id, data) => async (dispatch) => {
     dispatch({ type: UPDATE_CAST_REQ })
     const update = new FormData()
+    console.log(data)
     for (const key in data) {
         data[key] && update.append(`${key}`, data[key])
     }
-    try {
+     try {
         const result = await Axios.put(`/api/casts/update/${id}`, update)
         dispatch({ type: UPDATE_CAST_SUCCESS, payload: result.data })
         return result

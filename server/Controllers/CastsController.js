@@ -4,6 +4,19 @@ import formidable from 'formidable'
 
 const pathDir = path.join(process.cwd(), '/uploads')
 
+const getPagination = (page, size) => {
+    const limit = size ? +size : 5
+    const offset = page ? page * limit : 0
+    return { limit, offset }
+}
+
+const getPagingData = (data, page, limit) => {
+    const { count: totalCasts, rows: casts } = data
+    const currentPage = page ? +page : 0;
+    const totalPages = Math.ceil(totalCasts / limit);
+    return { totalCasts, casts, totalPages, currentPage }
+}
+
 //Create New Cast
 const createCast = async (req, res) => {
     if (!fs.existsSync(pathDir)) {
@@ -87,9 +100,19 @@ const createCast = async (req, res) => {
 
 //Get All Casts
 const getAllCast = async (req, res) => {
+    const { page, size } = req.query
+    const { limit, offset } = getPagination(page, size)
     try {
-        const result = await req.context.models.Casts.findAll()
-        return res.send(result)
+        const result = await req.context.models.Casts.findAndCountAll({
+            limit: limit,
+            offset: offset,
+            order: [
+                ['cast_id', 'ASC']
+            ]
+        })
+        const response = getPagingData(result, (parseInt(page)+1).toString(), limit)
+        return res.send(response)
+        
     }
     catch (err) {
         console.log(err)
@@ -186,23 +209,25 @@ const updateCast = async (req, res) => {
                     res.status(400)
                     return res.send(`Cannot Update With Existing Name`)
                 }
-                else if (Object.keys(files).length !== 0) {
+                if (Object.keys(files).length !== 0) {
                     data.cast_image = files.cast_image.name 
                     data.cast_image_path = files.cast_image.path
                     data.cast_image_size = files.cast_image.size
                     data.cast_image_type = files.cast_image.type
                 }
-                else if (data.cast_name && Object.keys(files).length === 0) {
-                    const name = data.cast_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                    const folder = `${pathDir}/casts/${req.params.id}_${name}/`
-                    if (!fs.existsSync(folder)) {
-                        const oldName = result.cast_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                        const imagePath = path.join(folder, result.cast_image)
-                        fs.mkdirSync(folder)
-                        fs.renameSync(result.cast_image_path, imagePath)
-                        fs.rmSync(`${pathDir}/casts/${req.params.id}_${oldName}`, { recursive: true })
-                        data.cast_image_path = imagePath
-                    }
+                if (data.cast_name && Object.keys(files).length === 0) {
+                    if (result.cast_image) {
+                        const name = data.cast_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                        const folder = `${pathDir}/casts/${req.params.id}_${name}/`
+                        if (!fs.existsSync(folder)) {
+                            const oldName = result.cast_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                            const imagePath = path.join(folder, result.cast_image)
+                            fs.mkdirSync(folder)
+                            fs.renameSync(result.cast_image_path, imagePath)
+                            fs.rmSync(`${pathDir}/casts/${req.params.id}_${oldName}`, { recursive: true })
+                            data.cast_image_path = imagePath
+                        }
+                    }                    
                 }
                 try {
                     const update = await req.context.models.Casts.update(data.dataValues, {

@@ -213,20 +213,22 @@ const updateUser = async (req, res) => {
                     res.status(400)
                     return res.send(`Cannot Update With Existing Name`)
                 }
-                else if (Object.keys(files).length !== 0) {
+                if (Object.keys(files).length !== 0) {
                     data.user_avatar = files.user_avatar.name 
                     data.user_avatar_path = files.user_avatar.path
                 }
-                else if (data.user_name && Object.keys(files).length === 0) {
-                    const name = data.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                    const folder = `${pathDir}/users/${req.params.id}_${name}/`
-                    if (!fs.existsSync(folder)) {
-                        const oldName = result.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                        const avatarPath = path.join(folder, result.user_avatar)
-                        fs.mkdirSync(folder)
-                        fs.renameSync(result.user_avatar_path, avatarPath)
-                        fs.rmSync(`${pathDir}/users/${req.params.id}_${oldName}`, { recursive: true })
-                        data.user_avatar_path = avatarPath
+                if (data.user_name && Object.keys(files).length === 0) {
+                    if (result.user_avatar) {
+                        const name = data.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                        const folder = `${pathDir}/users/${req.params.id}_${name}/`
+                        if (!fs.existsSync(folder)) {
+                            const oldName = result.user_name.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                            const avatarPath = path.join(folder, result.user_avatar)
+                            fs.mkdirSync(folder)
+                            fs.renameSync(result.user_avatar_path, avatarPath)
+                            fs.rmSync(`${pathDir}/users/${req.params.id}_${oldName}`, { recursive: true })
+                            data.user_avatar_path = avatarPath
+                        }
                     }
                 }
                 try {
