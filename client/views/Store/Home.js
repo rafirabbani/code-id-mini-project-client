@@ -101,7 +101,7 @@ export default function Home() {
                             {
                                 pages && pages.map((page) => (
                                     <div> 
-                                        <button className="mx-5 focus:outline-none" onClick={()=> onChangePage(page)}>{page + 1}</button>
+                                        <button className="mx-5 focus:outline-none focus:underline hover:underline" onClick={()=> onChangePage(page)}>{page + 1}</button>
                                     </div>
                                 ))
                             }

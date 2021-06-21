@@ -5,6 +5,7 @@ import MovieActions from '../../../Actions/MovieActions'
 import { TrashIcon, FolderOpenIcon } from '@heroicons/react/outline'
 import AdminCreateMovie from './AdminCreateMovie'
 import AdminUpdateMovie from './AdminUpdateMovie'
+import MainLayout from '../Components/AdminMainLayout'
 
 export default function Movies() {
     const [createMovieModal, setCreateMovieModal] = useState(false)
@@ -79,6 +80,7 @@ export default function Movies() {
 
     return (
         <div>
+            <MainLayout>
             <div className="flex flex-row items-center justify-between w-full flex-shrink-0">
                 <label><AdminHeader title={'Movies'}/></label>
                 <button className="bg-blue-500 text-white text-xl px-3 py-3 rounded-lg focus:outline-none active:bg-blue-300" onClick={()=> setCreateMovieModal(true)}>Create New Movie</button>
@@ -174,6 +176,7 @@ export default function Movies() {
                 updateMovieModal ? <AdminUpdateMovie setUpdateMovieModal={()=> setUpdateMovieModal(false)} title={"Update Movie"} movie={detailMovie} setUpdate={()=> setUpdate(true)}/>
                 : null
             }
+            </MainLayout>
         </div>
     )
 }

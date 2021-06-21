@@ -12,7 +12,7 @@ export default function AdminCreateCast(props) {
     const [values, setValues] = useState([])
     const cancelButtonRef = useRef()
     const { movie } = useSelector((state) => state)
-    const { movies } = movie
+    const { moviesNoLimit } = movie
 
     const modalClose = () => {
       props.setCreateCastModal(false)
@@ -33,7 +33,7 @@ export default function AdminCreateCast(props) {
     }
 
     useEffect(() => {
-      dispatch(MovieActions.movieList())
+      dispatch(MovieActions.movieListNoLimit())
     }, [])
 
     const onSubmit = () => {
@@ -111,7 +111,7 @@ export default function AdminCreateCast(props) {
                             <div className="mb-5 mt-1"><select className="rounded-lg w-48 border-blue-500 text-sm" type="text" name="movie_tv_status" onChange={handleChange('cast_movie_id')}>
                                 <option defaultValue hidden>Select Movie Title</option>
                                 {
-                                    movies && movies.map((movie) => (
+                                    moviesNoLimit && moviesNoLimit.map((movie) => (
                                         <option value={movie.movie_id} key={movie.movie_id}>{movie.movie_title}</option>
                                     )) 
                                 }
