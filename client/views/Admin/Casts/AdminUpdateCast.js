@@ -9,7 +9,7 @@ import CastActions from '../../../Actions/CastActions'
 
 
 export default function AdminUpdateCast(props) {
-    console.log(props)
+    //console.log(props)
     const dispatch = useDispatch()
     const [castMovie, setCastMovie] = useState([])
     const [open, setOpen] = useState(true)
@@ -18,7 +18,7 @@ export default function AdminUpdateCast(props) {
     const [values, setValues] = useState([])
     const cancelButtonRef = useRef()
     const { movie } = useSelector((state) => state)
-    const { movies } = movie
+    const { moviesNoLimit } = movie
 
     const handleChange = name => event => {
         setValues({...values, [name]: event.target.value})
@@ -43,10 +43,8 @@ export default function AdminUpdateCast(props) {
         setValues({ ...values, ['cast_image']: event.target.files[0]})
     }
     
-
-
     useEffect(() => {
-        dispatch(MovieActions.movieList())
+        dispatch(MovieActions.movieListNoLimit())
         try {
             Axios.get(`/api/movies/${props.cast.movieID}`).then((response) => {
                 setCastMovie(response.data)
@@ -68,8 +66,6 @@ export default function AdminUpdateCast(props) {
         })
         modalClose()
     }
-
-
 
     return (
         <div>
@@ -126,9 +122,9 @@ export default function AdminUpdateCast(props) {
                     <div className=" flex items-center justify-center min-w-screen">                    
                         <div className="flex flex-col w-full ml-3 mt-5">
                             <div className=""><label className="text-l text-gray-600 focus:outline-none ring-0 border-transparent">Cast Name</label></div>
-                            <div className="mb-5 mt-1"><input className="rounded-lg w-48 border-blue-500 text-sm" type="text" name="cast_name" onChange={handleChange('cast_name')} disabled={edit ? false : true} value={edit ? "" :props.cast.castName}/></div>
+                            <div className="mb-5 mt-1"><input className="rounded-lg w-48 border-blue-500 text-sm" type="text" name="cast_name" onChange={handleChange('cast_name')} disabled={edit ? false : true} value={edit ? values.cast_name :props.cast.castName}/></div>
                             <div className=""><label className="text-l text-gray-600 focus:outline-none ring-0 border-transparent">Cast Birthdate</label></div>
-                            <div className="mb-5 mt-1"><input className="rounded-lg w-48 border-blue-500 text-sm" type="date" name="cast_birthdate" onChange={handleChange('cast_birthdate')} disabled={edit ? false : true} value={edit ? '' : props.cast.castBirthdate}/></div>
+                            <div className="mb-5 mt-1"><input className="rounded-lg w-48 border-blue-500 text-sm" type="date" name="cast_birthdate" onChange={handleChange('cast_birthdate')} disabled={edit ? false : true} value={edit ? values.cast_birthdate : props.cast.castBirthdate}/></div>
                             <div className=""><label className="text-l text-gray-600 focus:outline-none ring-0 border-transparent">Cast Gender</label></div>
                             <div className="mb-5 mt-1"><select className="rounded-lg w-48 border-blue-500 text-sm" type="text" name="cast_gender" onChange={handleChange('cast_gender')} disabled={edit ? false : true}>
                                 <option defaultValue hidden>{edit ? `Select Cast Gender` : props.cast.castGender}</option>
@@ -140,7 +136,7 @@ export default function AdminUpdateCast(props) {
                             <div className="mb-5 mt-1"><select className="rounded-lg w-48 border-blue-500 text-sm" type="text" name="movie_tv_status" onChange={handleChange('cast_movie_id')}>
                                 <option defaultValue hidden>{edit ? `Select Movie Title` : castMovie.movie_title}</option>
                                 {
-                                    movies && movies.map((movie) => (
+                                    moviesNoLimit && moviesNoLimit.map((movie) => (
                                         <option value={movie.movie_id} key={movie.movie_id}>{movie.movie_title}</option>
                                     )) 
                                 }

@@ -4,7 +4,8 @@ import { MOVIE_LIST_REQ, MOVIE_LIST_SUCCESS, MOVIE_LIST_FAIL,
          MOVIE_DELETE_SUCCESS, MOVIE_DELETE_FAIL, MOVIE_SEARCH_BY_TITLE_REQ, MOVIE_SEARCH_BY_TITLE_SUCCESS,
          MOVIE_SEARCH_BY_TITLE_FAIL, MOVIE_SEARCH_BY_GENRE_REQ, MOVIE_SEARCH_BY_GENRE_SUCCESS,
          MOVIE_SEARCH_BY_GENRE_FAIL, MOVIE_SIMILAR_BY_GENRE_REQ, MOVIE_SIMILAR_BY_GENRE_SUCCESS,
-         MOVIE_SIMILAR_BY_GENRE_FAIL } from '../Constants/MovieConstants'
+         MOVIE_SIMILAR_BY_GENRE_FAIL, MOVIE_LIST_NO_LIMIT_REQ, MOVIE_LIST_NO_LIMIT_SUCCESS,
+         MOVIE_LIST_NO_LIMIT_FAIL} from '../Constants/MovieConstants'
 import Axios from 'axios'
 
 const movieList = (page) => async (dispatch) => {
@@ -95,10 +96,10 @@ const deleteMovie = (id) => async (dispatch) => {
     }
 }
 
-const searchMovieTitle = (value) => async (dispatch) => {
+const searchMovieTitle = (title, page) => async (dispatch) => {
     dispatch({ type: MOVIE_SEARCH_BY_TITLE_REQ })
     try {
-        const result = await Axios.get(`/api/movies/search/title/?movie_title=${value}`)
+        const result = await Axios.get(`/api/movies/search/title/?movie_title=${title}&page=${page}`)
         dispatch({ type: MOVIE_SEARCH_BY_TITLE_SUCCESS, payload: result.data })
     }
     catch (err) {
@@ -106,10 +107,10 @@ const searchMovieTitle = (value) => async (dispatch) => {
     }
 }
 
-const searchMovieGenre = (value) => async (dispatch) => {
+const searchMovieGenre = (genre, page) => async (dispatch) => {
     dispatch({ type: MOVIE_SEARCH_BY_GENRE_REQ })
     try {
-        const result = await Axios.get(`/api/movies/search/genre/?movie_genre=${value}`)
+        const result = await Axios.get(`/api/movies/search/genre/?movie_genre=${genre}&page=${page}`)
         dispatch({ type: MOVIE_SEARCH_BY_GENRE_SUCCESS, payload: result.data })
     }
     catch (err) {
@@ -128,6 +129,17 @@ const similarMovieGenre = (genre, id) => async (dispatch) => {
     }
 }
 
+const movieListNoLimit = () => async (dispatch) => {
+    dispatch({ type: MOVIE_LIST_NO_LIMIT_REQ })
+    try {
+        const result = await Axios.get(`/api/movies/all/nolimit`)
+        dispatch({ type: MOVIE_LIST_NO_LIMIT_SUCCESS, payload: result.data })
+    }
+    catch (err) {
+        dispatch({ type: MOVIE_LIST_NO_LIMIT_FAIL, payload: err.response.data })
+    }
+}
+
 export default {
     movieList,
     singleMovie,
@@ -136,5 +148,6 @@ export default {
     deleteMovie,
     searchMovieTitle, 
     searchMovieGenre,
-    similarMovieGenre
+    similarMovieGenre,
+    movieListNoLimit
 }

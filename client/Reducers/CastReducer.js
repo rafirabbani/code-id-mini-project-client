@@ -7,7 +7,7 @@ const castReducer = (state = {}, action) => {
         case GET_CASTS_LIST_REQ:
             return { loading: true }
         case GET_CASTS_LIST_SUCCESS:
-            return { loading: false, casts: action.payload }
+            return { loading: false, castList: action.payload }
         case GET_CASTS_LIST_FAIL:
             return { loading: false, error: action.payload}
         case CREATE_CAST_REQ:

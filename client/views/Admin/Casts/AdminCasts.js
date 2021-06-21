@@ -5,14 +5,18 @@ import { useSelector, useDispatch } from 'react-redux'
 import CastActions from '../../../Actions/CastActions'
 import AdminCreateCastModal from './AdminCreateCast'
 import AdminUpdateCastModal from './AdminUpdateCast'
+import MainLayout from '../Components/AdminMainLayout'
 
 
 export default function AdminCasts() {
     const dispatch = useDispatch()
+    const [pageChange, setPageChange] = useState(false)
     const [createCastModal, setCreateCastModal] = useState(false)
     const [updateCastModal, setUpdateCastModal] = useState(false)
+    const [pages, setPages] =  useState([])
+    const [casts, setCasts] = useState([])
     const { cast } = useSelector((state) => state)
-    const { casts, createCast, updateCast } = cast
+    const { castList, createCast, updateCast } = cast
     const [detailCast, setDetailCast] = useState({
         castID: undefined,
         castName: undefined,
@@ -21,12 +25,28 @@ export default function AdminCasts() {
         movieID: undefined,
     })
 
+    const onChangePage = (page) => {
+        dispatch(CastActions.getCastsList(page))
+        setPageChange(true)
+    }
+
     useEffect(() => {
-        dispatch(CastActions.getCastsList())
+        dispatch(CastActions.getCastsList(0))
     },[])
 
     useEffect(() => {
-        dispatch(CastActions.getCastsList())
+        if (castList) {
+            const { casts, totalPages } = castList
+            setCasts(casts)
+            setPages([...Array(totalPages).keys()])
+            setPageChange(false)
+
+
+        }
+    }, [castList, pageChange])
+
+    useEffect(() => {
+        dispatch(CastActions.getCastsList(0))
     }, [createCast, updateCast])
 
     const onDetails = (cast_id, cast_name, cast_gender, cast_birthdate, cast_movie_id) => {
@@ -42,6 +62,7 @@ export default function AdminCasts() {
     
     return (
         <div>
+            <MainLayout>
             <div className="flex flex-row items-center justify-between w-full flex-shrink-0">
                 <label><AdminHeader title={'Casts'}/></label>
                 <button className="bg-blue-500 text-white text-xl px-3 py-3 rounded-lg focus:outline-none active:bg-blue-300" onClick={()=> setCreateCastModal(true)}>Add New Cast</button>
@@ -111,8 +132,21 @@ export default function AdminCasts() {
                                     </tbody>
                                 </table>
                             </div>
+                            <div className="flex flex-row items-center justify-center mt-5">
+                                Pages:
+                                <div className="flex flex-row items-center justify-between">
+                                    {
+                                        pages && pages.map((page) => (
+                                            <div key={page}>
+                                                <button className="mx-3 focus:outline-none hover:underline focus:underline" onClick={()=> onChangePage(page)}>{page + 1}</button>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    
                     {
                         createCastModal ? <AdminCreateCastModal setCreateCastModal={()=> setCreateCastModal(false)} title="Add New Cast"/> : null
                     }
@@ -121,6 +155,7 @@ export default function AdminCasts() {
                     }
                 </div>
             </div>
+            </MainLayout>
         </div>
     )
 }

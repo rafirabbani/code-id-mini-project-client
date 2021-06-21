@@ -113,7 +113,7 @@ const getAllMovies = async (req, res) => {
                 ['movie_id', 'ASC']
             ]
         })
-        const response = getPagingData(result, page+1, limit)
+        const response = getPagingData(result, (parseInt(page)+1).toString(), limit)
         return res.send(response)
         //console.log(result)  
     }
@@ -213,21 +213,23 @@ const updateMovie = async (req, res) => {
                     res.status(400)
                     return res.send(`Cannot Update With Existing Name`)
                 }
-                else if (Object.keys(files).length !== 0) {
+                if (Object.keys(files).length !== 0) {
                     data.movie_image = files.movie_image.name 
                     data.movie_image_path = files.movie_image.path
                 }
-                else if (data.movie_title && Object.keys(files).length === 0) {
-                    const title = data.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                    const folder = `${pathDir}/movies/${req.params.id}_${title}/`
-                    if (!fs.existsSync(folder)) {
-                        const oldTitle = result.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
-                        const imagePath = path.join(folder, result.movie_image)
-                        fs.mkdirSync(folder)
-                        fs.renameSync(result.movie_image_path, imagePath)
-                        fs.rmSync(`${pathDir}/movies/${req.params.id}_${oldTitle}`, { recursive: true })
-                        data.movie_image_path = imagePath
-                    }
+                if (data.movie_title && Object.keys(files).length === 0) {
+                    if (result.movies_image) {
+                        const title = data.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                        const folder = `${pathDir}/movies/${req.params.id}_${title}/`
+                        if (!fs.existsSync(folder)) {
+                            const oldTitle = result.movie_title.replace(/\s+/g, '').replace(/\W/g, '').trim()
+                            const imagePath = path.join(folder, result.movie_image)
+                            fs.mkdirSync(folder)
+                            fs.renameSync(result.movie_image_path, imagePath)
+                            fs.rmSync(`${pathDir}/movies/${req.params.id}_${oldTitle}`, { recursive: true })
+                            data.movie_image_path = imagePath
+                        }
+                    }  
                 }
                 try {
                     const update = await Movies.update(data.dataValues, {
@@ -331,13 +333,20 @@ const getFewMovies = async (req, res) => {
 
 const searchMovieByTitle = async (req, res) => {
     //console.log(req.query)
-    const { movie_title } = req.query
+    const { movie_title, page  } = req.query
+    const { limit, offset } = getPagination(page, 5)
 
     try {
-        const result = await req.context.models.Movies.findAll({
-            where: { movie_title: { [Op.iLike]: `%${movie_title}%` }}
+        const result = await req.context.models.Movies.findAndCountAll({
+            where: { movie_title: { [Op.iLike]: `%${movie_title}%` }},
+            limit: limit,
+            offset: offset,
+            order: [
+                ['movie_rating', 'DESC']
+            ]
         })
-        return res.send(result)
+        const response = getPagingData(result, (parseInt(page)+1).toString(), limit)
+        return res.send(response)
     }
     catch (err) {
         console.log(err)
@@ -347,12 +356,20 @@ const searchMovieByTitle = async (req, res) => {
 }
 
 const searchMovieByGenre = async (req, res) => {
-    const { movie_genre } = req.query
+    const { movie_genre, page  } = req.query
+    const { limit, offset } = getPagination(page, 5)
     try {
-        const result = await req.context.models.Movies.findAll({
-            where: { movie_genre: {[Op.iLike]: `%${movie_genre}%`}}
+        const result = await req.context.models.Movies.findAndCountAll({
+            where: { movie_genre: {[Op.iLike]: `%${movie_genre}%`}},
+            limit: limit,
+            offset: offset,
+            order: [
+                ['movie_rating', 'DESC']
+            ]
+
         })
-        return res.send(result)
+        const response = getPagingData(result, (parseInt(page)+1).toString(), limit)
+        return res.send(response)
     }
     catch (err) {
         console.log(err)
@@ -380,6 +397,17 @@ const getSimilarMovies = async (req, res) => {
     }
 }
 
+const getAllMoviesNoLimit = async (req, res) => {
+    try {
+        const result = await req.context.models.Movies.findAll()
+        return res.send(result)
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send('Something Went Wrong')
+    }
+}
+
 export default {
     createMovie,
     getAllMovies,
@@ -390,5 +418,6 @@ export default {
     getFewMovies, 
     searchMovieByTitle,
     searchMovieByGenre,
-    getSimilarMovies
+    getSimilarMovies,
+    getAllMoviesNoLimit
 }

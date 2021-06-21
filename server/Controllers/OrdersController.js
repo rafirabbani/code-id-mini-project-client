@@ -52,7 +52,7 @@ const getAllOrdersUser = async (req, res) => {
             return res.send(result)
         }
         else {
-            return res.send('You Havent Order Anything')
+            return res.status(404).send('You Havent Order Anything')
         }
     }
     catch (err) {
@@ -131,7 +131,7 @@ const getPaidOrderByUser = async (req, res) => {
             return res.send(result)
         }
         else {
-            return res.send('You Havent Order Anything')
+            return res.status(404).send('You Havent Order Anything')
         }
     }
     catch (err) {
@@ -153,7 +153,7 @@ const getCancelledOrderByUser = async (req, res) => {
             return res.send(result)
         }
         else {
-            return res.send('You Havent Order Anything')
+            return res.status(404).send('You Havent Order Anything')
         }
     }
     catch (err) {

@@ -4,7 +4,8 @@ import { MOVIE_LIST_REQ, MOVIE_LIST_SUCCESS, MOVIE_LIST_FAIL,
          MOVIE_UPDATE_FAIL, MOVIE_DELETE_REQ, MOVIE_DELETE_SUCCESS, MOVIE_DELETE_FAIL, MOVIE_SEARCH_BY_TITLE_REQ,
          MOVIE_SEARCH_BY_TITLE_FAIL, MOVIE_SEARCH_BY_TITLE_SUCCESS, MOVIE_SEARCH_BY_GENRE_REQ, MOVIE_SEARCH_BY_GENRE_SUCCESS,
          MOVIE_SEARCH_BY_GENRE_FAIL, MOVIE_SIMILAR_BY_GENRE_REQ, MOVIE_SIMILAR_BY_GENRE_SUCCESS,
-         MOVIE_SIMILAR_BY_GENRE_FAIL  } from '../Constants/MovieConstants'
+         MOVIE_SIMILAR_BY_GENRE_FAIL, MOVIE_LIST_NO_LIMIT_REQ, MOVIE_LIST_NO_LIMIT_SUCCESS,
+         MOVIE_LIST_NO_LIMIT_FAIL  } from '../Constants/MovieConstants'
 
 
 const movieReducer = (state = { loading: true }, action) => {
@@ -56,6 +57,12 @@ const movieReducer = (state = { loading: true }, action) => {
         case MOVIE_SIMILAR_BY_GENRE_SUCCESS:
             return {...state, loading: false, similarMovies: action.payload }
         case MOVIE_SIMILAR_BY_GENRE_FAIL: 
+            return {...state, loading: false, err: action.payload }
+        case MOVIE_LIST_NO_LIMIT_REQ:
+            return {...state, loading: true }
+        case MOVIE_LIST_NO_LIMIT_SUCCESS:
+            return {...state, loading: false, moviesNoLimit: action.payload }
+        case MOVIE_LIST_NO_LIMIT_FAIL:
             return {...state, loading: false, err: action.payload }
         default:
             return state

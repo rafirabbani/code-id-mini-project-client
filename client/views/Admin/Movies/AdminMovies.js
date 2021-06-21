@@ -5,8 +5,12 @@ import MovieActions from '../../../Actions/MovieActions'
 import { TrashIcon, FolderOpenIcon } from '@heroicons/react/outline'
 import AdminCreateMovie from './AdminCreateMovie'
 import AdminUpdateMovie from './AdminUpdateMovie'
+import MainLayout from '../Components/AdminMainLayout'
 
 export default function Movies() {
+    const [movies, setMovies] = useState([])
+    const [pages, setPages] = useState([])
+    const [pageChange, setPageChange] = useState(false)
     const [createMovieModal, setCreateMovieModal] = useState(false)
     const [updateMovieModal, setUpdateMovieModal] = useState(false)
     const [update, setUpdate] = useState(false)
@@ -29,21 +33,32 @@ export default function Movies() {
     })
     const { movie } = useSelector((state) => state)
     const dispatch = useDispatch()
-    const { movies, createMovie, updateMovie, deleteMovie } = movie
+    const { movieData, createMovie, updateMovie, deleteMovie } = movie
+    
 
     useEffect(() => {
-        dispatch(MovieActions.movieList());
+        dispatch(MovieActions.movieList(0));
     }, [])
 
     useEffect(() => { 
-        if (!movies) {
-            dispatch(MovieActions.movieList())
+        if (!movieData) {
+            dispatch(MovieActions.movieList(0))
         }
+        setPageChange(false)
         setUpdate(false)
     }, [update, createMovie, updateMovie, deleteMovie])
 
-    const handleDetail = (movieID, movieTitle, movieEpisode, movieDirector, movieStudio, movieTVStatus, movieDuration, 
-        movieRelease, movieCountry,movieGenre, movieRating, movieNetwork, movieTrailer, 
+    useEffect(() => {   
+        if (movieData) {
+            const { movies, totalPages } = movieData
+            setMovies(movies)
+            setPages([...Array(totalPages).keys()])
+            setPageChange(false)
+        }
+    }, [movieData])
+
+    const handleDetail = (movieID, movieTitle, movieEpisode, movieDirector, movieStudio, movieTVStatus, movieDuration,
+        movieRelease, movieCountry,movieGenre, movieRating, movieNetwork, movieTrailer,
         movieViews, moviePrice) => {
             setUpdateMovieModal(true)
             setDetailMovie({
@@ -62,23 +77,29 @@ export default function Movies() {
                 movie_trailer: movieTrailer,
                 movie_views: movieViews,
                 movie_price: moviePrice,
-            })
-            
-        }
+            })   
+    }
 
-        const onDestroy = (id) => {
-            dispatch(MovieActions.deleteMovie(id)).then((result) => {
-                if (result.status === 200) {
-                    alert(`Movie Delete`)
-                }
-                else {
-                    alert(`Delete Fail`)
-                }
-            })
-        }
+    const onDestroy = (id) => {
+        dispatch(MovieActions.deleteMovie(id)).then((result) => {
+            if (result.status === 200) {
+                alert(`Movie Delete`)
+            }
+            else {
+                alert(`Delete Fail`)
+            }
+        })
+    }
+
+    const onPageChange = (page) => {
+        dispatch(MovieActions.movieList(page))
+        setPageChange(true)
+    }
+
 
     return (
         <div>
+            <MainLayout>
             <div className="flex flex-row items-center justify-between w-full flex-shrink-0">
                 <label><AdminHeader title={'Movies'}/></label>
                 <button className="bg-blue-500 text-white text-xl px-3 py-3 rounded-lg focus:outline-none active:bg-blue-300" onClick={()=> setCreateMovieModal(true)}>Create New Movie</button>
@@ -160,6 +181,18 @@ export default function Movies() {
                                     </tbody>
                                 </table>
                             </div>
+                            <div className="flex flex-row items-center justify-center mt-5">
+                                <label>Pages:</label>
+                                <div className="flex flex-row items-center justify-between">
+                                    {
+                                        pages && pages.map((page) => (
+                                            <div className="mx-3" key={page}>
+                                                <button className="focus:outline-none hover:underline focus:underline" onClick={()=> onPageChange(page)}>{page+1}</button>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -174,6 +207,7 @@ export default function Movies() {
                 updateMovieModal ? <AdminUpdateMovie setUpdateMovieModal={()=> setUpdateMovieModal(false)} title={"Update Movie"} movie={detailMovie} setUpdate={()=> setUpdate(true)}/>
                 : null
             }
+            </MainLayout>
         </div>
     )
 }
