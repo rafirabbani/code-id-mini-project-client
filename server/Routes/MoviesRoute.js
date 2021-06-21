@@ -15,5 +15,6 @@ router.get('/some/list', movies.getFewMovies)
 router.get('/search/title/', movies.searchMovieByTitle)
 router.get('/search/genre/', movies.searchMovieByGenre)
 router.get('/similar/genre', movies.getSimilarMovies)
+router.get('/all/nolimit', movies.getAllMoviesNoLimit)
 
 export default router

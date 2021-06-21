@@ -32,7 +32,6 @@ import { StaticRouter } from 'react-router-dom'
 import Template from './../template'
 import { Provider } from 'react-redux'
 import store from '../client/ReduxStore'
-import Client from '../client/App'
 
 // Create Redux Store
 //const store = createStore(reducer)
@@ -65,7 +64,7 @@ app.use('/api/auth', routes.AuthRoute)
 app.use('/api/transactions', routes.TransactionsRoute)
 
 // Client Main Route
-app.get('*', (req, res) => {
+app.get('/mini-project/*', (req, res) => {
     const context = {}
     const markup = ReactDOMServer.renderToString(
       <Provider store={store}>
