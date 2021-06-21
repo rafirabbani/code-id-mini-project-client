@@ -1,5 +1,4 @@
-import React, { useState, Fragment, useRef } from 'react'
-import { Transition, Dialog } from '@headlessui/react'
+import React from 'react'
 import CheckIcon from '@heroicons/react/solid/CheckIcon'
 
 export default function UpdateModal(props) {

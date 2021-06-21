@@ -1,5 +1,6 @@
 import { AUTH_SIGNIN_REQ, AUTH_SIGNIN_SUCCESS, AUTH_SIGNIN_FAIL, AUTH_SIGNOUT_REQ, AUTH_SIGNOUT_SUCCESS,
     AUTH_SIGNOUT_FAIL } from '../Constants/AuthConstants'
+    
 const authReducer = (state = {}, action) => {
     switch (action.type) {
         case AUTH_SIGNIN_REQ:

@@ -1,24 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import Popcorn from '../../assets/images/popcorn-png-3.png'
+import bgImage from "../../assets/images/landing-page.jpg"
+import Popcorn from "../../assets/images/popcorn-png-3.png"
 import { useHistory } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import AuthActions from '../../Actions/AuthActions'
 import WarningModal from './WarningModal'
 
 export default function SignIn() {
     const dispatch = useDispatch()
     const history = useHistory()
-    //const { auth } = useSelector((state) => state)
     const [warningEmail, setWarningEmail] = useState(false)
     const [warningPassword, setWarningPassword] = useState(false)
     const [values, setValues] = useState([])
     const [warningModal, setWarningModal] = useState(false)
-
-    useEffect(() => {
-        if (localStorage.getItem('data')) {
-            history.push('/mini-project/store/home')
-        }
-    }, [])
 
     const handleChange = name => event => {
         setValues({...values, [name]: event.target.value})
@@ -28,14 +22,6 @@ export default function SignIn() {
         else if (name === 'user_password') {
             setWarningPassword(false)
         }
-    }
-
-    const toLandingPage = () => {
-        history.push('/mini-project/')
-    }
-
-    const toSignUp = () => {
-        history.push('/mini-project/signup')
     }
 
     const onSubmit = (e) => {
@@ -64,37 +50,52 @@ export default function SignIn() {
     }
 
     return (
-            <div className='min-h-screen bg-black'>
-          <nav className="flex items-center justify-between bg-red-600 ">
-            <img src={Popcorn} className="h-14 w-14 ml-10 py-2 px-2" alt='icon'></img>
-            <button className="mr-10 text-white py-2 px-3 rounded text-xl" onClick={toLandingPage}>Home</button>
-          </nav>
-          <div className="flex items-center justify-center mt-20">
-              <h1 className='text-white text-center text-3xl font-serif'>WELCOME BACK, PLEASE LOGIN TO ACCESS THE STORE</h1>
-          </div>
-          <div className="flex flex-wrap items-center justify-center mt-10 mr-5">
-            <div className=' text-red-600 font-bold rounded-lg border px-10 py-10 ring-4 ring-red-600 bg-white'>
-              <form method='post'action='#'>
-                <div className='text-sm'><label>Email</label></div>
-                <div className='mt-1'>
-                  <input className='rounded-lg w-full ring-red-600 border-red-600 focus:ring-green-400 focus:border-green-400'id='user_email' name='user_email' type='text' onChange={handleChange('user_email')} style={{input: '-internal-autofill-selected'}}/>
-                  <h1 className='text-sm text-yellow-400' style={{ visibility: (!warningEmail ? 'hidden' : 'visible') }}>Email Required!!!</h1>
+        <div>
+        <section className="min-h-screen flex items-stretch text-white ">
+            <div className="lg:flex w-1/2 hidden bg-gray-500 bg-no-repeat bg-cover relative items-center" style={{backgroundImage: `url(${bgImage})`}}>
+                <div className="absolute bg-black opacity-70 inset-0 z-0"></div>
+                <div className="w-full px-10 z-10">
+                    
+                    {/* <p className="text-3xl my-4">Capture your personal memory in unique way, anywhere.</p> */}
                 </div>
-                <div className='mt-5 text-sm'><label>Password</label></div>
-                <div className='mt-1'>
-                  <input className='rounded-lg w-full bg-opacity-0 ring-red-600 border-red-600 focus:ring-green-400 focus:border-green-400'id='user_password' name='user_password' type='password' onChange={handleChange('user_password')}/>
-                  <h1 className='text-sm text-yellow-400' style={{ visibility: (!warningPassword ? 'hidden' : 'visible') }}>Password Required!!!</h1>
-                </div>
-                <button className='bg-red-600 text-white font-bold rounded-lg w-full mt-6 py-1 flex items-center justify-center'
-                  onClick={onSubmit}>
-                  <h1 className='text-xl'>Sign In</h1></button>
-              </form>
-              <h1 className='text-sm mt-5 font-normal text-blue-600'>Dont Have an account?<button className='ml-2 text-sm px-1 py-1' onClick={toSignUp}>Sign Up Here</button></h1>
             </div>
-          </div>
-          {
-              warningModal ? <WarningModal setWarningModal={()=> setWarningModal(false)}/> : null
-          }
-        </div>
+            <div className="lg:w-1/2 w-full flex items-center justify-center text-center md:px-16 px-0 z-0" style={{backgroundColor: `#161616`}}>
+                <div className="absolute lg:hidden z-10 inset-0 bg-gray-500 bg-no-repeat bg-cover items-center" style={{backgroundImage: `url(https://images.unsplash.com/photo-1577495508048-b635879837f1?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=675&q=80)`}}>
+                    <div className="absolute bg-black opacity-60 inset-0 z-0"></div>
+                </div>
+                <div className="w-full py-6 z-20">
+                    <div className="flex flex-row items-center justify-center">
+                        <img src={Popcorn} style={{width:"100px", height:"100px"}}/>
+                    </div>
+                    <h1 className="my-6">
+                    <h1 className="text-2xl font-bold text-center tracking-wide text-red-600">Your Watching Experience Starts Here...</h1>
+                    </h1>
+                    <form method="post" action="#" className="sm:w-2/3 w-full px-4 lg:px-0 mx-auto"> 
+                        <div className="pb-2 pt-4">
+                            <input type="email" name="email" id="email" placeholder="Email" className="block w-full p-4 text-lg rounded-sm bg-black focus:border-red-600 focus:ring-0"
+                            onChange={handleChange('user_email')}/>
+                            <label className='text-sm text-yellow-400 mt-1' style={{ visibility: (!warningEmail ? 'hidden' : 'visible') }}>Email Required!!!</label>
+                        </div>
+                        <div className="pb-2 pt-4">
+                            <input className="block w-full p-4 text-lg rounded-sm bg-black focus:border-red-600 focus:ring-0" type="password" name="password" id="password" placeholder="Password"
+                            onChange={handleChange('user_password')}/>
+                            <label className='text-sm text-yellow-400 mt-1' style={{ visibility: (!warningPassword ? 'hidden' : 'visible') }}>Password Required!!!</label>
+                        </div>
+                        <div className="text-right text-gray-400">
+                            <a className="mx-1 text-sm cursor-default">Dont Have Account?</a>
+                            <a href="/mini-project/signup"className="mx-1 text-sm hover:underline hover:cursor-pointer hover:text-white">Register Here</a>
+                        </div>
+                        <div className="px-4 pb-2 pt-4">
+                            <button className="uppercase block w-full p-4 text-lg rounded-full bg-red-600 hover:bg-red-800 focus:outline-none"
+                            onClick={onSubmit}>sign in</button>
+                        </div>
+                    </form>
+                </div>
+                {
+                    warningModal ? <WarningModal setWarningModal={()=> setWarningModal(false)}/> : null
+                }
+            </div>
+        </section>
+    </div>
     )
 }

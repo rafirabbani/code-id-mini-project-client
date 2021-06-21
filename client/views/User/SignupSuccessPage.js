@@ -15,7 +15,7 @@ export default function SignupSuccessModal() {
                     <h2 className="text-4xl font-bold text-green-400 w-full">SIGNUP SUCCESS</h2>
                 </div>
                 <div className='flex items-center justify-center'>
-                    <button className="mb-2 md:mb-0 bg-green-400 border border-green-400 px-3 py-2 text-sm tracking-wider text-white rounded-lg focus:ring-0 focus:border-transparent ring-0 border-transparent outline-none"
+                    <button className="mb-2 md:mb-0 bg-green-400 border border-green-400 px-3 py-2 text-sm tracking-wider text-white rounded-lg focus:ring-0 focus:border-transparent ring-0 border-transparent focus:outline-none"
                     onClick={onClose}>Click Here To Log In Into Your Account</button>
                 </div>
             </div>

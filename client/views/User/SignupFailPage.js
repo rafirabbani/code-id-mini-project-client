@@ -15,7 +15,7 @@ export default function SignupFailModal() {
                     <h2 className="text-4xl font-bold text-red-600 w-full">SIGNUP FAILED</h2>
                 </div>
                 <div className='flex items-center justify-center'>
-                    <button className="mb-2 md:mb-0 bg-red-600 border border-red-600 px-3 py-2 text-sm tracking-wider text-white rounded-lg focus:ring-0 focus:border-transparent ring-0 border-transparent outline-none"
+                    <button className="mb-2 md:mb-0 bg-red-600 border border-red-600 px-3 py-2 text-sm tracking-wider text-white rounded-lg focus:ring-0 focus:border-transparent ring-0 border-transparent focus:outline-none"
                     onClick={onClose}>Close</button>
                 </div>
             </div>

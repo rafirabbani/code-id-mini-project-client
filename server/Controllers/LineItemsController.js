@@ -138,17 +138,31 @@ const sumLineItems = async (req, res) => {
     //console.log(movies)
     
     if (movies.length > 1) {
-        subTotal['total_due'] = movies.reduce((total, subtotal) => ({subtotal: total.subtotal + subtotal.subtotal}))
-        subTotal['total_qty'] = movies.reduce((total, qty) => ({ qty: total.qty + qty.qty }))
+        let subtotal = movies.reduce((acc, movie) => {return acc + movie.subtotal}, 0)
+        let totalQTY = movies.reduce((acc, movie) => {return acc + movie.qty}, 0)
+        let disc = subtotal * 0.2
+        let tax = (subtotal  - disc) * 0.1
+        subTotal['subtotal'] = subtotal
+        subTotal['total_qty'] = totalQTY
+        subTotal['disc'] = disc
+        subTotal['tax'] = tax
+        subTotal['total_due'] = subtotal - disc + tax
     }
     else {
         if (movies[0]) {
-            subTotal['total_due'] = { subtotal: movies[0].subtotal } 
-            subTotal['total_qty'] = { qty:movies[0].qty }
+            subTotal['subtotal'] = movies[0].subtotal
+            subTotal['total_qty'] = movies[0].qty
+            subTotal['disc'] = 0
+            subTotal['tax'] = (subTotal.subtotal - subTotal.disc) * 0.1
+            subTotal['total_due'] = subTotal.subtotal - subTotal.disc + subTotal.tax
+
         }
         else {
-            subTotal['total_due'] = { subtotal: 0 }
-            subTotal['total_qty'] = { qty: 0 }
+            subTotal['subtotal'] = 0
+            subTotal['total_qty'] = 0
+            subTotal['tax'] = 0
+            subTotal['disc'] = 0
+            subTotal['total_due'] = 0
         }
         
     }
@@ -177,20 +191,32 @@ const bulkUpdateLineItems = async (req, res, next) => {
     //return res.send(result)
 }
 
-
-/* const getLineItemInfo = async (req, res) => {
+const getItemsByOrderNum = async (req, res) => {
     try {
         const result = await req.context.models.Line_Items.findAll({
-            where: { line_item_id: { [Op.any]: `{${ req.body.movie_id }}` } },
-            include: req.context.models.Movies
+            where: { line_item_order_name : req.params.order_name }
         })
-        return res.status(200).send(result)
+        return res.send(result)
     }
     catch (err) {
         console.log(err)
-        return res.status(500).send('Something went wrong')
+        return res.status(500).send('Something Wrong')
     }
-} */
+}
+
+const updateItemsByOrderNumber = async (req, res, next) => {
+    try {
+        const result = await req.context.models.Line_Items.findAll({
+            where: { line_item_order_name : req.params.order_name }
+        })
+        req.items = result
+        next()
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send('Something Wrong')
+    }
+}
 
 
 export default {
@@ -199,6 +225,8 @@ export default {
     sumLineItems,
     bulkUpdateLineItems,
     newLineItem,
-    deleteLineItem
+    deleteLineItem,
+    getItemsByOrderNum,
+    updateItemsByOrderNumber
     //getLineItemInfo
 }

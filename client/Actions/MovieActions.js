@@ -1,12 +1,16 @@
 import { MOVIE_LIST_REQ, MOVIE_LIST_SUCCESS, MOVIE_LIST_FAIL, 
-    MOVIE_SINGLE_REQ, MOVIE_SINGLE_SUCCESS, MOVIE_SINGLE_FAIL, MOVIE_CREATE_REQ, MOVIE_CREATE_SUCCESS,
-    MOVIE_CREATE_FAIL, MOVIE_UPDATE_REQ, MOVIE_UPDATE_SUCCESS, MOVIE_UPDATE_FAIL } from '../Constants/MovieConstants'
+         MOVIE_SINGLE_REQ, MOVIE_SINGLE_SUCCESS, MOVIE_SINGLE_FAIL, MOVIE_CREATE_REQ, MOVIE_CREATE_SUCCESS,
+         MOVIE_CREATE_FAIL, MOVIE_UPDATE_REQ, MOVIE_UPDATE_SUCCESS, MOVIE_UPDATE_FAIL, MOVIE_DELETE_REQ,
+         MOVIE_DELETE_SUCCESS, MOVIE_DELETE_FAIL, MOVIE_SEARCH_BY_TITLE_REQ, MOVIE_SEARCH_BY_TITLE_SUCCESS,
+         MOVIE_SEARCH_BY_TITLE_FAIL, MOVIE_SEARCH_BY_GENRE_REQ, MOVIE_SEARCH_BY_GENRE_SUCCESS,
+         MOVIE_SEARCH_BY_GENRE_FAIL, MOVIE_SIMILAR_BY_GENRE_REQ, MOVIE_SIMILAR_BY_GENRE_SUCCESS,
+         MOVIE_SIMILAR_BY_GENRE_FAIL } from '../Constants/MovieConstants'
 import Axios from 'axios'
 
-const movieList = () => async (dispatch) => {
+const movieList = (page) => async (dispatch) => {
     dispatch({ type: MOVIE_LIST_REQ })
     try {
-        const result = await Axios.get('/api/movies')
+        const result = await Axios.get(`/api/movies/?page=${page}`)
         dispatch({ type: MOVIE_LIST_SUCCESS, payload: result.data })
     }
     catch (err) {
@@ -60,7 +64,7 @@ const createMovie = (data) => async (dispatch) => {
 }
 
 const updateMovie = (id, data) => async (dispatch) => {
-    console.log(id, data)
+    //console.log(id, data)
     dispatch({ type: MOVIE_UPDATE_REQ })
     const update = new FormData()
     for (const key in data) {
@@ -78,9 +82,59 @@ const updateMovie = (id, data) => async (dispatch) => {
 
 }
 
+const deleteMovie = (id) => async (dispatch) => {
+    dispatch({ type: MOVIE_DELETE_REQ })
+    try {
+        const result = await Axios.delete(`/api/movies/delete/${id}`)
+        dispatch({ type: MOVIE_DELETE_SUCCESS, payload: result.data })
+        return result
+    }
+    catch (err) {
+        dispatch({ type: MOVIE_DELETE_FAIL, payload: err.response.data })
+        return err.response
+    }
+}
+
+const searchMovieTitle = (value) => async (dispatch) => {
+    dispatch({ type: MOVIE_SEARCH_BY_TITLE_REQ })
+    try {
+        const result = await Axios.get(`/api/movies/search/title/?movie_title=${value}`)
+        dispatch({ type: MOVIE_SEARCH_BY_TITLE_SUCCESS, payload: result.data })
+    }
+    catch (err) {
+        dispatch({ type: MOVIE_SEARCH_BY_TITLE_FAIL, payload: err.response.data }) 
+    }
+}
+
+const searchMovieGenre = (value) => async (dispatch) => {
+    dispatch({ type: MOVIE_SEARCH_BY_GENRE_REQ })
+    try {
+        const result = await Axios.get(`/api/movies/search/genre/?movie_genre=${value}`)
+        dispatch({ type: MOVIE_SEARCH_BY_GENRE_SUCCESS, payload: result.data })
+    }
+    catch (err) {
+        dispatch({ type: MOVIE_SEARCH_BY_GENRE_FAIL, payload: err.response.data }) 
+    }
+}
+
+const similarMovieGenre = (genre, id) => async (dispatch) => {
+    dispatch({ type: MOVIE_SIMILAR_BY_GENRE_REQ })
+    try {
+        const result = await Axios.get(`/api/movies/similar/genre?movie_genre=${genre}&movie_id=${id}`)
+        dispatch({ type: MOVIE_SIMILAR_BY_GENRE_SUCCESS, payload: result.data })
+    }
+    catch (err) {
+        dispatch({ type: MOVIE_SIMILAR_BY_GENRE_FAIL, payload: err.response.data })
+    }
+}
+
 export default {
     movieList,
     singleMovie,
     createMovie,
-    updateMovie
+    updateMovie,
+    deleteMovie,
+    searchMovieTitle, 
+    searchMovieGenre,
+    similarMovieGenre
 }

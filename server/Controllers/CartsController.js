@@ -51,7 +51,7 @@ const openCart = async (req, res, next) => {
 const updateCart =  async (req, res, next) => {
     try {
         const result = await req.context.models.Carts.findOne({
-            where: { cart_id: req.params.cart_id/* , cart_status: 'OPEN' */ },
+            where: { cart_id: req.params.cart_id },/* , cart_status: 'OPEN' */ 
             include: req.context.models.Line_Items
         })
         /* if (result.line_items) {
@@ -79,6 +79,7 @@ const updateCart =  async (req, res, next) => {
             }, { where: { cart_id: result.cart_id }
             })
             req.items = result.line_items
+            req.params.cart_id = result.cart_id
             req.params.user_id = result.cart_user_id
             //console.log(result)
             next()

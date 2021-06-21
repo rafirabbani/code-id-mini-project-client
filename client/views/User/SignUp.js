@@ -62,7 +62,7 @@ export default function SignUp() {
         <div className='min-h-screen'>
           <nav className="flex items-center justify-between bg-red-600 ">
             <img src={Popcorn} className="h-14 w-14 ml-10 py-2 px-2" alt='icon'></img>
-            <button className="mr-10 text-white py-2 px-3 rounded text-xl" onClick={toLandingPage}>Home</button>
+            <button className="mr-10 text-white py-2 px-3 rounded text-xl focus-outline-none" onClick={toLandingPage}>Home</button>
           </nav>
           <div className="flex flex-wrap items-center justify-center min-h-screen">
             <div className=' text-red-600 font-bold rounded-lg border ring-4 ring-red-600 px-10 py-10 border-red-600'>
@@ -81,10 +81,10 @@ export default function SignUp() {
                   <input className='rounded-lg w-full ring-red-600 border-red-600 focus:ring-green-400 focus:border-green-400'id='user_password' name='user_password' type='password' onChange={handleChange('user_password')}/>
                   <h1 className='text-sm text-yellow-400' style={{ visibility: (!warningPassword ? 'hidden' : 'visible') }}>Password Required!!!</h1>
                 </div>
-                <button className='bg-red-600 text-white font-bold rounded-lg w-full mt-5 py-1 flex items-center justify-center'
+                <button className='bg-red-600 text-white font-bold rounded-lg w-full mt-5 py-1 flex items-center justify-center focus:outline-none'
                   onClick={onSubmit}>
                   <i className='text-xl flex justify-center not-italic'>Next<ArrowRightIcon className='ml-2 w-4' style={{position: 'relative', top: '2px'}}/></i></button>
-                <h1 className='text-blue-600 text-sm mt-3'>Already have an account? <button className='text-xs ml-3 font-bold' onClick={toLogin}>Sign In Here</button></h1>
+                <h1 className='text-blue-600 text-sm mt-3'>Already have an account? <button className='text-xs ml-3 font-bold focus:outline-none' onClick={toLogin}>Sign In Here</button></h1>
               </form>
             </div>
           </div>

@@ -88,7 +88,7 @@ export default function Profile() {
         <div className='min-h-screen'>
           <nav className="flex items-center justify-between bg-red-600 ">
             <img src={Popcorn} className="h-14 w-14 ml-10 py-2 px-2" alt='icon'></img>
-            <button className="mr-10 text-white py-2 px-3 rounded text-xl" onClick={toLandingPage}>Home</button>
+            <button className="mr-10 text-white py-2 px-3 rounded text-xl focus:outline-none" onClick={toLandingPage}>Home</button>
           </nav>
           <div className="flex flex-wrap items-center justify-center min-h-screen">
             <div className=' text-red-600 font-bold rounded-lg border ring-4 ring-red-600 px-10 py-10 border-red-600'>
@@ -105,8 +105,8 @@ export default function Profile() {
                 <div className='mt-2 text-sm'><label>Birth Date</label></div>
                 <div className='mt-1'>
                   {/* <Calendar/> */}
-                  <DatePicker className='border-red-600 rounded-lg w-full focus:border-green-400 focus:ring-green-400 text-red-600' id='user_birthdate' name='user_birthdate' selected={values.user_birthdate} onChange={(date)=>handleDateChange(date)} dateFormat="yyyy-MM-dd"/>
-                  {/* <input className='rounded-lg w-full'id='user_birthdate' name='user_birthdate' type='text' onChange={handleChange('user_birthdate')}/>} */}
+                  {/* <DatePicker className='border-red-600 rounded-lg w-full focus:border-green-400 focus:ring-green-400 text-red-600' id='user_birthdate' name='user_birthdate' selected={values.user_birthdate} onChange={(date)=>handleDateChange(date)} dateFormat="yyyy-MM-dd"/> */}
+                  <input className='rounded-lg w-full'id='user_birthdate' name='user_birthdate' type='date' onChange={handleChange('user_birthdate')}/>
                 </div>
                 <div className='mt-7 text-sm'><label>Gender</label></div>
                 <div className='mt-1'><select className='rounded-lg border-red-600 focus:ring-green-400 focus:border-green-400 appearance-none' id='user_gender' name='user_gender'
@@ -131,11 +131,11 @@ export default function Profile() {
                     </div>
                   </div>
                 </div>
-                <button className='bg-red-600 text-white font-bold rounded-lg w-full mt-5 py-1 flex items-center justify-center text-xl'
+                <button className='bg-red-600 text-white font-bold rounded-lg w-full mt-5 py-1 flex items-center justify-center text-xl focus:outline'
                   onClick={onSubmit}>
                   Sign Up</button>
               </form>
-              <h1 className='mt-5 text-sm text-blue-600'>Already have an account? <button className='text-xs ml-3 font-bold' onClick={toLogin}>Sign In Here</button></h1>
+              <h1 className='mt-5 text-sm text-blue-600'>Already have an account? <button className='text-xs ml-3 font-bold focus:outline-none' onClick={toLogin}>Sign In Here</button></h1>
             </div>
           </div>
           {/* <DatePicker className='rounded-lg w-full' id='user_birthdate' name='user_birthdate' selected={startDate} onChange={(date) => setStartDate(date)} dateFormat='yyyy-MM-dd'/> */}

@@ -1,5 +1,4 @@
 import React, { useState, Fragment, useRef } from 'react'
-import { Redirect } from 'react-router-dom'
 import PencilAltIcon from '@heroicons/react/outline/PencilAltIcon'
 import { Transition, Dialog } from '@headlessui/react'
 import { DocumentAddIcon } from '@heroicons/react/outline'
@@ -29,6 +28,7 @@ export default function AdminUpdateMovie(props) {
     const modalClose = () => {
         //console.log(values, edit)
         props.setUpdateMovieModal(false);
+        
         setOpen(!open)
     }
 
@@ -36,7 +36,8 @@ export default function AdminUpdateMovie(props) {
       dispatch(MovieActions.updateMovie(props.movie.movie_id, values)).then(
         (result) => {
           if (result.status === 200) {
-            //alert(`Movie Update Success`)
+            props.setUpdate(true)
+            alert(`Movie Update Success`)
             //return <Redirect to="/mini-project/admin/home"/>
           }
           else {
@@ -104,7 +105,7 @@ export default function AdminUpdateMovie(props) {
                             </div>
                             <button className="text-blue-600 ml-20 focus:outline-none rounded-md px-1 py-1 mt-1" onClick={editHandler} style={ edit ? {backgroundColor: '#000000', color: '#FFFFFF'} : null }>
                                     <PencilAltIcon className='' width="35" height="35"/>
-                                </button>
+                            </button>
                         </div> 
                     </Dialog.Title>
                     <div className=" flex items-center justify-center min-w-screen">                    
@@ -154,7 +155,7 @@ export default function AdminUpdateMovie(props) {
                                         <div className="flex text-sm">
                                             <label htmlFor="image" className="relative cursor-pointer rounded-lg font-medium hover:text-blue-600">
                                                 {edit ? `Upload Image` : ''}
-                                                <input id="image" name="image" onChange={uploadSingleFile('image')} type="file" className="sr-only" disabled={edit ? false : true} />
+                                                <input id="image" name="image" onChange={uploadSingleFile('image')} type="file" className="sr-only" disabled={edit ? false : true}/>
                                             </label>
                                         </div>
                                     </div>

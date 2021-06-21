@@ -11,8 +11,8 @@ router.post('/cart/create', cart.openCart, lineItem.checkLineItem, lineItem.newL
 // Update Existing Cart With New Line Item
 router.put('/cart/update/additem/:cart_id', cart.updateCart, lineItem.checkLineItem, lineItem.newLineItem, cart.getAllCartsByUser)
 
-//Get Line Item Info
-//router.get('/item/info/', lineItem.getLineItemInfo)
+//Get Items by Order Name
+router.get('/items/ordered/:order_name', lineItem.getItemsByOrderNum)
 
 // Get All Open Carts
 router.get('/cart/open', cart.getAllOpenCarts)
@@ -34,5 +34,11 @@ router.get('/cart/sum/:cart_id', cart.sumLineItems, lineItem.sumLineItems)
 
 // Check Out
 router.put('/cart/checkout/:cart_id', cart.updateCart, lineItem.bulkUpdateLineItems, cart.getOneCart)
+
+// Get Cart by ID
+router.get('/cart/:cart_id', cart.getOneCart)
+
+//Update Ordered Items
+router.put('/items/ordered/update/:order_name', lineItem.updateItemsByOrderNumber, lineItem.bulkUpdateLineItems, lineItem.getItemsByOrderNum)
 
 export default router

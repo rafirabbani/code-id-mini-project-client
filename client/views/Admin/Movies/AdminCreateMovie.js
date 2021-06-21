@@ -13,7 +13,8 @@ export default function AdminCreateMovie(props) {
     const cancelButtonRef = useRef()
     
     const modalClose = () => {
-        props.setCreateMovieModal(false);
+        props.setCreateMovieModal(false)
+        
         setOpen(!open)
     }
 
@@ -26,6 +27,7 @@ export default function AdminCreateMovie(props) {
       dispatch(MovieActions.createMovie(values)).then((result) => {
         //console.log(result)
         if (result.status === 200) {
+          props.setUpdate(true)
           alert('Create Movie Success')
         }
         else {
