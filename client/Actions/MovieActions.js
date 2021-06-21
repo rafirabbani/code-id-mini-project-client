@@ -107,10 +107,10 @@ const searchMovieTitle = (value) => async (dispatch) => {
     }
 }
 
-const searchMovieGenre = (value) => async (dispatch) => {
+const searchMovieGenre = (genre, page) => async (dispatch) => {
     dispatch({ type: MOVIE_SEARCH_BY_GENRE_REQ })
     try {
-        const result = await Axios.get(`/api/movies/search/genre/?movie_genre=${value}`)
+        const result = await Axios.get(`/api/movies/search/genre/?movie_genre=${genre}&page=${page}`)
         dispatch({ type: MOVIE_SEARCH_BY_GENRE_SUCCESS, payload: result.data })
     }
     catch (err) {

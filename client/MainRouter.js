@@ -1,6 +1,6 @@
 import React from 'react'
 import { Route, Switch } from "react-router-dom"
-import NotFoundPage from './NotFoundPage'
+//import NotFoundPage from './NotFoundPage'
 
 //Test Route
 import TestRoute from './Routers/TestRoute'
@@ -29,7 +29,6 @@ const MainRouter = () => {
           <UserRoute/>
           <AdminRoute/>
         </Route>
-        <Route component={NotFoundPage}/>
       </Switch>
     </>
   )
