@@ -25,9 +25,9 @@ export default function ProfilePage() {
     useEffect(() => {
         dispatch(UserActions.findUserById(user_id))
         dispatch(OrderActions.getOpenOrderByUser(user_id))
-        dispatch(OrderActions.getAllOrderForUser(user_id))
-        dispatch(OrderActions.getPaidOrderForUser(user_id))
-        dispatch(OrderActions.getCancelOrderForUser(user_id))
+        dispatch(OrderActions.getAllOrderForUser(user_id, 0))
+        dispatch(OrderActions.getPaidOrderForUser(user_id, 0))
+        dispatch(OrderActions.getCancelOrderForUser(user_id, 0))
         
     }, [])
 
@@ -93,21 +93,20 @@ export default function ProfilePage() {
                             <button className="bg-black px-1 py-1 rounded-lg text-white mx-3 focus:outline-none focus:bg-gray-600" onClick={showCancelledTransactions}>Cancelled</button>
                         </div>
                         {
-                            allTransactions ? <AllTransactions transactionsList={allOrderUser && allOrderUser}/> : null
+                            allTransactions ? <AllTransactions transactionsList={allOrderUser && allOrderUser} userID={user_id}/> : null
                         }
                         {
                             notPaidTransactions ? <NotPaidTransactions transactionsList={openOrderUser && openOrderUser}/> : null
                         }
                         {
-                            paidTransactions ? <PaidTransactions transactionsList={paidOrderUser && paidOrderUser}/> : null
+                            paidTransactions ? <PaidTransactions transactionsList={paidOrderUser && paidOrderUser} userID={user_id}/> : null
                         }
                         {
-                            cancelledTransactions ? <CancelledTransactions transactionsList={cancelOrderUser && cancelOrderUser}/> : null
+                            cancelledTransactions ? <CancelledTransactions transactionsList={cancelOrderUser && cancelOrderUser} userID={user_id}/> : null
                         }
                             
                     </div>
-                </div>
-                
+                </div> 
             </div>
         </div>
     )

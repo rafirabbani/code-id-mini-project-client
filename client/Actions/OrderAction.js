@@ -65,10 +65,10 @@ const updateOrderByName = (orderNum, trxNum) => async (dispatch) => {
     }
 }
 
-const getAllOrderForUser = (userID) => async (dispatch) => {
+const getAllOrderForUser = (userID, page) => async (dispatch) => {
     dispatch({ type: GET_ALL_ORDER_FOR_USER_REQ })
     try {
-        const result = await Axios.get(`/api/orders/all/user/${userID}`)
+        const result = await Axios.get(`/api/orders/all/user/${userID}?page=${page}`)
         dispatch({ type: GET_ALL_ORDER_FOR_USER_SUCCESS, payload: result.data })
     }
     catch (err) {
@@ -76,10 +76,10 @@ const getAllOrderForUser = (userID) => async (dispatch) => {
     }
 }
 
-const getPaidOrderForUser = (userID) => async (dispatch) => {
+const getPaidOrderForUser = (userID, page) => async (dispatch) => {
     dispatch({ type: GET_PAID_ORDER_FOR_USER_REQ })
     try {
-        const result = await Axios.get(`/api/orders/paid/user/${userID}`)
+        const result = await Axios.get(`/api/orders/paid/user/${userID}?page=${page}`)
         dispatch({ type: GET_PAID_ORDER_FOR_USER_SUCCESS, payload: result.data })
     }
     catch (err) {
@@ -87,10 +87,10 @@ const getPaidOrderForUser = (userID) => async (dispatch) => {
     }
 } 
 
-const getCancelOrderForUser = (userID) => async (dispatch) => {
+const getCancelOrderForUser = (userID, page) => async (dispatch) => {
     dispatch({ type: GET_CANCELLED_ORDER_FOR_USER_REQ })
     try {
-        const result = await Axios.get(`/api/orders/cancel/user/${userID}`)
+        const result = await Axios.get(`/api/orders/cancel/user/${userID}?page=${page}`)
         dispatch({ type: GET_CANCELLED_ORDER_FOR_USER_SUCCESS, payload: result.data })
     }
     catch (err) {
