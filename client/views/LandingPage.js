@@ -10,17 +10,25 @@ export default function LandingPage() {
     const dispatch = useDispatch()
     const history = useHistory()
     const [warning, setWarning] = useState(false)
+    const [notValidEmailWarning, setNotValidEmailWarning] = useState(false)
     const [email, setEmail] = useState([])
     const handleChange = name => event => {
         setEmail({...email, [name]: event.target.value })
         setWarning(false)
+        setNotValidEmailWarning(false)
     }
     const onSubmit = () => {
         //console.log(data)
+        //console.log(validateEmail(email.user_email))
         if (email.user_email) {
-            //console.log(data.user_email)
-            dispatch(UserActions.holdMail(email))
-            history.push('/mini-project/signup')
+            if (validateEmail(email.user_email)) {
+                dispatch(UserActions.holdMail(email))
+                history.push('/mini-project/signup')
+            }
+            else {
+                setNotValidEmailWarning(true)
+            }
+            
         }
         else {
             setWarning(true)
@@ -31,6 +39,11 @@ export default function LandingPage() {
     const toLogin = () => {
         history.push('/mini-project/signin')
     }
+
+    const validateEmail = (email) => {
+        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+      }
     
     return (
         <div className="bg-fixed bg-cover min-h-screen" style={{backgroundImage: `url(${bgImage})`}}>
@@ -55,7 +68,7 @@ export default function LandingPage() {
                             className="border border-red-600 bg-red-600 text-white px-4 py-2 transition duration-500 ease select-none hover:bg-red-600 focus:outline-none focus:shadow-outline"
                             onClick={onSubmit}>
                             Sign Up
-                            </button></span>
+                            </button><label className="text-red-600 mx-2 uppercase" hidden={notValidEmailWarning ? false : true}>please use a valid email address!!!</label></span>
                             <h1 className='text-red-600 font-bold text-l mb-1' style={!warning ? {visibility: 'hidden'}  : {visibility: 'visible'}  }>Email Required!!!</h1>
                         </div>
                     </div>

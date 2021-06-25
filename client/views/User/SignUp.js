@@ -10,17 +10,9 @@ export default function SignUp() {
   const dispatch = useDispatch()
   const [warningEmail, setWarningEmail] = useState(false)
   const [warningPassword, setWarningPassword] = useState(false)
+  const [notValidEmailWarning, setNotValidEmailWarning] = useState(false)
   const data = useSelector((state) => state.user)
   const [values, setValues] = useState([])
-  const handleChange = name => event => {
-    setValues({...values, [name]: event.target.value})
-    if (name === 'user_email') {
-      setWarningEmail(false)
-    }
-    else if (name === 'user_password') {
-      setWarningPassword(false)
-    }
-  }
 
   useEffect(() => {
     if (data.user) {
@@ -32,12 +24,31 @@ export default function SignUp() {
     
   }, []) 
 
+  const handleChange = name => event => {
+    setValues({...values, [name]: event.target.value})
+    if (name === 'user_email') {
+      setWarningEmail(false)
+      setNotValidEmailWarning(false)
+    }
+    else if (name === 'user_password') {
+      setWarningPassword(false)
+    }
+  }
+
+  const validateEmail = (email) => {
+    const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
+
   const onSubmit = (e) => {
     e.preventDefault()
     //console.log(values, data)
     if (values.user_email && values.user_password){
-      dispatch(UserActions.holdPasswordMail(values))
-      history.push('/mini-project/signup/profile')
+      if (validateEmail(values.user_email)) {
+        dispatch(UserActions.holdPasswordMail(values))
+        history.push('/mini-project/signup/profile')
+      } else setNotValidEmailWarning(true)
+
     }
     else if (!values.user_email && values.user_password) {
       setWarningEmail(true)
@@ -75,6 +86,7 @@ export default function SignUp() {
                 <div className='mt-1'>
                   <input className='rounded-lg w-full ring-red-600 border-red-600 focus:ring-green-400 focus:border-green-400'id='user_email' name='user_email' type='text' onChange={handleChange('user_email')} value={values.user_email}/>
                   <h1 className='text-sm text-yellow-400' style={{ visibility: (!warningEmail ? 'hidden' : 'visible') }}>Email Required!!!</h1>
+                  <h1 className='text-sm text-yellow-400' style={{ visibility: (!notValidEmailWarning ? 'hidden' : 'visible') }}>Please Use a Valid Email Address!!!</h1>
                 </div>
                 <div className='mt-5 text-sm'><label>User Password</label></div>
                 <div className='mt-1'>
