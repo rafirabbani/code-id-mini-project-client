@@ -13,9 +13,11 @@ const movieList = (page) => async (dispatch) => {
     try {
         const result = await Axios.get(`/api/movies/?page=${page}`)
         dispatch({ type: MOVIE_LIST_SUCCESS, payload: result.data })
+        return result
     }
     catch (err) {
         dispatch({ type: MOVIE_LIST_FAIL, payload: err.response.data })
+        return err.response
     }
 }
 

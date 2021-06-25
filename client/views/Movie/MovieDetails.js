@@ -33,9 +33,11 @@ export default function MoviesDetails() {
     }, [singleMovie])
     
     useEffect(() => {
-        if (singleMovie && similarMovies && similarMovies.length < 5) {
-            dispatch(MovieActions.similarMovieGenre(singleMovie.movie_genre.replace(/\s+/g, '').split(',')[1], singleMovie.movie_id))
+        if (singleMovie) {
+            if (similarMovies && similarMovies.length < 1) {
+                dispatch(MovieActions.similarMovieGenre(singleMovie.movie_genre.replace(/\s+/g, '').split(',')[1], singleMovie.movie_id))
             setLink(`/mini-project/movies/search/genre?movie_genre=${singleMovie && singleMovie.movie_genre.replace(/\s+/g, '').split(',')[1]}`)
+            }  
         }
     }, [similarMovies])
 
@@ -108,7 +110,7 @@ export default function MoviesDetails() {
                                 <label className="text-3xl text-white block px-5">Title:</label>
                                 <div className="flex flex-row flex-grow-0 flex-wrap px-5"><h1 className="inline-block uppercase text-xl text-white mb-3 font-serif font-bold cursor-default">{singleMovie && singleMovie.movie_title}</h1></div>
                                 <label className="text-3xl text-white px-5">Price:</label>
-                                <h1 className="px-5 text-white text-2xl mb-3 mt-1 font-mono font-bold cursor-default">Rp{singleMovie && singleMovie.movie_price}</h1>
+                                <h1 className="px-5 text-white text-2xl mb-3 mt-1 font-mono font-bold cursor-default">Rp{singleMovie && singleMovie.movie_price.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}</h1>
                                 <label className="px-5 text-3xl text-white">Genre:</label>
                                 <h1 className="px-5 uppercase text-xl text-white mb-3 mt-1 font-serif font-bold cursor-default">{singleMovie && singleMovie.movie_genre}</h1>
                                 <label className="px-5 text-3xl text-white">Director:</label>
@@ -123,7 +125,7 @@ export default function MoviesDetails() {
                             <label className='text-xl text-center text-white'>Add Amount</label>
                             <span className="flex flex-row items-center justify-center mt-5"><button className="focus:outline-none" onClick={()=> amountChange('plus')}><PlusCircleIcon className="w-7 h-7 text-white"/></button><input className="focus:outline-none mx-5 rounded-md bg-gray-800 w-14 h-14 text-center text-sm text-white" value={amount && amount}
                             onChange={handleAmountChange}/><button className="focus:outline-none disabled:opacity-30 disabled:cursor-not-allowed" onClick={()=> amountChange('minus')} disabled={amount===1 ? true : false}><MinusCircleIcon className="w-7 h-7 text-white"/></button></span>
-                            <span className="flex flex-row items-center justify-between mt-5"><label className="text-white text-md">Subtotal:</label><h1 className="text-white text-sm font-mono cursor-default">Rp{singleMovie && (singleMovie.movie_price * amount)}</h1></span>
+                            <span className="flex flex-row items-center justify-between mt-5"><label className="text-white text-md">Subtotal:</label><h1 className="text-white text-sm font-mono cursor-default">Rp{singleMovie && (singleMovie.movie_price * amount).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}</h1></span>
                             <button className="text-white w-full bg-red-600 py-1 mt-2 rounded-lg hover:ring-2 ring-white focus:outline-none"
                                 onClick={()=> addToCart(auth.userID, ( cartUser[0] ? cartUser[0].cart_id : null ) , singleMovie.movie_id, amount)}>Add To Cart
                             </button>

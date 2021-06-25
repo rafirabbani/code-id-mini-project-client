@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import OrderActions from '../../../Actions/OrderAction'
+import { Disclosure } from '@headlessui/react'
+import TransactionItem from './TransactionItem'
+import ChevronDownIcon from '@heroicons/react/outline/ChevronDownIcon'
 
 export default function PaidTransactions(props) {
     const [orders, setOrders] = useState([])
@@ -33,6 +36,21 @@ export default function PaidTransactions(props) {
                         <div className="font-bold">Transaction Date: <label className="text-sm font-normal">{item.order_created_on.slice(0,10)}</label></div>
                         <div className="font-bold">Shipping Address: <label className="text-sm font-normal">{item.order_city}, {item.order_address}</label></div>
                         <div className="font-bold">Status: <label className="text-sm font-normal">{item.order_status}</label></div>
+                        <Disclosure>
+                                <>
+                                    <Disclosure.Button className="mt-3 focus:outline-none text-left hover:bg-gray-400 rounded-md px-1 font-bold bg-gray-300 w-72">
+                                        <div className="flex flex-row items-center justify-between"> 
+                                            <label>Items Ordered</label>
+                                            <ChevronDownIcon className="w-5 h-5"/>
+                                        </div>
+                                    </Disclosure.Button>
+                                    <Disclosure.Panel>
+                                        <div className="mt-1 px-1">
+                                            <TransactionItem orderNum={item.order_name} totalDue={item.order_total_due} totalAmount={item.order_total_qty} />
+                                        </div>
+                                    </Disclosure.Panel> 
+                                </>
+                        </Disclosure>
                     </div>
                 </div> 
             ))}

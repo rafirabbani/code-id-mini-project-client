@@ -11,24 +11,28 @@ import AllTransactions from './UserTransactions/AllTransactions'
 import NotPaidTransactions from './UserTransactions/NotPaidTransactions'
 import PaidTransactions from './UserTransactions/PaidTransactions'
 import CancelledTransactions from './UserTransactions/CancelledTransactions'
+import LoadingScreen from '../LoadingScreen'
 
 export default function ProfilePage() {
     const [allTransactions, setAllTransactions] = useState(false)
     const [cancelledTransactions, setCancelledTransactions] = useState(false)
     const [notPaidTransactions, setNotPaidTransactions] = useState(false)
     const [paidTransactions, setPaidTransactions] = useState(false)
+    const [pageLoading, setPageLoading] = useState(true)
     const dispatch = useDispatch()
     const { user_id } = useParams()
     const { auth, user, order } = useSelector((state) => state)
     const { userInfo } = user
     const { allOrderUser, openOrderUser, paidOrderUser, cancelOrderUser } = order
     useEffect(() => {
-        dispatch(UserActions.findUserById(user_id))
-        dispatch(OrderActions.getOpenOrderByUser(user_id))
-        dispatch(OrderActions.getAllOrderForUser(user_id, 0))
-        dispatch(OrderActions.getPaidOrderForUser(user_id, 0))
-        dispatch(OrderActions.getCancelOrderForUser(user_id, 0))
-        
+        setTimeout(function(){
+            dispatch(UserActions.findUserById(user_id))
+            dispatch(OrderActions.getOpenOrderByUser(user_id))
+            dispatch(OrderActions.getAllOrderForUser(user_id, 0))
+            dispatch(OrderActions.getPaidOrderForUser(user_id, 0))
+            dispatch(OrderActions.getCancelOrderForUser(user_id, 0))
+            setPageLoading(false)
+        }, 1000)        
     }, [])
 
     const showAllTransaction = () => {
@@ -103,6 +107,9 @@ export default function ProfilePage() {
                         }
                         {
                             cancelledTransactions ? <CancelledTransactions transactionsList={cancelOrderUser && cancelOrderUser} userID={user_id}/> : null
+                        }
+                        {
+                            pageLoading ? <LoadingScreen/> : null
                         }
                             
                     </div>
