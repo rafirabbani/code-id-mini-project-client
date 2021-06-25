@@ -84,7 +84,7 @@ export default function Home() {
             <div className="min-h-screen bg-black text-white">
                 <h1 className="text-center text-white text-5xl pt-5 font-serif mt-20 cursor-default">Movies List</h1>
                 {/* <button className="bg-white px-1 py-1 min-w-screen" onClick={testClick}>Click</button> */}
-                <div className="flex flex-row flex-wrap w-full items-center justify-start px-10 pb-10 ml-5">
+                <div className="flex flex-row flex-wrap w-full items-center justify-around px-10 pb-10">
                     {
                         movies && movies.map((movie) => (
                             <div className="mx-5 my-5" key={movie.movie_id} hidden={contentLoading ? true : false}>

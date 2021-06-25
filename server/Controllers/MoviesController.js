@@ -105,7 +105,7 @@ const createMovie = async (req, res) => {
 const getAllMovies = async (req, res) => {
     const Movies = req.context.models.Movies
     const { page } = req.query
-    const { limit, offset } = getPagination(page, 10)
+    const { limit, offset } = getPagination(page, 8)
 
     try {
         const result = await Movies.findAndCountAll({

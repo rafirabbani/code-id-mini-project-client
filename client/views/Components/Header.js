@@ -52,8 +52,9 @@ export default function Header(props) {
                 <div className='flex justify-start mt-3'>
                     <img src={Popcorn} className="ml-10 py-2 px-2" alt='icon' style={{width: '70px', height: '75px'}}></img>
                     <a className="text-white py-2 px-3 text-2xl relative mt-1 ml-5 inline" href='/mini-project/store/home'>Home</a>
-                    <a className="text-white py-2 px-3 text-2xl relative mt-1 ml-5 inline" href={`/mini-project/user/profile/${auth && auth.userID}`}>Profile</a>
+                    <a className="text-white py-2 px-3 text-2xl relative mt-1 ml-5 inline" href={`/mini-project/user/profile`}>Profile</a>
                     <button className="text-white px-3 text-2xl relative mb-5 ml-5 inline focus:outline-none" onMouseOver={()=> setGenreModal(true)} onMouseOut={()=> setGenreModal(false)}>Genre</button>
+                    <a className="text-white py-2 px-3 text-2xl relative mt-1 ml-5 inline" href={`/mini-project/admin/home`} style={auth && auth.userType !== "ADMIN" ? {visibility: "hidden"} : {visibility: "visible"}}>Admin</a>
                 </div>
                 <div>
                     <input className="text-sm px-5 py-5 border-black border-2 focus:outline-none" style={{width: '300px'}} placeholder="Find Your Favorite Movie here..."

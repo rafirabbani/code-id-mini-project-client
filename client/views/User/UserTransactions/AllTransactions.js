@@ -6,6 +6,7 @@ import TransactionItem from './TransactionItem'
 import ChevronDownIcon from '@heroicons/react/outline/ChevronDownIcon'
 
 export default function AllTransactions(props) {
+    console.log(props)
     const [orders, setOrders] = useState([])
     const [pages, setPages] = useState([])
     //const [open, setOpen] = useState(true)
@@ -19,11 +20,10 @@ export default function AllTransactions(props) {
 
     useEffect(() => {
         if (props.transactionsList) {
-            const { orders, totalPages } = props.transactionsList
-            setOrders(orders)
-            setPages([...Array(totalPages).keys()])
-            setPageChange(false)
-
+                const { orders, totalPages } = props.transactionsList
+                setOrders(orders)
+                setPages([...Array(totalPages).keys()])
+                setPageChange(false)
         }
     }, [props, pageChange])
 

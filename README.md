@@ -18,8 +18,7 @@
     ],
     "exec" : "babel-node ./server/server.js"
 },
-
-### And use express.js file on the server.js file import
+And use express.js file on the server.js file import
 
 ### For running the frontend and backend of the app use this config on the nodemon.json : 
 
@@ -30,5 +29,4 @@
     ],
     "exec": "webpack --mode=development --config webpack.config.server.js && node ./dist/server.generated.js"
 }
-
-### And use express-fullstack.js file on the server.js file import
+And use express-fullstack.js file on the server.js file import
