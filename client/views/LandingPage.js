@@ -23,7 +23,7 @@ export default function LandingPage() {
         if (email.user_email) {
             if (validateEmail(email.user_email)) {
                 dispatch(UserActions.holdMail(email))
-                history.push('/mini-project/signup')
+                history.push('/signup')
             }
             else {
                 setNotValidEmailWarning(true)
@@ -37,7 +37,7 @@ export default function LandingPage() {
     }
 
     const toLogin = () => {
-        history.push('/mini-project/signin')
+        history.push('/signin')
     }
 
     const validateEmail = (email) => {
