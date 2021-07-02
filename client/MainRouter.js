@@ -48,7 +48,7 @@ const MainRouter = () => {
           return <Component />
       }
       else {
-      return <Redirect to="/mini-project/auth-failed"/>
+      return <Redirect to="/auth-failed"/>
       }
   }
 
@@ -56,7 +56,7 @@ const MainRouter = () => {
     if (auth.userType === "ADMIN") {
         return <Component />
     }
-    else return <Redirect to="/mini-project/not-authorized"/>
+    else return <Redirect to="/not-authorized"/>
   }
   
   
