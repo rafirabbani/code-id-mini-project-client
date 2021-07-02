@@ -57,7 +57,7 @@ export default function SetAddressModal(props) {
             dispatch(OrderActions.createOrder(data)).then((response) => {
                 if (response.status == 200) {
                     dispatch(CartActions.checkOut(props.cartID, response.data.order_name)).then(() => {
-                        window.location.assign('/mini-project/checkout')
+                        window.location.assign('/checkout')
                     })
                 }
                 else {
