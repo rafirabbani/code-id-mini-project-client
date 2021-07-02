@@ -1,5 +1,5 @@
 module.exports = {
-    purge: ['./client/**/*.js", "./client/assets/**/*.css'],
+    purge: ["./client/**/*.js", "./client/assets/**/*.css"],
     future: {
         removeDeprecatedGapUtilities: true,
         purgeLayersByDefault: true,
