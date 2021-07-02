@@ -46,7 +46,7 @@ export default function SignUp() {
     if (values.user_email && values.user_password){
       if (validateEmail(values.user_email)) {
         dispatch(UserActions.holdPasswordMail(values))
-        history.push('/mini-project/signup/profile')
+        history.push('/signup/profile')
       } else setNotValidEmailWarning(true)
 
     }
@@ -62,11 +62,11 @@ export default function SignUp() {
   }
   }
   const toLogin = () => {
-    history.push('/mini-project/signin')
+    history.push('/signin')
   }
 
   const toLandingPage = () => {
-    history.push('/mini-project/')
+    history.push('/')
   }
   
     return (

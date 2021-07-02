@@ -33,7 +33,7 @@ export default function SignIn() {
                     setWarningModal(true)
                 }
                 else if (result.status === 200) {
-                    history.push('/mini-project/store/home')
+                    history.push('/store/home')
                 }
             })
         }
@@ -83,7 +83,7 @@ export default function SignIn() {
                         </div>
                         <div className="text-right text-gray-400">
                             <a className="mx-1 text-sm cursor-default">Dont Have Account?</a>
-                            <a href="/mini-project/signup"className="mx-1 text-sm hover:underline hover:cursor-pointer hover:text-white">Register Here</a>
+                            <a href="/signup"className="mx-1 text-sm hover:underline hover:cursor-pointer hover:text-white">Register Here</a>
                         </div>
                         <div className="px-4 pb-2 pt-4">
                             <button className="uppercase block w-full p-4 text-lg rounded-full bg-red-600 hover:bg-red-800 focus:outline-none"

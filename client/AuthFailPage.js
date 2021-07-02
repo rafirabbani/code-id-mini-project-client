@@ -5,7 +5,7 @@ import ExclamationIcon from '@heroicons/react/solid/ExclamationIcon'
 export default function LoginBlockPage() {
     const history = useHistory()
     const onClose = () => {
-        history.push('/mini-project/signin')
+        history.push('/signin')
         //props.setLoginCheck()
     }
     return (

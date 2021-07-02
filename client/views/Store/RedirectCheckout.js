@@ -5,7 +5,7 @@ export default function RedirectCheckout() {
     //window.location.assign('/mini-project/checkout')
     return (
         <div>
-            <Redirect to=""/>
+            <Redirect to="/checkout"/>
         </div>
     )
 }

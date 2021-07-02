@@ -12,10 +12,10 @@ export default function NotFoundPage() {
                     <div className="px-1 py-1"><img className="rounded-xl"src={Trolls} style={{width:"1075px", height:"420px"}}/></div>
                     <label className="font-serif text-5xl mt-5 px-1 py-1">You Are Lost Please Go Back Before Trolls Eat You</label>
                     <div className="flex flex-row items-center justify-start mt-5 px-1 py-1">
-                        <div className="mx-5 hover:underline" hidden={auth && auth.isLoggedIn  ? false : true}><a href={`/mini-project/store/home`}>Home</a></div>
-                        <div className="mx-5 hover:underline" hidden={auth && auth.isLoggedIn  ? false : true}><a href={`/mini-project/user/profile`}>Profile</a></div>
-                        <div className="mx-5 hover:underline" hidden={auth && auth.userType === 'ADMIN' ? false : true}><a href={`/mini-project/admin/home`}>Admin</a></div>
-                        <div className="mx-5 hover:underline" hidden={auth && auth.isLoggedIn  ? true : false}><a href={`/mini-project/`}>Get Me Out</a></div>
+                        <div className="mx-5 hover:underline" hidden={auth && auth.isLoggedIn  ? false : true}><a href={`/store/home`}>Home</a></div>
+                        <div className="mx-5 hover:underline" hidden={auth && auth.isLoggedIn  ? false : true}><a href={`/user/profile`}>Profile</a></div>
+                        <div className="mx-5 hover:underline" hidden={auth && auth.userType === 'ADMIN' ? false : true}><a href={`/admin/home`}>Admin</a></div>
+                        <div className="mx-5 hover:underline" hidden={auth && auth.isLoggedIn  ? true : false}><a href={`/`}>Get Me Out</a></div>
                     </div>
                 
                 </div>

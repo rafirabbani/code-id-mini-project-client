@@ -85,7 +85,7 @@ export default function SearchMovie() {
                     movies && movies.map((item) => (
                         <div className="py-5 px-5" key={item.movie_id}>
                             <div className="overflow-hidden truncate w-48 text-white">
-                                <a href={`/mini-project/store/movie/${item.movie_id}`}>
+                                <a href={`/store/movie/${item.movie_id}`}>
                                     <img className="mb-5 transform hover:scale-105" src={`/api/movies/image/download/${item.movie_id}`} style={{width: "200px", height:"300px"}}/>
                                 </a>
                                 <label className="font-serif text-left">{item.movie_title}</label>

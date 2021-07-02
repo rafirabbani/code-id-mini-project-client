@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 export default function SignupSuccessModal() {
     const history = useHistory()
     const onClose = () => {
-        history.push('/mini-project/signin')
+        history.push('/signin')
     }
     return (
         <div className="bg-black min-w-screen min-h-screen animated fadeIn faster fixed flex justify-center items-center inset-0 z-50 outline-none focus:outline-none">

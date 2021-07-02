@@ -28,7 +28,7 @@ export default function MoviesDetails() {
         if (singleMovie) {
             //console.log(singleMovie.movie_genre.replace(/\s+/g, '').split(',')[0])
             dispatch(MovieActions.similarMovieGenre(singleMovie.movie_genre.replace(/\s+/g, '').split(',')[0], singleMovie.movie_id))
-            setLink(`/mini-project/movies/search/genre?movie_genre=${singleMovie && singleMovie.movie_genre.replace(/\s+/g, '').split(',')[0]}`)
+            setLink(`/movies/search/genre?movie_genre=${singleMovie && singleMovie.movie_genre.replace(/\s+/g, '').split(',')[0]}`)
         }
     }, [singleMovie])
     
@@ -36,7 +36,7 @@ export default function MoviesDetails() {
         if (singleMovie) {
             if (similarMovies && similarMovies.length < 1) {
                 dispatch(MovieActions.similarMovieGenre(singleMovie.movie_genre.replace(/\s+/g, '').split(',')[1], singleMovie.movie_id))
-            setLink(`/mini-project/movies/search/genre?movie_genre=${singleMovie && singleMovie.movie_genre.replace(/\s+/g, '').split(',')[1]}`)
+            setLink(`/movies/search/genre?movie_genre=${singleMovie && singleMovie.movie_genre.replace(/\s+/g, '').split(',')[1]}`)
             }  
         }
     }, [similarMovies])
@@ -146,7 +146,7 @@ export default function MoviesDetails() {
                          {
                             similarMovies && similarMovies.map((movie) => (
                                 <div className='px-5 py-5 overflow-hidden w-36' key={movie.movie_id}>
-                                    <a href={`/mini-project/store/movie/${movie.movie_id}`}className="justify-center flex flex-grow-0"><img className="rounded-md" src={`/api/movies/image/download/${movie.movie_id}`} alt="cast_image" style={{width: '180px', height: '180px'}}/></a>
+                                    <a href={`/store/movie/${movie.movie_id}`}className="justify-center flex flex-grow-0"><img className="rounded-md" src={`/api/movies/image/download/${movie.movie_id}`} alt="cast_image" style={{width: '180px', height: '180px'}}/></a>
                                     <h1 className='text-white text-sm text-center mt-3 font-serif cursor-default truncate'>{movie.movie_title}</h1>
                                 </div>
                         ))} 

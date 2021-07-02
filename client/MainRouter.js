@@ -64,38 +64,38 @@ const MainRouter = () => {
     <>
       <Switch>
         {/* Public Route */}
-        <Route exact path ='/mini-project' component={LandingPage}/>
-        <Route exact path = '/mini-project/signup' component={SignUp}/>
-        <Route exact path ='/mini-project/signup/profile' component={ProfileSignUp}/>
-        <Route exact path = '/mini-project/signin' component={SignIn}/>
+        <Route exact path ='/' component={LandingPage}/>
+        <Route exact path = '/signup' component={SignUp}/>
+        <Route exact path ='/signup/profile' component={ProfileSignUp}/>
+        <Route exact path = '/signin' component={SignIn}/>
 
         {/* User Only Route */}
-        <Route exact path ='/mini-project/store/home' render={()=> typeof window != 'undefined' && isLogin(StoreHomePage)}/>
-        <Route exact path = '/mini-project/store/movie/:movie_id' render={()=> typeof window != 'undefined' && isLogin(MovieDetailPage)}/>
-        <Route exact path = '/mini-project/store/cart' render={()=> typeof window != 'undefined' && isLogin(CartPage)}/>
-        <Route exact path = '/mini-project/checkout' render={()=> typeof window != 'undefined' && isLogin(CheckoutPage)}/>
-        <Route exact path = '/mini-project/user/profile' render={()=> typeof window != 'undefined' && isLogin(ProfilePage)}/>
-        <Route exact path = '/mini-project/movies/search/:params' render={()=> typeof window != 'undefined' && isLogin(SearchMoviePage)}/>
-        <Route exact path = '/mini-project/store' render={()=> typeof window != 'undefined' && isLogin(RedirectStore)}/>
-        <Route exact path = '/mini-project/redirect/checkout' render={()=> typeof window != 'undefined' && isLogin(RedirectCheckout)}/>
+        <Route exact path ='/store/home' render={()=> typeof window != 'undefined' && isLogin(StoreHomePage)}/>
+        <Route exact path = '/store/movie/:movie_id' render={()=> typeof window != 'undefined' && isLogin(MovieDetailPage)}/>
+        <Route exact path = '/store/cart' render={()=> typeof window != 'undefined' && isLogin(CartPage)}/>
+        <Route exact path = '/checkout' render={()=> typeof window != 'undefined' && isLogin(CheckoutPage)}/>
+        <Route exact path = '/user/profile' render={()=> typeof window != 'undefined' && isLogin(ProfilePage)}/>
+        <Route exact path = '/movies/search/:params' render={()=> typeof window != 'undefined' && isLogin(SearchMoviePage)}/>
+        <Route exact path = '/store' render={()=> typeof window != 'undefined' && isLogin(RedirectStore)}/>
+        <Route exact path = '/redirect/checkout' render={()=> typeof window != 'undefined' && isLogin(RedirectCheckout)}/>
 
         {/* Blocking Page */}
-        <Route exact path = '/mini-project/auth-failed' component={AuthFailPage}/>
-        <Route exact path = '/mini-project/signup/success' component={SignupSuccessPage}/>
-        <Route exact path = '/mini-project/signup/fail' component={SignupFailPage}/>
-        <Route exact path = '/mini-project/not-authorized' component={PrevilegeCheckPage}/>
+        <Route exact path = '/auth-failed' component={AuthFailPage}/>
+        <Route exact path = '/signup/success' component={SignupSuccessPage}/>
+        <Route exact path = '/signup/fail' component={SignupFailPage}/>
+        <Route exact path = '/not-authorized' component={PrevilegeCheckPage}/>
 
         {/* Admin Only Route */}
-        <Route exact path = '/mini-project/admin/home' render={()=> typeof window != 'undefined' && isAdmin(AdminHomePage)}/>
-        <Route exact path = '/mini-project/admin/movies' render={()=> typeof window != 'undefined' && isAdmin(AdminMoviesPage)}/>
-        <Route exact path = '/mini-project/admin/casts' render={()=> typeof window != 'undefined' && isAdmin(AdminCastsPage)}/>
+        <Route exact path = '/admin/home' render={()=> typeof window != 'undefined' && isAdmin(AdminHomePage)}/>
+        <Route exact path = '/admin/movies' render={()=> typeof window != 'undefined' && isAdmin(AdminMoviesPage)}/>
+        <Route exact path = '/admin/casts' render={()=> typeof window != 'undefined' && isAdmin(AdminCastsPage)}/>
 
         {/* Test Route */}
-        <Route exact path = "/mini-project/test" component={KaroselTest}/>
+        <Route exact path = "/test" component={KaroselTest}/>
 
         {/* Not Found Route */}
-        <Route exact path = '/mini-project/404' component={NotFoundPage}/>
-        <Redirect to="/mini-project/404"/>
+        <Route exact path = '/404' component={NotFoundPage}/>
+        <Redirect to="/404"/>
 
     </Switch>
     </>

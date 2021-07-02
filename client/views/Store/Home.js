@@ -68,7 +68,7 @@ export default function Home() {
     }
 
     const toDetail = (id) => {
-        history.push(`/mini-project/store/movie/${id}`)
+        history.push(`/store/movie/${id}`)
         //console.log(pages)
     }
 

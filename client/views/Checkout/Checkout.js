@@ -27,7 +27,7 @@ export default function Checkout() {
             dispatch(OrderAction.updateOrderByName(onSuccess.payt_order_number, onSuccess.payt_trx_number)).then((result) => {
                 if (result.status === 200) {
                     alert(`Payment Success`)
-                    history.push('/mini-project/store/home')
+                    history.push('/store/home')
                 }
                 else{
                     alert(`Payment Failed`)
@@ -54,7 +54,7 @@ export default function Checkout() {
             if (response.status === 200) {
                 alert(`Order Cancelled`)
                 setCancel(true)
-                history.push('/mini-project/store/home')
+                history.push('/store/home')
             }
             else {
                 alert(`Cancel Failed`)

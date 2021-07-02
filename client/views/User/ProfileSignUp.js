@@ -63,11 +63,11 @@ export default function Profile() {
         //console.log(values)
         //console.log(result.status)
         if (result.status == 200) {
-          history.push('/mini-project/signup/success')
+          history.push('/signup/success')
         }
         else if (result.status === 400) {
           //console.log(result)
-          history.push('/mini-project/signup/fail')
+          history.push('/signup/fail')
         }
       })
     }

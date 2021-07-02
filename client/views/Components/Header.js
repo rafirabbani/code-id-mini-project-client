@@ -19,7 +19,7 @@ export default function Header(props) {
 
     const handleLogout = () => {
         dispatch(AuthActions.signOut()).then(() => {
-            history.push('/mini-project/signin')
+            history.push('/signin')
         })
 
     }
@@ -36,12 +36,12 @@ export default function Header(props) {
     }
 
     const onSearch = () => {
-        window.location.assign(`/mini-project/movies/search/title?movie_title=${search}`)
+        window.location.assign(`/movies/search/title?movie_title=${search}`)
         props.setNewSearch(true)
     }
 
     const onGenre = (genre) => {
-        window.location.assign(`/mini-project/movies/search/genre?movie_genre=${genre}`)
+        window.location.assign(`/movies/search/genre?movie_genre=${genre}`)
         props.setNewSearch(true)
     }
 
@@ -51,10 +51,10 @@ export default function Header(props) {
         <nav className="fixed z-50 flex items-center justify-between bg-red-600 w-full top-0">
                 <div className='flex justify-start mt-3'>
                     <img src={Popcorn} className="ml-10 py-2 px-2" alt='icon' style={{width: '70px', height: '75px'}}></img>
-                    <a className="text-white py-2 px-3 text-2xl relative mt-1 ml-5 inline" href='/mini-project/store/home'>Home</a>
-                    <a className="text-white py-2 px-3 text-2xl relative mt-1 ml-5 inline" href={`/mini-project/user/profile`}>Profile</a>
+                    <a className="text-white py-2 px-3 text-2xl relative mt-1 ml-5 inline" href='/store/home'>Home</a>
+                    <a className="text-white py-2 px-3 text-2xl relative mt-1 ml-5 inline" href={`/user/profile`}>Profile</a>
                     <button className="text-white px-3 text-2xl relative mb-5 ml-5 inline focus:outline-none" onMouseOver={()=> setGenreModal(true)} onMouseOut={()=> setGenreModal(false)}>Genre</button>
-                    <a className="text-white py-2 px-3 text-2xl relative mt-1 ml-5 inline" href={`/mini-project/admin/home`} style={auth && auth.userType !== "ADMIN" ? {visibility: "hidden"} : {visibility: "visible"}}>Admin</a>
+                    <a className="text-white py-2 px-3 text-2xl relative mt-1 ml-5 inline" href={`/admin/home`} style={auth && auth.userType !== "ADMIN" ? {visibility: "hidden"} : {visibility: "visible"}}>Admin</a>
                 </div>
                 <div>
                     <input className="text-sm px-5 py-5 border-black border-2 focus:outline-none" style={{width: '300px'}} placeholder="Find Your Favorite Movie here..."
@@ -65,7 +65,7 @@ export default function Header(props) {
                     </button>
                 </div>
                 <div className='flex justify-end'>
-                    <a className="py-2 px-3 mr-5 focus:outline-none inline" href="/mini-project/store/cart">
+                    <a className="py-2 px-3 mr-5 focus:outline-none inline" href="/store/cart">
                         <a className="relative rounded-full px-2 py-1 text-md bg-black text-white font-bold z-10" >{cartUser && cartUser[0] ? cartUser[0].line_items.length ? cartUser[0].line_items.length : 0 : 0 }</a>
                         <CartIcon className='w-10 max-h-10 text-white mt-1 relative' style={{width: '50px', height: '50px', bottom:"12px"}}/>
                         
@@ -77,11 +77,11 @@ export default function Header(props) {
                     
                     <Transition show={profileModal} enter="transition-opacity duration-500" enterFrom="opacity-0" enterTo="opacity-100" leave="transition-opacity duration-500" leaveFrom="opacity-100" leaveTo="opacity-0">
                         <div className="group rounded-lg absolute right-0 w-40 mt-14 mr-7 py-1 bg-gray-800 border border-gray-800 ring-4 ring-gray-800" onMouseOut={()=> setProfileModal(false)} onMouseOver={()=> setProfileModal(true)}>
-                            <a href={`/mini-project/user/profile/${auth && auth.userID}`} className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-red-600 hover:bg-white focus:outline-none">Profile</a>
+                            <a href={`/user/profile/${auth && auth.userID}`} className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-red-600 hover:bg-white focus:outline-none">Profile</a>
                             <div className="py-2">
                                 <hr></hr>
                             </div>
-                            <a href="/mini-project/store/cart" className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-red-600 hover:bg-white focus:outline-none">Cart</a>
+                            <a href="/store/cart" className="transition-colors duration-200 block px-4 py-2 text-normal rounded-lg text-white hover:text-red-600 hover:bg-white focus:outline-none">Cart</a>
                             <div className="py-2">
                                 <hr></hr>
                             </div>
