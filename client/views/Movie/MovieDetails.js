@@ -131,7 +131,7 @@ export default function MoviesDetails() {
                             </button>
                         </div>
                     </div>
-                    <h3 className="text-gray-600 text-5xl font-bold mt-24 ml-16 text-center font-serif cursor-default" hidden={singleMovie.casts.length > 0 ? false : true}>Casts</h3>
+                    <h3 className="text-gray-600 text-5xl font-bold mt-24 ml-16 text-center font-serif cursor-default" hidden={singleMovie && singleMovie.casts.length > 0 ? false : true}>Casts</h3>
                     <div className="flex flex-row flex-wrap w-full items-center justify-start px-16 py-5 mt-5">
                          {
                             singleMovie && singleMovie.casts.map((cast) => (
