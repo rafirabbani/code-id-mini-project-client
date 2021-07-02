@@ -37,14 +37,14 @@ import store from '../client/ReduxStore'
 //const store = createStore(reducer)
 
 //comment script dibawah before building for production
-import devBundle from './devBundle'
+//import devBundle from './devBundle'
 
 //comment script dibawah before building for production
 // client-side : gunakan ketika development only
-devBundle.compile(app)
+//devBundle.compile(app)
 
-const CURRENT_WORKING_DIR = process.cwd()
-app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
+/* const CURRENT_WORKING_DIR = process.cwd()
+app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist'))) */
 app.use("/miniproject/", (req, res) => {
     res.send("Hello  World from Mini Project")
 });
