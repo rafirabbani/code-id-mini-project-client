@@ -1,5 +1,18 @@
 //import { sequelize } from '../../config/config-db'
-import { Op } from 'sequelize'
+//import { Op } from 'sequelize'
+
+const getPagination = (page, size) => {
+    const limit = size ? +size : 3
+    const offset = page ? page * limit : 0
+    return { limit, offset }
+}
+
+const getPagingData = (data, page, limit) => {
+    const { count: totalOrders, rows: orders } = data
+    const currentPage = page ? +page : 0;
+    const totalPages = Math.ceil(totalOrders / limit);
+    return { totalOrders, orders, totalPages, currentPage }
+}
 
 // Create New Open Order
 const createOrder = async (req, res) => {
@@ -40,16 +53,21 @@ const createOrder = async (req, res) => {
 
 // Get All Orders for Single User
 const getAllOrdersUser = async (req, res) => {
+    const { page } = req.query
+    const { limit, offset } = getPagination(page, 3)
     try {
-        const result = await req.context.models.Orders.findAll({
+        const result = await req.context.models.Orders.findAndCountAll({
             where: { order_user_id: req.params.user_id },
+            limit: limit,
+            offset: offset,
             order: [
                 ['order_created_on', 'DESC']
             ]
             
         })
-        if (result.length > 0) {
-            return res.send(result)
+        if (result.count > 0) {
+            const response = getPagingData(result, (parseInt(page)+1).toString(), limit)
+            return res.send(response)
         }
         else {
             return res.status(404).send('You Havent Order Anything')
@@ -119,16 +137,21 @@ const getOpenOrderByUser  = async (req, res) => {
 }
 
 const getPaidOrderByUser = async (req, res) => {
+    const { page } = req.query
+    const { limit, offset } = getPagination(page, 3)
     try {
-        const result = await req.context.models.Orders.findAll({
+        const result = await req.context.models.Orders.findAndCountAll({
             where: { order_user_id: req.params.user_id, order_status: 'PAID' },
+            limit: limit,
+            offset: offset,
             order: [
                 ['order_created_on', 'DESC']
             ]
             
         })
-        if (result.length > 0) {
-            return res.send(result)
+        if (result.count > 0) {
+            const response = getPagingData(result, (parseInt(page)+1).toString(), limit)
+            return res.send(response)
         }
         else {
             return res.status(404).send('You Havent Order Anything')
@@ -141,16 +164,21 @@ const getPaidOrderByUser = async (req, res) => {
 }
 
 const getCancelledOrderByUser = async (req, res) => {
+    const { page } = req.query
+    const { limit, offset } = getPagination(page, 3)
     try {
-        const result = await req.context.models.Orders.findAll({
+        const result = await req.context.models.Orders.findAndCountAll({
             where: { order_user_id: req.params.user_id, order_status: 'CANCELLED' },
+            limit: limit,
+            offset: offset,
             order: [
                 ['order_created_on', 'DESC']
             ]
             
         })
-        if (result.length > 0) {
-            return res.send(result)
+        if (result.count > 0) {
+            const response = getPagingData(result, (parseInt(page)+1).toString(), limit)
+            return res.send(response)
         }
         else {
             return res.status(404).send('You Havent Order Anything')

@@ -5,7 +5,7 @@ import ExclamationIcon from '@heroicons/react/solid/ExclamationIcon'
 export default function PrevilegeCheckPage() {
     const history = useHistory()
     const onClose = () => {
-        history.push('/mini-project/')
+        history.push('/mini-project/store/home')
         //props.setLoginCheck()
     }
 

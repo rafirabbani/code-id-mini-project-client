@@ -11,53 +11,73 @@ import AllTransactions from './UserTransactions/AllTransactions'
 import NotPaidTransactions from './UserTransactions/NotPaidTransactions'
 import PaidTransactions from './UserTransactions/PaidTransactions'
 import CancelledTransactions from './UserTransactions/CancelledTransactions'
+import LoadingScreen from '../LoadingScreen'
+import Loading from '../../assets/images/content-loading.svg'
 
 export default function ProfilePage() {
     const [allTransactions, setAllTransactions] = useState(false)
     const [cancelledTransactions, setCancelledTransactions] = useState(false)
     const [notPaidTransactions, setNotPaidTransactions] = useState(false)
     const [paidTransactions, setPaidTransactions] = useState(false)
+    const [pageLoading, setPageLoading] = useState(true)
+    const [contentLoading, setContentLoading] = useState(false)
     const dispatch = useDispatch()
-    const { user_id } = useParams()
     const { auth, user, order } = useSelector((state) => state)
     const { userInfo } = user
     const { allOrderUser, openOrderUser, paidOrderUser, cancelOrderUser } = order
     useEffect(() => {
-        dispatch(UserActions.findUserById(user_id))
-        dispatch(OrderActions.getOpenOrderByUser(user_id))
-        dispatch(OrderActions.getAllOrderForUser(user_id))
-        dispatch(OrderActions.getPaidOrderForUser(user_id))
-        dispatch(OrderActions.getCancelOrderForUser(user_id))
-        
+        setTimeout(function(){
+            dispatch(UserActions.findUserById(auth && auth.userID))
+            dispatch(OrderActions.getOpenOrderByUser(auth && auth.userID))
+            dispatch(OrderActions.getAllOrderForUser(auth && auth.userID, 0))
+            dispatch(OrderActions.getPaidOrderForUser(auth && auth.userID, 0))
+            dispatch(OrderActions.getCancelOrderForUser(auth && auth.userID, 0))
+            setPageLoading(false)
+        }, 1000)        
     }, [])
 
     const showAllTransaction = () => {
-        setAllTransactions(true)
+        setContentLoading(true)
         setCancelledTransactions(false)
         setNotPaidTransactions(false)
         setPaidTransactions(false)
+        setTimeout(function(){
+            setAllTransactions(true)
+            setContentLoading(false)
+        }, 500)        
     }
 
     const showNotPaidTransactions = () => {
-        setNotPaidTransactions(true)
-        setPaidTransactions(false)
-        setAllTransactions(false)
+        setContentLoading(true)
         setCancelledTransactions(false)
+        setAllTransactions(false)
+        setPaidTransactions(false)
+        setTimeout(function(){
+            setNotPaidTransactions(true)
+            setContentLoading(false)
+        }, 500)
     }
 
    const showPaidTransactions = () => {
-        setNotPaidTransactions(false)
+    setContentLoading(true)
+    setCancelledTransactions(false)
+    setAllTransactions(false)
+    setNotPaidTransactions(false)
+    setTimeout(function(){
         setPaidTransactions(true)
-        setAllTransactions(false)
-        setCancelledTransactions(false)
+        setContentLoading(false)
+    }, 500)
     }
 
     const showCancelledTransactions = () => {
+        setContentLoading(true)
         setNotPaidTransactions(false)
-        setPaidTransactions(false)
         setAllTransactions(false)
-        setCancelledTransactions(true)
-    
+        setPaidTransactions(false)
+        setTimeout(function(){
+            setCancelledTransactions(true)
+            setContentLoading(false)
+        }, 500)
     }
 
     return (
@@ -93,21 +113,25 @@ export default function ProfilePage() {
                             <button className="bg-black px-1 py-1 rounded-lg text-white mx-3 focus:outline-none focus:bg-gray-600" onClick={showCancelledTransactions}>Cancelled</button>
                         </div>
                         {
-                            allTransactions ? <AllTransactions transactionsList={allOrderUser && allOrderUser}/> : null
+                            allTransactions ? <AllTransactions transactionsList={allOrderUser && allOrderUser} userID={auth && auth.userID}/> : null
                         }
                         {
                             notPaidTransactions ? <NotPaidTransactions transactionsList={openOrderUser && openOrderUser}/> : null
                         }
                         {
-                            paidTransactions ? <PaidTransactions transactionsList={paidOrderUser && paidOrderUser}/> : null
+                            paidTransactions ? <PaidTransactions transactionsList={paidOrderUser && paidOrderUser} userID={auth && auth.userID}/> : null
                         }
                         {
-                            cancelledTransactions ? <CancelledTransactions transactionsList={cancelOrderUser && cancelOrderUser}/> : null
+                            cancelledTransactions ? <CancelledTransactions transactionsList={cancelOrderUser && cancelOrderUser} userID={auth && auth.userID}/> : null
                         }
-                            
+                        {
+                            pageLoading ? <LoadingScreen/> : null
+                        }  
+                        {
+                            contentLoading ? <img src={Loading} /> : null
+                        }                         
                     </div>
-                </div>
-                
+                </div> 
             </div>
         </div>
     )

@@ -1,7 +1,9 @@
 import fs from 'fs'
 import path from 'path'
 import formidable from 'formidable'
-import { Op } from 'sequelize'
+import { Op, QueryTypes } from 'sequelize'
+import { sequelize } from '../../config/config-db';
+
 //import defaultMovieImage from '../Assets/Images/popcorn-png-3.png'
 
 const getPagination = (page, size) => {
@@ -102,8 +104,8 @@ const createMovie = async (req, res) => {
 //Get All Movies
 const getAllMovies = async (req, res) => {
     const Movies = req.context.models.Movies
-    const { page, size } = req.query
-    const { limit, offset } = getPagination(page, size)
+    const { page } = req.query
+    const { limit, offset } = getPagination(page, 8)
 
     try {
         const result = await Movies.findAndCountAll({
@@ -408,6 +410,18 @@ const getAllMoviesNoLimit = async (req, res) => {
     }
 }
 
+const getOrderedMovies = async (req, res) => {
+    try {
+        const result =  await sequelize.query(`SELECT * FROM movies INNER JOIN line_items on line_item_movie_id = movie_id where line_item_order_name = '${req.params.order_name}'`, 
+        { type: QueryTypes.SELECT })
+        return res.send(result)
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(500).send('Something Went Wrong')
+    }
+}
+
 export default {
     createMovie,
     getAllMovies,
@@ -419,5 +433,6 @@ export default {
     searchMovieByTitle,
     searchMovieByGenre,
     getSimilarMovies,
-    getAllMoviesNoLimit
+    getAllMoviesNoLimit,
+    getOrderedMovies
 }

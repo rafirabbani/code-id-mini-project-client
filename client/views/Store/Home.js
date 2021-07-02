@@ -5,6 +5,9 @@ import CartIcon from '@heroicons/react/outline/ShoppingCartIcon'
 import MovieActions from '../../Actions/MovieActions'
 import Header from '../Components/Header'
 import CartActions from '../../Actions/CartActions'
+import LoadingScreen from '../LoadingScreen'
+import Loading from '../../assets/images/content-loading.svg'
+
 
 export default function Home() {
     const dispatch = useDispatch()
@@ -12,23 +15,34 @@ export default function Home() {
     const [movies, setMovies] = useState([])
     const [pages, setPages] =  useState([])
     const [pageChange, setPageChange] = useState(false)
+    const [pageLoading, setPageLoading] = useState(true)
+    const [contentLoading, setContentLoading] = useState(false)
     const { movieData } = movie
     const { cartUser } = cart
     const history = useHistory()
 
     useEffect(() => {
-        dispatch(MovieActions.movieList(0))
         dispatch(CartActions.getCartUser(auth.userID))
+        dispatch(MovieActions.movieList(0)).then((result) => {
+            const { movies, totalPages } = result.data
+            setTimeout(function(){
+                setMovies(movies)
+                setPageLoading(false)
+                setPages([...Array(totalPages).keys()])
+            }, 2000)
+        })
+
     }, [])
 
     useEffect(() => {
-        if (movieData) {
+        setTimeout(function(){
             const { movies, totalPages } = movieData
             setMovies(movies)
             setPages([...Array(totalPages).keys()])
             setPageChange(false)
-        }
-    }, [movieData, pageChange])
+            setContentLoading(false)
+        }, 1000)  
+    }, [pageChange, movieData])  
 
     const addToCart = (userID, cartID, itemID, itemQTY) => {
         //console.log(cartID)
@@ -61,6 +75,7 @@ export default function Home() {
     const onChangePage = (page) => {
         dispatch(MovieActions.movieList(page))
         setPageChange(true)
+        setContentLoading(true)
     }
 
     return (
@@ -69,12 +84,11 @@ export default function Home() {
             <div className="min-h-screen bg-black text-white">
                 <h1 className="text-center text-white text-5xl pt-5 font-serif mt-20 cursor-default">Movies List</h1>
                 {/* <button className="bg-white px-1 py-1 min-w-screen" onClick={testClick}>Click</button> */}
-                <div className="flex flex-row flex-wrap w-full items-center justify-between px-10 pb-10">
+                <div className="flex flex-row flex-wrap w-full items-center justify-around px-10 pb-10">
                     {
                         movies && movies.map((movie) => (
-                            <div className="mx-5 my-5" key={movie.movie_id}>
+                            <div className="mx-5 my-5" key={movie.movie_id} hidden={contentLoading ? true : false}>
                                 <a className="px-5 py-5">
-                                    
                                     <div className="flex-col flex-grow-0 items-center justify-center w-56">
                                         <button className="w-56 focus:outline-none" onClick={()=> toDetail(movie.movie_id)}>
                                             <img className="transition duration-100 ease-in-out rounded-lg transform hover:scale-105" 
@@ -94,19 +108,28 @@ export default function Home() {
                                     </div>
                                 </a>
                             </div>
-                    ))} 
+                    ))}                                        
                 </div>
+                {
+                    contentLoading ? 
+                    <div className="text-white mt-20 flex min-w-screen min-h-screen items-center justify-center"> 
+                        <img src={Loading}/>                  
+                    </div> : null
+                }                
                 <div className="flex flex-row items-center justify-center">
-                    <div className="flex flex-row items-center justify-between">Pages: 
+                    <div className="flex flex-row items-center justify-between" hidden={contentLoading ? true : false}>Pages: 
                             {
                                 pages && pages.map((page) => (
-                                    <div> 
+                                    <div key={page}> 
                                         <button className="mx-5 focus:outline-none focus:underline hover:underline" onClick={()=> onChangePage(page)}>{page + 1}</button>
                                     </div>
                                 ))
                             }
                     </div>
                 </div>
+                {
+                    pageLoading ? <LoadingScreen/> : null
+                }
             </div>
         </div>
     )

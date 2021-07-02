@@ -1,21 +1,16 @@
-# HR-PROJECT CODE.ID BATCH#9
+# MINI PROJECT CODE.ID BATCH#9
 
+## This project is a isomorphic web app built using NodeJS with ExpressJS framework for the server side and ReactJS for the client side.
 
-##  How to run this code
-1. Pastikan postgres db running
-2. Clone this repository
-3. Update config/config.js sesuaikan dengan config local 
-4. Open command line in the cloned folder, lalu exec command berikut :
-   > yarn install
-   > yarn start, untuk running/debug applikasi
-   > yarn reverse:db, untuk reverse tables di db menjadi models
-   
-5. Test (http://localhost:3000/api/regions/) di postman
-   
+## To run this project after cloning, use yarn or npm to install all dependencies
+### You can check all the dependencies needed on the package.json file
+
+### Use yarn start and the app will be started on the 'http://localhost:5000/mini-project'
+
 ---- 
 
-## Nodemon supaya bisa debug gunakan : 
-### edit nodemon.json
+### For running only the backend server use this config on the nodemon.json : 
+
 {
     "verbose": false,
     "watch": [
@@ -23,8 +18,9 @@
     ],
     "exec" : "babel-node ./server/server.js"
 },
+And use express.js file on the server.js file import
 
-### untuk built-up : 
+### For running the frontend and backend of the app use this config on the nodemon.json : 
 
 {
     "verbose": false,
@@ -33,3 +29,4 @@
     ],
     "exec": "webpack --mode=development --config webpack.config.server.js && node ./dist/server.generated.js"
 }
+And use express-fullstack.js file on the server.js file import
