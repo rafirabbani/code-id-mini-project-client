@@ -19,7 +19,7 @@ const getPagingData = (data, page, limit) => {
     return { totalMovies, movies, totalPages, currentPage }
 }
 
-const pathDir = path.join(process.cwd(), '/uploads')
+const pathDir = path.join(process.cwd(), '/server/assets/uploads')
 
 // Create New Movie
 const createMovie = async (req, res) => {
