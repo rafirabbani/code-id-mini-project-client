@@ -117,7 +117,7 @@ export default function Profile() {
                   <option value='?'>?</option>
                   </select>
                 </div>
-                <div className='mt-7 text-sm'><label>Avatar</label></div>
+                {/* <div className='mt-7 text-sm'><label>Avatar</label></div>
                 <div className="mt-1 col-span-6 sm:col-span-2 lg:col-span-3 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg">
                   <div className="space-y-2 text-center">
                     <div className="mx-auto h-48 w-24 text-gray-400">
@@ -130,7 +130,7 @@ export default function Profile() {
                       </label>
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <button className='bg-red-600 text-white font-bold rounded-lg w-full mt-5 py-1 flex items-center justify-center text-xl focus:outline'
                   onClick={onSubmit}>
                   Sign Up</button>
