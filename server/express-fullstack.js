@@ -64,7 +64,7 @@ app.use('/api/auth', routes.AuthRoute)
 app.use('/api/transactions', routes.TransactionsRoute)
 
 // Client Main Route
-app.get('/mini-project/*', (req, res) => {
+app.get('*', (req, res) => {
     const context = {}
     const markup = ReactDOMServer.renderToString(
       <Provider store={store}>
