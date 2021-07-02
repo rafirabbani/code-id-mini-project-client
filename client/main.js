@@ -12,4 +12,4 @@ const renderMethod = !!module.hot ? render : hydrate;
 //const testStore = createStore(root)
 //console.log(store.getState())
 
-hydrate(<Provider store={store}><App/></Provider>, document.getElementById('root'))
+renderMethod(<Provider store={store}><App/></Provider>, document.getElementById('root'))
