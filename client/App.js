@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import MainRouter from './MainRouter'
-import { hot } from 'react-hot-loader'
+//import { hot } from 'react-hot-loader'
 
 const App = () => {
     React.useEffect(() => {
@@ -18,4 +18,5 @@ const App = () => {
     )
 }
 
-export default hot(module)(App)
+//export default hot(module)(App)
+export default App
