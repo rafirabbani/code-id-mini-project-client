@@ -19,11 +19,10 @@ const getPagingData = (data, page, limit) => {
     return { totalMovies, movies, totalPages, currentPage }
 }
 
-const pathDir = path.join(process.cwd(), '/server/assets/uploads')
+const pathDir = process.cwd() + '/server/assets/uploads'
 
 // Create New Movie
 const createMovie = async (req, res) => {
-    console.log(pathDir)
     const Movies = req.context.models.Movies
     if (!fs.existsSync(pathDir)) {
         fs.mkdirSync(pathDir);
