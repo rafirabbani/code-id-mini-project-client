@@ -25,11 +25,6 @@ const config = {
                 test: /\.(ttf|eot|svg|gif|jpg|png)(\?[\s\S]+)?$/,
                 use: 'file-loader'
             },
-            {
-                test: /\.css$/i,
-                include: path.join(CURRENT_WORKING_DIR, 'client/assets/'),
-                use: ['style-loader', 'css-loader', 'postcss-loader'],
-            }
         ]
     }
 }
