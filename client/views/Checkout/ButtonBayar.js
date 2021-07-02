@@ -8,12 +8,12 @@ export default function ButtonBayar(props) {
   };
 
   const lopalopa = async () => {
-    await axios.post("http://192.168.100.24:3030/api/payment/save", order);
+    await axios.post("https://still-thicket-00857.herokuapp.com/api/payment/save", order);
   };
 
   const lopalalalllopa = async () => {
     const { data } = await axios.get(
-      "http://192.168.100.24:3030/api/payt/order/" + order.pays_order_number
+      "https://still-thicket-00857.herokuapp.com/api/payt/order/" + order.pays_order_number
     );
     props.onSuccess(data);
   };
@@ -24,7 +24,7 @@ export default function ButtonBayar(props) {
     lopalopa();
 
     let popup = window.open(
-      `http://192.168.100.24:3030/pay/order/wallet/${order.pays_order_number}`,
+      `https://still-thicket-00857.herokuapp.com/pay/order/wallet/${order.pays_order_number}`,
       "Popup",
       "toolbar=no, location=no, statusbar=no, menubar=no, scrollbars=1, resizable=0, width=580, height=600, top=30"
     );
