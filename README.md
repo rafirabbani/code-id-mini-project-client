@@ -6,6 +6,7 @@
 ### You can check all the dependencies needed on the package.json file
 
 ### Use yarn start and the app will be started on the 'http://localhost:5000/mini-project'
+### To see the application run you can check 'https://agile-springs-09069.herokuapp.com/'
 
 ---- 
 
